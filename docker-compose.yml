@@ -7,15 +7,30 @@ services:
     volumes:
       - ~/docker-mongo/data:/data/db
     env_file:
-      - ./.env-mongo
+      - ./.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD}
 
   mongo-express:
     image: mongo-express
     restart: always
     ports:
       - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: user
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password
     env_file:
-      - ./.env-mongo-express
+      - ./.env
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ADMIN_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ADMIN_PASSWORD}
+
+  node:
+    image: node:8.15.0-jessie
+    user: node
+    working_dir: /home/node/app
+    volumes:
+      - ./:/home/node/app
+    environment:
+      NODE_ENV: ${NODE_ENV}
+    expose:
+      - "3000"
+    command: "npm start"
