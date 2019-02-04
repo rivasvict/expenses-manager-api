@@ -2,16 +2,26 @@
   "name": "expenses-tracker-api",
   "version": "1.0.0",
   "description": "An open source API designed to serve all needs for tracking expenses",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "mocha test/**/*.spec.js",
-    "start": "if [[ ${NODE_ENV} == \"production\" ]]; then start:production ; else npm run start:development; fi",
-    "start:prod": "node index.js",
-    "start:development": "nodemon index.js"
+    "start": "if-env NODE_ENV=production && start:production || npm run start:development",
+    "start:prod": "node ./bin/www",
+    "start:development": "nodemon ./bin/www"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vctr90/expenses-tracker-api.git"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "dotenv": "^6.2.0",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "if-env": "^1.0.4",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0"
   },
   "author": "Victor Rivas",
   "license": "ISC",
@@ -19,9 +29,6 @@
     "url": "https://github.com/vctr90/expenses-tracker-api/issues"
   },
   "homepage": "https://github.com/vctr90/expenses-tracker-api#readme",
-  "dependencies": {
-    "if-env": "^1.0.4"
-  },
   "devDependencies": {
     "nodemon": "^1.18.9"
   }

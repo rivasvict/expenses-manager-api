@@ -27,6 +27,8 @@ services:
     image: node:8.15.0-jessie
     user: node
     working_dir: /home/node/app
+    ports:
+      - ${PORT}:${PORT}
     volumes:
       - ./:/home/node/app
     environment:
