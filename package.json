@@ -4,7 +4,7 @@
   "description": "An open source API designed to serve all needs for tracking expenses",
   "private": true,
   "scripts": {
-    "test": "mocha test/**/*.spec.js",
+    "test": "jest",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon ./bin/www"
@@ -29,6 +29,8 @@
   },
   "homepage": "https://github.com/vctr90/expenses-tracker-api#readme",
   "devDependencies": {
+    "eslint": "^5.13.0",
+    "jest": "^24.1.0",
     "nodemon": "^1.18.9"
   }
 }
