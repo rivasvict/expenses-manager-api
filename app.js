@@ -1,14 +1,32 @@
-const createError = require('http-errors');
 const express = require('express');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+const connectToMongo = async () => {
+  try {
+    const dbUrl = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVER}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+    await mongoose.connect(dbUrl, {
+      userCreateIndex: true,
+      useNewUrlParser: true
+    });
+
+    console.log('Mongo Connected!');
+  } catch (error) {
+    throw error;
+  }
+};
+
+connectToMongo();
 
 const routes = require('./routes/index');
 
 const app = express();
 
-app.use(logger('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(logger('dev'));
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -16,8 +34,7 @@ app.use(cookieParser());
 app.use(routes);
 
 // error handler
-app.use(function(err, req, res, next) {
-  console.log(err);
+app.use((err, req, res) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

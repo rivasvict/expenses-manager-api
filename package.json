@@ -7,7 +7,7 @@
     "test": "jest",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
-    "start:development": "nodemon ./bin/www"
+    "start:development": "nodemon --exec babel-node ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "if-env": "^1.0.4",
+    "mongoose": "^5.4.10",
     "morgan": "~1.9.0"
   },
   "author": "Victor Rivas",
@@ -29,7 +30,11 @@
   },
   "homepage": "https://github.com/vctr90/expenses-tracker-api#readme",
   "devDependencies": {
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
     "eslint": "^5.13.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
     "jest": "^24.1.0",
     "nodemon": "^1.18.9"
   }
