@@ -4,9 +4,10 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const authenticatedMongoUrl = process.env.NODE_ENV === 'development' ? '' : `${process.env.DB_USER}:${process.env.DB_PASSWORD}@`;
 const connectToMongo = async () => {
   try {
-    const dbUrl = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVER}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+    const dbUrl = `mongodb://${authenticatedMongoUrl}${process.env.DB_SERVER}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
     await mongoose.connect(dbUrl, {
       userCreateIndex: true,
       useNewUrlParser: true
