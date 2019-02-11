@@ -3,6 +3,9 @@
     "rules" : {"comma-dangle": ["error", "never"]},
     "plugins": ["jest"],
     "env": {
-      "jest/globals": true
+      "jest/globals": true,
+      "jest" : true,
+      "mocha" : true,
+      "node" : true
     }
 }
