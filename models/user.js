@@ -8,3 +8,15 @@ const userSchema = new Schema({
   lastName: String,
   password: String
 });
+
+userSchema.methods.create = function () {
+  return 'test';
+};
+
+class User {
+  constructor() {
+    this.model = mongoose.model('User', userSchema);
+  }
+}
+
+module.exports = User;
