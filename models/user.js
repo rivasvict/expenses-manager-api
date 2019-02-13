@@ -9,19 +9,29 @@ const userSchema = new Schema({
   password: String
 });
 
-userSchema.methods.create = function () {
-  if (this.isEmailDuplicated()) {
-    // this.save();
-    console.log('holiii');
+userSchema.methods.create = async function () {
+  try {
+    const isEmailDuplicated = await this.getIsEmailDuplicated();
+    if (isEmailDuplicated) {
+      throw new Error('Dupplicated user');
+    } else {
+      await this.save();
+      return 'Success';
+    }
+  } catch (error) {
+    throw error;
   }
 };
 
-userSchema.methods.isEmailDuplicated = async function () {
-  const doesUserExist = await this.model('Accounts').find({ email: this.email });
-  console.log(doesUserExist);
-  // return doesUserExist ? true : false;
+userSchema.methods.getIsEmailDuplicated = async function () {
+  try {
+    const doesUserExist = await this.model('Users').find({ email: this.email });
+    return doesUserExist.length;
+  } catch (error) {
+    throw error;
+  }
 };
 
-const User = mongoose.model('Accounts', userSchema);
+const User = mongoose.model('Users', userSchema);
 
 module.exports = User;
