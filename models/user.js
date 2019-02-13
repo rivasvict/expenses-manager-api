@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { Schema } = mongoose.Schema;
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
   firstName: String,
@@ -10,13 +10,18 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.create = function () {
-  return 'test';
+  if (this.isEmailDuplicated()) {
+    // this.save();
+    console.log('holiii');
+  }
 };
 
-class User {
-  constructor() {
-    this.model = mongoose.model('User', userSchema);
-  }
-}
+userSchema.methods.isEmailDuplicated = async function () {
+  const doesUserExist = await this.model('Accounts').find({ email: this.email });
+  console.log(doesUserExist);
+  // return doesUserExist ? true : false;
+};
+
+const User = mongoose.model('Accounts', userSchema);
 
 module.exports = User;

@@ -4,12 +4,23 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const authenticatedMongoUrl = process.env.NODE_ENV === 'development' ? '' : `${process.env.DB_USER}:${process.env.DB_PASSWORD}@`;
+const User = require('./models/user.js');
+
+const myUser = new User({
+  firstName: 'Victor',
+  email: 'vctr90w@gmail.com',
+  lastName: 'Rivas',
+  password: 'hola'
+});
+
+myUser.create();
+
+const authenticatedMongoUrl = `${process.env.DB_USER}:${process.env.DB_PASSWORD}@`;
 const connectToMongo = async () => {
   try {
-    const dbUrl = `mongodb://${authenticatedMongoUrl}${process.env.DB_SERVER}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+    const dbUrl = `mongodb://${authenticatedMongoUrl}${process.env.DB_SERVER}/${process.env.DB_NAME}`;
+    console.log(dbUrl);
     await mongoose.connect(dbUrl, {
-      userCreateIndex: true,
       useNewUrlParser: true
     });
 
