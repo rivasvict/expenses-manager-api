@@ -1,5 +1,7 @@
-const { mongoose, userSchema } = require('../db/schemas/user.js');
+const { mongoose, userSchema } = require('../db/schemas/user/');
+const { addPasswordEncryptionToSaveMethod } = require('../db/schemas/user/utils.js');
 
+addPasswordEncryptionToSaveMethod(userSchema);
 const DbUser = mongoose.model('Users', userSchema);
 class User extends DbUser {
   async create() {
@@ -16,6 +18,11 @@ class User extends DbUser {
     }
   }
 
+  /*
+   * TODO: Check if this function is still needed because of the change on schema
+   * about the index unique attributes set
+   */
+
   async getIsEmailDuplicated() {
     try {
       const doesUserExist = await this.model('Users').find({ email: this.email });
@@ -23,10 +30,6 @@ class User extends DbUser {
     } catch (error) {
       throw error;
     }
-  }
-
-  _createPassword() {
-    console.log('bad!');
   }
 }
 
