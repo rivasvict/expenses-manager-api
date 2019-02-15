@@ -1,37 +1,33 @@
-const mongoose = require('mongoose');
+const { mongoose, userSchema } = require('../db/schemas/user.js');
 
-const { Schema } = mongoose;
-
-const userSchema = new Schema({
-  firstName: String,
-  email: String,
-  lastName: String,
-  password: String
-});
-
-userSchema.methods.create = async function () {
-  try {
-    const isEmailDuplicated = await this.getIsEmailDuplicated();
-    if (isEmailDuplicated) {
-      throw new Error('Dupplicated user');
-    } else {
-      await this.save();
-      return 'Success';
+const DbUser = mongoose.model('Users', userSchema);
+class User extends DbUser {
+  async create() {
+    try {
+      const isEmailDuplicated = await this.getIsEmailDuplicated();
+      if (isEmailDuplicated) {
+        throw new Error('Dupplicated user');
+      } else {
+        await this.save();
+        return 'Success';
+      }
+    } catch (error) {
+      throw error;
     }
-  } catch (error) {
-    throw error;
   }
-};
 
-userSchema.methods.getIsEmailDuplicated = async function () {
-  try {
-    const doesUserExist = await this.model('Users').find({ email: this.email });
-    return doesUserExist.length;
-  } catch (error) {
-    throw error;
+  async getIsEmailDuplicated() {
+    try {
+      const doesUserExist = await this.model('Users').find({ email: this.email });
+      return doesUserExist.length;
+    } catch (error) {
+      throw error;
+    }
   }
-};
 
-const User = mongoose.model('Users', userSchema);
+  _createPassword() {
+    console.log('bad!');
+  }
+}
 
 module.exports = User;
