@@ -1,7 +1,7 @@
 const { mongoose, userSchema } = require('../db/schemas/user/');
-const { addPasswordEncryptionToSaveMethod } = require('../db/schemas/user/utils.js');
+const { addPasswordEncryptionPreSaveHook } = require('../db/schemas/user/utils.js');
 
-addPasswordEncryptionToSaveMethod(userSchema);
+addPasswordEncryptionPreSaveHook(userSchema);
 const DbUser = mongoose.model('Users', userSchema);
 class User extends DbUser {
   async create() {

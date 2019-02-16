@@ -1,30 +1,22 @@
-const bcrypt = require('bcrypt');
+const { getSaltHash } = require('../../../lib/util.js');
 
-const SALT_WORK_FACTOR = 10;
+const addPasswordEncryptionPreSaveHook = (schema) => {
+  schema.pre('save', async function (next) {
+    const document = this;
+    if (document.isModified('password')) {
+      try {
+        const hash = await getSaltHash({ dataToHash: document.password });
+        document.set('password', hash);
+        next();
+      } catch (error) {
+        throw error;
+      }
 
-const addPasswordEncryptionToSaveMethod = (userSchema) => {
-  userSchema.pre('save', function (next) {
-    const user = this;
-    if (user.isModified('password')) {
-      bcrypt.genSalt(SALT_WORK_FACTOR, (error, salt) => {
-        if (!error) {
-          return bcrypt.hash(user.password, salt, (err, hash) => {
-            if (!err) {
-              user.set('password', hash);
-              user.password = hash;
-              console.log(user);
-            }
-
-            return next();
-          });
-        }
-
-        return next();
-      });
+      next();
     }
   });
 };
 
 module.exports = {
-  addPasswordEncryptionToSaveMethod
+  addPasswordEncryptionPreSaveHook
 };
