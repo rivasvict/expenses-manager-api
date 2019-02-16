@@ -1,16 +1,10 @@
 const mongoose = require('mongoose');
 
-/*
- * TODO: Check the schema declaration for the whole schema.
- * also check that email ducplication function is needed after
- * index unique is used here
- */
-
 const user = {
-  firstName: String,
+  firstName: { type: String, required: true },
   email: { type: String, required: true, index: { unique: true } },
-  lastName: String,
-  password: String
+  lastName: { type: String, required: true },
+  password: { type: String, required: true }
 };
 
 const { Schema } = mongoose;

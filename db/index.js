@@ -5,7 +5,7 @@ const User = require('../models/user.js');
 
 const myUser = new User({
   firstName: 'Victor',
-  email: 'bbsaaaauasdaa',
+  email: 'ooooooo',
   lastName: 'Rivas',
   password: 'hola'
 });
