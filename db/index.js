@@ -5,12 +5,14 @@ const User = require('../models/user.js');
 
 const myUser = new User({
   firstName: 'Victor',
-  email: 'vctr90sw@gmail.com',
+  email: 'aaaasdsadaasdfgsm',
   lastName: 'Rivas',
   password: 'hola'
 });
 
-myUser.create();
+myUser.create().then(() => {
+  console.log('yeeje');
+});
 
 const authenticatedMongoUrl = `${process.env.DB_USER}:${process.env.DB_PASSWORD}@`;
 const initialize = async () => {
