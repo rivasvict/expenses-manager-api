@@ -1,17 +1,28 @@
 const { mongoose, userSchema } = require('../db/schemas/user/');
 const { addPasswordEncryptionPreSaveHook } = require('../db/schemas/user/utils.js');
-const { getParsedErrorFromDb } = require('../db/util/errorParser.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
 const DbUser = mongoose.model('Users', userSchema);
 class User extends DbUser {
   async create() {
     try {
-      await this.save();
-      return 'Success';
+      const isEmailDuplicated = await this.getIsEmailDuplicated();
+      if (isEmailDuplicated) {
+        throw new Error('Dupplicated user');
+      } else {
+        const newUser = await this.save();
+        return newUser;
+      }
     } catch (error) {
-      const parsedError = getParsedErrorFromDb({ error, customFields: { duplicated: 'user' } });
-      error.message = parsedError;
+      throw error;
+    }
+  }
+
+  async getIsEmailDuplicated() {
+    try {
+      const doesUserExist = await this.model('Users').find({ email: this.email });
+      return doesUserExist.length;
+    } catch (error) {
       throw error;
     }
   }

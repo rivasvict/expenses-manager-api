@@ -1,19 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const User = require('../models/user.js');
-
-const myUser = new User({
-  firstName: 'Victor',
-  email: 'ooooooo',
-  lastName: 'Rivas',
-  password: 'hola'
-});
-
-myUser.create().then(() => {
-  console.log('yeeje');
-}).catch(error => console.log(error));
-
+require('../modules/user.js');
 const authenticatedMongoUrl = `${process.env.DB_USER}:${process.env.DB_PASSWORD}@`;
 const initialize = async () => {
   try {
