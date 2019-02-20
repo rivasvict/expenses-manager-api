@@ -4,7 +4,7 @@
   "description": "An open source API designed to serve all needs for tracking expenses",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "nodemon --exec 'mocha **/*.spec.js'",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon --inspect-brk=${DEBBUG_NODE_SERVER}:${DEBBUG_NODE_PORT} --exec babel-node ./bin/www"
@@ -15,15 +15,20 @@
     "url": "git+https://github.com/vctr90/expenses-tracker-api.git"
   },
   "dependencies": {
+    "@babel/core": "^7.3.3",
     "bcrypt": "^3.0.4",
+    "chai": "^4.2.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "dotenv": "^6.2.0",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "if-env": "^1.0.4",
+    "mocha": "^6.0.0",
     "mongoose": "^5.4.10",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "rewire": "^4.0.1",
+    "sinon": "^7.2.4"
   },
   "author": "Victor Rivas",
   "license": "ISC",
@@ -38,7 +43,6 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jest": "^22.2.2",
-    "jest": "^24.1.0",
     "nodemon": "^1.18.9"
   }
 }
