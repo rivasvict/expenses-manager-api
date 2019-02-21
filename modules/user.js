@@ -9,11 +9,11 @@ const signUp = async (userToCreate) => {
   }
 };
 
-/* signUp({
+signUp({
   firstName: 'Victor',
   email: 'ooooooollaaaa',
   lastName: 'Rivas',
   password: 'hola'
-}).then(() => console.log('Brutal brutal')).catch(error => console.log(error));*/
+}).then(() => console.log('Brutal brutal')).catch(error => console.log(error));
 
 module.exports = { signUp };
