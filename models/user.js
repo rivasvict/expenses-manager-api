@@ -4,6 +4,17 @@ const { addPasswordEncryptionPreSaveHook } = require('../db/schemas/user/utils.j
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
 const DbUser = mongoose.model('Users', userSchema);
 class User extends DbUser {
+  constructor(user) {
+    super(user);
+    /*
+     * TODO: Finish validation implementation
+     */
+    this.validate((error) => {
+      if (error) return console.log(error);
+      console.log('saved');
+    });
+  }
+
   async create() {
     try {
       const isEmailDuplicated = await this.getIsEmailDuplicated();
