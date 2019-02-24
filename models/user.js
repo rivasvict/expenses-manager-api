@@ -13,7 +13,6 @@ class User extends DbUser {
   }
 
   async create() {
-    console.log('yao');
     try {
       const isEmailDuplicated = await this.getIsEmailDuplicated();
       if (isEmailDuplicated) {
