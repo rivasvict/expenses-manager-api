@@ -6,16 +6,14 @@ const DbUser = mongoose.model('Users', userSchema);
 class User extends DbUser {
   constructor(user) {
     super(user);
-    /*
-     * TODO: Finish validation implementation
-     */
-    this.validate((error) => {
-      if (error) return console.log(error);
-      console.log('saved');
-    });
+    const validationError = this.validateSync();
+    if (validationError) {
+      throw validationError;
+    }
   }
 
   async create() {
+    console.log('yao');
     try {
       const isEmailDuplicated = await this.getIsEmailDuplicated();
       if (isEmailDuplicated) {

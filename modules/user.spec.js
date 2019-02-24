@@ -1,32 +1,57 @@
 const rewire = require('rewire');
 const assert = require('assert');
 const sinon = require('sinon');
+const { expect } = require('chai');
 
 const userModule = rewire('./user.js');
 const signUp = userModule.__get__('signUp');
 const User = userModule.__get__('User');
 
-(async function() {
-  const user = await signUp({
-    firstName: 'Victor',
-    email: 'ahfushaa',
-    lastName: 'Rivas',
-    password: 'hola'
+describe('Sign user up', function () {
+  beforeEach('Stub User model', function () {
+    this.User = User.prototype;
   });
 
-  console.log(user);
-})();
+  it('Should create new user when it is formed with correct data', async function () {
+    const userToTest = {
+      firstName: 'ahisuhd',
+      email: 'ahfushaa',
+      lastName: 'Rivas',
+      password: 'hola'
+    };
+    const stub = sinon.stub(this.User, 'create')
+      .returns(Promise.resolve(userToTest));
+    try {
+      const user = await signUp(userToTest);
 
-/* 
- * describe('Sign user up', function () {
- * TODO: Finish parameters validation test
-  it('Should create new user when it is formed with correct data');
+      expect(user).to.deep.equal(userToTest);
+      stub.restore();
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
-  it('Should throw error when missing data');
+  it('Should throw error when missing data', async function () {
+    const userToTest = {
+      email: 'ahfushaa',
+      lastName: 'Rivas',
+      password: 'hola'
+    };
+    const stub = sinon.stub(this.User, 'create')
+      .throws();
+    try {
+      await signUp(userToTest);
+
+      stub.restore();
+    } catch (error) {
+      expect(error.name).to.be.equal('ValidationError');
+      stub.restore();
+    }
+  });
 
   it('Should throw error when alrady used email', async function () {
     const duplicationUserError = new Error('Duplicated user');
-    sinon.stub(User.prototype, 'create')
+    const stub = sinon.stub(this.User, 'create')
       .returns(Promise.resolve(duplicationUserError));
     const user = await signUp({
       firstName: 'Victor',
@@ -36,5 +61,6 @@ const User = userModule.__get__('User');
     });
 
     assert.equal(user, duplicationUserError);
+    stub.restore();
   });
-});*/
+});
