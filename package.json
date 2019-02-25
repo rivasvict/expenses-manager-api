@@ -4,7 +4,7 @@
   "description": "An open source API designed to serve all needs for tracking expenses",
   "private": true,
   "scripts": {
-    "test": "nodemon --exec 'mocha **/*.spec.js'",
+    "test": "DEBUG=true nodemon --exec 'mocha **/*.spec.js'",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon --inspect-brk=${DEBBUG_NODE_SERVER}:${DEBBUG_NODE_PORT} --exec babel-node ./bin/www"
@@ -27,6 +27,7 @@
     "mocha": "^6.0.0",
     "mongoose": "^5.4.10",
     "morgan": "~1.9.0",
+    "nock-record": "^0.3.3",
     "rewire": "^4.0.1",
     "sinon": "^7.2.4"
   },
