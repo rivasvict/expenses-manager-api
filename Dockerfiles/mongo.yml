@@ -1,0 +1,3 @@
+FROM mongo:4.0.5-xenial
+COPY docker-config/mongo/ /config/dbs/
+RUN bash /config/dbs/configDbs.sh

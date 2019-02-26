@@ -2,7 +2,9 @@ version: '3'
 services:
 
   mongo:
-    image: mongo:4.0.5-xenial
+    build:
+      context: .
+      dockerfile: Dockerfiles/mongo.yml
     restart: always
     volumes:
       - ~/docker-mongo/data:/data/db
@@ -13,6 +15,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_ADMIN_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD}
+      NODE_ENV: ${NODE_ENV}
+      DB_NAME: ${DB_NAME}
+      DB_TEST_NAME: ${DB_TEST_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
 
   mongo-express:
     image: mongo-express
