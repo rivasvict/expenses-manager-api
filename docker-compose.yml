@@ -2,13 +2,11 @@ version: '3'
 services:
 
   mongo:
-    build:
-      context: .
-      dockerfile: Dockerfiles/mongo.yml
+    image: mongo:4.0.5-xenial
     restart: always
     volumes:
       - ~/docker-mongo/data:/data/db
-      - ./docker-config/mongo/:/test-config
+      - ./docker-config/mongo/:/config/dbs/
     env_file:
       - ./.env
     ports:
