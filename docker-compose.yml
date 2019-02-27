@@ -6,6 +6,7 @@ services:
     restart: always
     volumes:
       - ~/docker-mongo/data:/data/db
+      - ./docker-config/mongo/:/config/dbs/
     env_file:
       - ./.env
     ports:
@@ -13,6 +14,13 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_ADMIN_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD}
+      NODE_ENV: ${NODE_ENV}
+      DB_NAME: ${DB_NAME}
+      DB_TEST_NAME: ${DB_TEST_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_TEST_PASSWORD: ${DB_TEST_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_TEST_USER: ${DB_TEST_USER}
 
   mongo-express:
     image: mongo-express
