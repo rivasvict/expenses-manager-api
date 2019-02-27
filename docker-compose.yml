@@ -8,6 +8,7 @@ services:
     restart: always
     volumes:
       - ~/docker-mongo/data:/data/db
+      - ./docker-config/mongo/:/test-config
     env_file:
       - ./.env
     ports:
