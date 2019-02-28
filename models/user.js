@@ -16,7 +16,7 @@ class User extends DbUser {
     try {
       const isEmailDuplicated = await this.getIsEmailDuplicated();
       if (isEmailDuplicated) {
-        throw new Error('Dupplicated user');
+        throw new Error('Duplicated user');
       } else {
         const newUser = await this.save();
         return newUser;
@@ -28,8 +28,8 @@ class User extends DbUser {
 
   async getIsEmailDuplicated() {
     try {
-      const doesUserExist = await this.model('Users').find({ email: this.email });
-      return doesUserExist.length;
+      const foundUsers = await this.model('Users').find({ email: this.email });
+      return foundUsers.length;
     } catch (error) {
       throw error;
     }
