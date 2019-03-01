@@ -8,7 +8,7 @@ describe('User class', function () {
     this.user = new User({
       password: 'myPassword',
       lastName: 'myLastName',
-      email: 'asd',
+      email: 'asd@gmail.com',
       firstName: 'myFirstName'
     });
   });

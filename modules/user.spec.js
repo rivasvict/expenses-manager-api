@@ -18,7 +18,7 @@ describe('Implementation: Sign user up', function () {
   it('Should create new user when it is formed with correct data', async function () {
     const userToTest = {
       firstName: 'ahisuhd',
-      email: 'ahfushaa',
+      email: 'ahfushaa@gmail.com',
       lastName: 'Rivas',
       password: 'hola'
     };
@@ -31,7 +31,7 @@ describe('Implementation: Sign user up', function () {
 
   it('Should throw error when missing data', async function () {
     const userToTest = {
-      email: 'ahfushaa',
+      email: 'ahfushaa@gmail.com',
       lastName: 'Rivas',
       password: 'hola'
     };
@@ -50,7 +50,7 @@ describe('Implementation: Sign user up', function () {
       .returns(Promise.resolve(duplicationUserError)));
     const user = await signUp({
       firstName: 'Victor',
-      email: 'ahfushaa',
+      email: 'ahfushaa@gmail.com',
       lastName: 'Rivas',
       password: 'hola'
     });
