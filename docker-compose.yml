@@ -43,6 +43,10 @@ services:
       - ./:/home/node/app
     environment:
       NODE_ENV: ${NODE_ENV}
+      DEBBUG_NODE_SERVER: ${DEBBUG_NODE_SERVER}
+      DEBBUG_NODE_PORT: ${DEBBUG_NODE_PORT}
     expose:
       - "${PORT}"
+    ports:
+      - ${DEBBUG_NODE_PORT}:${DEBBUG_NODE_PORT}
     command: "npm start"

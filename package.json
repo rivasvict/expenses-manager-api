@@ -7,7 +7,7 @@
     "test": "jest",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
-    "start:development": "nodemon --exec babel-node ./bin/www"
+    "start:development": "nodemon --inspect-brk=${DEBBUG_NODE_SERVER}:${DEBBUG_NODE_PORT} --exec babel-node ./bin/www"
   },
   "repository": {
     "type": "git",
