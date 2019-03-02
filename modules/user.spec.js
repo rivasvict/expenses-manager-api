@@ -40,6 +40,25 @@ describe('Implementation: Sign user up', function () {
     try {
       await signUp(userToTest);
     } catch (error) {
+      expect(error.message).to.be.equal('Validation failed: firstName: Path `firstName` is required.');
+      expect(error.name).to.be.equal('ValidationError');
+    }
+  });
+
+  it('Should throw an error when an uncorrectly formated email inserted', async function () {
+    this.setStub(sinon.stub(this.User, 'create')
+      .throws());
+    const user = {
+      firstName: 'Victor',
+      email: 'ahfushaa@gmailcom',
+      lastName: 'Rivas',
+      password: 'hola'
+    };
+    try {
+      const userToTest = await signUp(user);
+      await signUp(userToTest);
+    } catch (error) {
+      expect(error.message).to.be.equal(`Validation failed: email: Provided email: ${user.email} has no valid format`);
       expect(error.name).to.be.equal('ValidationError');
     }
   });
