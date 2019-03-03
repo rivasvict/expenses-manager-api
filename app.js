@@ -1,26 +1,10 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const mongoose = require('mongoose');
 require('dotenv').config();
+const db = require('./db');
 
-const authenticatedMongoUrl = process.env.NODE_ENV === 'development' ? '' : `${process.env.DB_USER}:${process.env.DB_PASSWORD}@`;
-const connectToMongo = async () => {
-  try {
-    const dbUrl = `mongodb://${authenticatedMongoUrl}${process.env.DB_SERVER}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
-    await mongoose.connect(dbUrl, {
-      userCreateIndex: true,
-      useNewUrlParser: true
-    });
-
-    console.log('Mongo Connected!');
-  } catch (error) {
-    throw error;
-  }
-};
-
-connectToMongo();
-
+db.initialize();
 const routes = require('./routes/index');
 
 const app = express();
