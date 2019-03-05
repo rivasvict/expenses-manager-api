@@ -34,6 +34,13 @@ class User extends DbUser {
       throw error;
     }
   }
+
+  static async authenticate() {
+    try {
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = User;

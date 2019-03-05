@@ -9,4 +9,12 @@ const signUp = async (userToCreate) => {
   }
 };
 
-module.exports = { signUp };
+const regularSignIn = async ({ email, password }) => {
+  try {
+    return User.authenticate({ email, password });
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = { signUp, regularSignIn };
