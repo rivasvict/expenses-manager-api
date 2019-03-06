@@ -1,5 +1,8 @@
 const { mongoose, userSchema } = require('../db/schemas/user/');
-const { addPasswordEncryptionPreSaveHook } = require('../db/schemas/user/utils.js');
+const {
+  addPasswordEncryptionPreSaveHook,
+  comparePassword
+} = require('../db/schemas/user/utils.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
 const DbUser = mongoose.model('Users', userSchema);
@@ -28,15 +31,24 @@ class User extends DbUser {
 
   async getIsEmailDuplicated() {
     try {
-      const foundUsers = await this.model('Users').find({ email: this.email });
+      const foundUsers = await this.getByEmail({ email: this.email });
       return foundUsers.length;
     } catch (error) {
       throw error;
     }
   }
 
-  static async authenticate() {
+  async getByEmail({ email }) {
     try {
+      return this.model('Users').find({ email });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async authenticate({ email, password }) {
+    try {
+
     } catch (error) {
       throw error;
     }
