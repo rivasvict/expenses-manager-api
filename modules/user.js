@@ -11,7 +11,7 @@ const signUp = async (userToCreate) => {
 
 const regularSignIn = async ({ email, password }) => {
   try {
-    return User.authenticate({ email, password });
+    return User.areCredentialsValid({ email, password });
   } catch (error) {
     throw error;
   }

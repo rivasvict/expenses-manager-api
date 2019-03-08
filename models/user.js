@@ -31,14 +31,14 @@ class User extends DbUser {
 
   async getIsEmailDuplicated() {
     try {
-      const foundUsers = await this.getByEmail({ email: this.email });
+      const foundUsers = await User.getByEmail({ email: this.email });
       return foundUsers.length;
     } catch (error) {
       throw error;
     }
   }
 
-  async getByEmail({ email }) {
+  static async getByEmail({ email }) {
     try {
       return this.model('Users').find({ email });
     } catch (error) {
@@ -46,9 +46,14 @@ class User extends DbUser {
     }
   }
 
-  static async authenticate({ email, password }) {
+  static async areCredentialsValid({ email, password }) {
     try {
+      const user = await this.getByEmail({ email });
+      if (user && user.email === email) {
+        return comparePassword({ password, hashedPassword: user.password });
+      }
 
+      return false;
     } catch (error) {
       throw error;
     }
