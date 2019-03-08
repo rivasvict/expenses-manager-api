@@ -92,7 +92,7 @@ describe('User class', function () {
       expect(validCredentials).to.be.equal(true);
     });
 
-    it('Should throw credential validations error when incorrect email', async function () {
+    it('Should return false when incorrect email', async function () {
       const user = {
         email: 'tes@test.com',
         password: 'myPassword'
@@ -102,7 +102,7 @@ describe('User class', function () {
       expect(validCredentials).to.be.equal(false);
     });
 
-    it('Should throw credential validations error when incorrect password', async function () {
+    it('Should return false when incorrect password', async function () {
       const user = {
         email: 'test@test.com',
         password: 'myPasswor'
