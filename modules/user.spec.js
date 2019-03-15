@@ -6,7 +6,7 @@ const { expect } = require('chai');
 const userModule = rewire('./user.js');
 const signUp = userModule.__get__('signUp');
 const User = userModule.__get__('User');
-const regularSignIn = userModule.__get__('regularSignIn');
+const validateCredentials = userModule.__get__('validateCredentials');
 
 describe('User module', function () {
   describe('Implementation: Sign regular user up', function () {
@@ -95,7 +95,7 @@ describe('User module', function () {
         password: 'myPass'
       };
 
-      const signedUser = await regularSignIn(user);
+      const signedUser = await validateCredentials(user);
       expect(signedUser.email).to.be.equal(user.email);
     });
   });
