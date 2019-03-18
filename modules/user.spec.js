@@ -6,13 +6,13 @@ const { expect } = require('chai');
 const userModule = rewire('./user.js');
 const signUp = userModule.__get__('signUp');
 const User = userModule.__get__('User');
-const validateCredentials = userModule.__get__('validateCredentials');
+const authenticateUser = userModule.__get__('authenticateUser');
 
 describe('User module', function () {
   describe('Implementation: Sign regular user up', function () {
     beforeEach('Stub User model', function () {
       this.User = User.prototype;
-      this.setStub = function (stub) {
+      this.setStub = this.setStub || function (stub) {
         this.stub = stub;
       };
     });
@@ -84,19 +84,40 @@ describe('User module', function () {
     });
   });
 
-  describe('Integration: Sign regular user in', function () {
-    beforeEach('Prepare wuthentication stub', function () {
-    });
-
-    it.skip('Should enable session for an user with correct login credentials', async function () {
-      // I need to redefine this test
+  describe('Integration: Authenticate user', function () {
+    it('Should return user when authentication success', async function () {
+      const mockedUser = {
+        email: 'test@extracker.com',
+        firstName: 'firstName',
+        lastName: 'lastName'
+      };
+      const authenticateSuccess = sinon.stub(User, 'authenticate').returns(Promise.resolve(mockedUser));
       const user = {
         email: 'test@extracker.com',
         password: 'myPass'
       };
 
-      const signedUser = await validateCredentials(user);
+      const signedUser = await authenticateUser(user);
       expect(signedUser.email).to.be.equal(user.email);
+      authenticateSuccess.restore();
+    });
+
+    it('Should return null when failed to authenticate user', async function () {
+      const mockedFailedAuthenticationResponse = {
+        email: 'test@extracker.com',
+        firstName: 'firstName',
+        lastName: 'lastName'
+      };
+      const authenticateFail = sinon.stub(User, 'authenticate')
+        .returns(Promise.resolve(null));
+      const user = {
+        email: 'test@extracker.com',
+        password: 'myPass'
+      };
+
+      const signedUser = await authenticateUser(user);
+      expect(signedUser).to.deep.equal(null);
+      authenticateFail.restore();
     });
   });
 });

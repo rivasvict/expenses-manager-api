@@ -9,12 +9,12 @@ const signUp = async (userToCreate) => {
   }
 };
 
-const validateCredentials = async ({ email, password }) => {
+const authenticateUser = async ({ email, password }) => {
   try {
-    return User.areCredentialsValid({ email, password });
+    return User.authenticate({ email, password });
   } catch (error) {
     throw error;
   }
 };
 
-module.exports = { signUp, validateCredentials };
+module.exports = { signUp, authenticateUser };

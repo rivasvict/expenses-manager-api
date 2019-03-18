@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 
 const User = require('./user');
-const { getSaltHash } = require('../lib/util.js');
+const { getSaltHash, getObjectCopyWithoutKey  } = require('../lib/util.js');
 
 describe('User class', function () {
   describe('User creation', function () {
@@ -74,42 +74,49 @@ describe('User class', function () {
       const hashedPassword = await getSaltHash({ dataToHash: 'myPassword' });
       const fabricatedUser = {
         password: hashedPassword,
-        lastName: 'myLastName',
+        firstname: 'firstName',
         email: 'test@test.com',
-        firstName: 'myFirstName'
+        lastName: 'lastName'
       };
       this.getUserStub = sinon.stub(User, 'getByEmail')
         .returns(Promise.resolve(fabricatedUser));
     });
 
-    it('Should return true when user credentials are valid', async function () {
+    it('Should return user when user credentials are valid', async function () {
       const user = {
         email: 'test@test.com',
-        password: 'myPassword'
+        password: 'myPassword',
+        firstname: 'firstName',
+        lastName: 'lastName'
       };
+      const userWithoutPassword = getObjectCopyWithoutKey({ obj: user, keyToRemove: 'password' });
       const validCredentials = await User
-        .areCredentialsValid({ email: user.email, password: user.password });
-      expect(validCredentials).to.be.equal(true);
+        .authenticate({ email: user.email, password: user.password });
+      expect(validCredentials).to.be.deep.equal(userWithoutPassword);
     });
 
-    it('Should return false when incorrect email', async function () {
+    it('Should return null when incorrect email', async function () {
       const user = {
         email: 'tes@test.com',
-        password: 'myPassword'
+        password: 'myPassword',
+        firstname: 'firstName',
+        lastName: 'lastName'
       };
       const validCredentials = await User
-        .areCredentialsValid({ email: user.email, password: user.password });
-      expect(validCredentials).to.be.equal(false);
+        .authenticate({ email: user.email, password: user.password });
+      expect(validCredentials).to.be.deep.equal(null);
     });
 
-    it('Should return false when incorrect password', async function () {
+    it('Should return null when incorrect password', async function () {
       const user = {
         email: 'test@test.com',
-        password: 'myPasswor'
+        password: 'myPasswor',
+        firstname: 'firstName',
+        lastName: 'lastName'
       };
       const validCredentials = await User
-        .areCredentialsValid({ email: user.email, password: user.password });
-      expect(validCredentials).to.be.equal(false);
+        .authenticate({ email: user.email, password: user.password });
+      expect(validCredentials).to.be.deep.equal(null);
     });
 
     afterEach('Restores stub', function () {

@@ -3,6 +3,7 @@ const {
   addPasswordEncryptionPreSaveHook,
   comparePassword
 } = require('../db/schemas/user/utils.js');
+const { getObjectCopyWithoutKey } = require('../lib/util.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
 const DbUser = mongoose.model('Users', userSchema);
@@ -46,14 +47,20 @@ class User extends DbUser {
     }
   }
 
-  static async areCredentialsValid({ email, password }) {
+  static async authenticate({ email, password }) {
     try {
       const user = await this.getByEmail({ email });
       if (user && user.email === email) {
-        return comparePassword({ password, hashedPassword: user.password });
+        const areCredentialsCorrect = await comparePassword({
+          password, hashedPassword: user.password
+        });
+        if (areCredentialsCorrect) {
+          const userWithoutPassword = getObjectCopyWithoutKey({ obj: user, keyToRemove: 'password' });
+          return userWithoutPassword;
+        }
       }
 
-      return false;
+      return null;
     } catch (error) {
       throw error;
     }
