@@ -10,25 +10,32 @@ describe('Authentication module', function () {
       this.setStub = this.setStub || function (stub) {
         this.stub = stub;
       };
+      this.username = 'test@test.com';
+      this.password = 'password';
+      this.userToAuthenticate = {
+        firstname: 'test',
+        email: this.username,
+        lastname: 'test'
+      };
     });
 
     it('Should successfully verify the user', async function () {
-      const username = 'test@test.com';
-      const password = 'password';
-      const loggedUser = {
-        firstname: 'test',
-        email: username,
-        lastname: 'test'
-      };
       this.setStub(sinon.stub(userModule, 'authenticateUser')
-        .returns(Promise.resolve(loggedUser)));
+        .returns(Promise.resolve(this.userToAuthenticate)));
       const done = sinon.fake();
-      await verifyLocal(username, password, done);
+      await verifyLocal(this.username, this.password, done);
       expect(done.callCount).to.be.equal(1);
-      expect(done.calledOnceWith(null, loggedUser)).to.be.equal(true);
+      expect(done.calledOnceWith(null, this.userToAuthenticate)).to.be.equal(true);
     });
 
-    it('Should call done with false when non authentic user');
+    it('Should call done with false when non authentic user', async function () {
+      this.setStub(sinon.stub(userModule, 'authenticateUser')
+        .returns(Promise.resolve(null)));
+      const done = sinon.fake();
+      await verifyLocal(this.username, this.password, done);
+      expect(done.callCount).to.be.equal(1);
+      expect(done.calledOnceWith(null, false)).to.be.equal(true);
+    });
 
     afterEach('Restore stubs', function () {
       if (this.stub && this.stub.restore) {
