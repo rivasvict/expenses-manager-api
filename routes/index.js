@@ -2,11 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 const mountAuthenticationRoutes = require('./authentication/');
+const RoutesHandler = require('./routesHandler.js');
 
 const baseApiUrl = '/api';
-const getBaseUrl = ulrToRebase => `${baseApiUrl}${ulrToRebase}`;
+const routesHandler = new RoutesHandler({ router, baseApiUrl });
 
-mountAuthenticationRoutes({ router, baseUrl: getBaseUrl('/authentication') });
-debugger;
+routesHandler.mountRoute({ mountRouteCallback: mountAuthenticationRoutes, mainRouteUrl: '/authentication' });
 
 module.exports = router;
