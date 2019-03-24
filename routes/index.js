@@ -1,8 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 
-router.get('/', (req, res) => {
-  res.sendStatus(200);
-});
+const router = express.Router();
+const mountAuthenticationRoutes = require('./authentication/');
+
+const baseApiUrl = '/api';
+const getBaseUrl = ulrToRebase => `${baseApiUrl}${ulrToRebase}`;
+
+mountAuthenticationRoutes({ router, baseUrl: getBaseUrl('/authentication') });
+debugger;
 
 module.exports = router;
