@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 
 const userModule = require('./user.js');
-const { verifyLocal, getToken, verifyToken } = require('./authentication.js');
+const { verifyAuthenticUser, getToken, verifyToken } = require('./authentication.js');
 
 describe('Authentication module', function () {
   describe('Authenticate regular user', function () {
@@ -19,22 +19,25 @@ describe('Authentication module', function () {
       };
     });
 
-    it('Should successfully verify the user', async function () {
+    it('Should return user valid user token when correct credentials', async function () {
       this.setStub(sinon.stub(userModule, 'authenticateUser')
         .returns(Promise.resolve(this.userToAuthenticate)));
-      const done = sinon.fake();
-      await verifyLocal(this.username, this.password, done);
-      expect(done.callCount).to.be.equal(1);
-      expect(done.calledOnceWith(null, this.userToAuthenticate)).to.be.equal(true);
+      const verifiedUserToken = await verifyAuthenticUser(this.username, this.password);
+      const decodedUserToken = verifyToken(verifiedUserToken);
+      expect(decodedUserToken).to.have.property('firstname');
+      expect(decodedUserToken).to.have.property('lastname');
+      expect(decodedUserToken).to.have.property('email');
+      expect(decodedUserToken).to.have.property('exp');
+      expect(decodedUserToken).to.have.property('iat');
+      const expirationTimeLength = decodedUserToken.exp - decodedUserToken.iat;
+      expect(expirationTimeLength).to.be.equal(7200);
     });
 
-    it('Should call done with false when non authentic user', async function () {
+    it('Should return null when non authentic user', async function () {
       this.setStub(sinon.stub(userModule, 'authenticateUser')
         .returns(Promise.resolve(null)));
-      const done = sinon.fake();
-      await verifyLocal(this.username, this.password, done);
-      expect(done.callCount).to.be.equal(1);
-      expect(done.calledOnceWith(null, false)).to.be.equal(true);
+      const verifiedUserToken = await verifyAuthenticUser(this.username, this.password);
+      expect(verifiedUserToken).to.deep.equal(null);
     });
 
     afterEach('Restore stubs', function () {
@@ -54,7 +57,7 @@ describe('Authentication module', function () {
       const token = getToken({ payload: loggedUser, tokenGenerationOptions: { expiresIn: '1s' } });
       expect(token).to.not.equal(undefined);
     });
-    
+
     describe('Verify token', function () {
       beforeEach('Prepate loggedUser', function () {
         this.loggedUser = {

@@ -3,7 +3,10 @@ const jwt = require('jsonwebtoken');
 
 const user = require('./user.js');
 
-const verifyLocal = async (username, password, done) => {
+const getToken = ({ payload, tokenGenerationOptions = {} }) => jwt
+  .sign(payload, process.env.SECRET, tokenGenerationOptions);
+
+const verifyAuthenticUser = async (username, password) => {
   try {
     const loggedUser = await user.authenticateUser({
       password,
@@ -11,18 +14,20 @@ const verifyLocal = async (username, password, done) => {
     });
 
     if (!loggedUser) {
-      return done(null, false);
+      return null;
     }
 
-    return done(null, loggedUser);
+    return getToken({
+      payload: loggedUser,
+      tokenGenerationOptions: {
+        expiresIn: '2h'
+      }
+    });
   } catch (error) {
     throw error;
   }
 };
 
-const getToken = ({ payload, tokenGenerationOptions = {} }) => jwt
-  .sign(payload, process.env.SECRET, tokenGenerationOptions);
-
 const verifyToken = (payload) => jwt.verify(payload, process.env.SECRET);
 
-module.exports = { verifyLocal, getToken, verifyToken };
+module.exports = { verifyAuthenticUser, getToken, verifyToken };
