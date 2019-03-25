@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const user = require('./user.js');
@@ -28,6 +28,6 @@ const verifyAuthenticUser = async (username, password) => {
   }
 };
 
-const verifyToken = (payload) => jwt.verify(payload, process.env.SECRET);
+const verifyToken = payload => jwt.verify(payload, process.env.SECRET);
 
 module.exports = { verifyAuthenticUser, getToken, verifyToken };
