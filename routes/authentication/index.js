@@ -8,12 +8,12 @@ const loginRouteHandler = async (req, res) => {
     const { password } = req.body;
     const userToken = await authentication.verifyAuthenticUser(email, password);
     if (userToken) {
-      res.sendStatus(200).json({ userToken });
+      res.status(200).json({ userToken });
     } else {
-      res.sendStatus(403).json({ message: 'Invalid credentials' });
+      res.status(403).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
-    res.sendStatus(500);
+    res.status(500);
     throw error;
   }
 };
