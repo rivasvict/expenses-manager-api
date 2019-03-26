@@ -1,12 +1,12 @@
 const wrap = require('express-async-wrapper');
 
-const { verifyAuthenticUser } = require('../../modules/authentication.js');
+const authentication = require('../../modules/authentication.js');
 
 const loginRouteHandler = async (req, res) => {
   try {
     const { email } = req.body;
     const { password } = req.body;
-    const userToken = await verifyAuthenticUser(email, password);
+    const userToken = await authentication.verifyAuthenticUser(email, password);
     if (userToken) {
       res.sendStatus(200).json({ userToken });
     } else {

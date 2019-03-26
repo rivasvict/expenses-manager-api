@@ -30,4 +30,6 @@ const verifyAuthenticUser = async (username, password) => {
 
 const verifyToken = payload => jwt.verify(payload, process.env.SECRET);
 
-module.exports = { verifyAuthenticUser, getToken, verifyToken };
+const authenticationModule = { verifyAuthenticUser, getToken, verifyToken };
+
+module.exports = authenticationModule;

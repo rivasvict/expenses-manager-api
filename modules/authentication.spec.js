@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 
 const userModule = require('./user.js');
-const { verifyAuthenticUser, getToken, verifyToken } = require('./authentication.js');
+const authentication = require('./authentication.js');
 
 describe('Authentication module', function () {
   describe('Authenticate regular user', function () {
@@ -22,8 +22,8 @@ describe('Authentication module', function () {
     it('Should return user valid user token when correct credentials', async function () {
       this.setStub(sinon.stub(userModule, 'authenticateUser')
         .returns(Promise.resolve(this.userToAuthenticate)));
-      const verifiedUserToken = await verifyAuthenticUser(this.username, this.password);
-      const decodedUserToken = verifyToken(verifiedUserToken);
+      const verifiedUserToken = await authentication.verifyAuthenticUser(this.username, this.password);
+      const decodedUserToken = authentication.verifyToken(verifiedUserToken);
       expect(decodedUserToken).to.have.property('firstname');
       expect(decodedUserToken).to.have.property('lastname');
       expect(decodedUserToken).to.have.property('email');
@@ -36,7 +36,7 @@ describe('Authentication module', function () {
     it('Should return null when non authentic user', async function () {
       this.setStub(sinon.stub(userModule, 'authenticateUser')
         .returns(Promise.resolve(null)));
-      const verifiedUserToken = await verifyAuthenticUser(this.username, this.password);
+      const verifiedUserToken = await authentication.verifyAuthenticUser(this.username, this.password);
       expect(verifiedUserToken).to.deep.equal(null);
     });
 
@@ -48,13 +48,13 @@ describe('Authentication module', function () {
   });
 
   describe('Token usage', function () {
-    it('Should getToken', function () {
+    it('Should authentication.getToken', function () {
       const loggedUser = {
         firstname: 'test',
         email: 'test@test.com',
         lastname: 'test'
       };
-      const token = getToken({ payload: loggedUser, tokenGenerationOptions: { expiresIn: '1s' } });
+      const token = authentication.getToken({ payload: loggedUser, tokenGenerationOptions: { expiresIn: '1s' } });
       expect(token).to.not.equal(undefined);
     });
 
@@ -68,17 +68,17 @@ describe('Authentication module', function () {
       });
 
       it('Should verify correct token with no expiration time', function () {
-        const token = getToken({ payload: this.loggedUser });
-        const decodedToken = verifyToken(token);
+        const token = authentication.getToken({ payload: this.loggedUser });
+        const decodedToken = authentication.verifyToken(token);
         expect(decodedToken).to.have.property('firstname');
         expect(decodedToken).to.have.property('lastname');
         expect(decodedToken).to.have.property('email');
       });
 
       it('Should throw error when token is invalid', function () {
-        const token = `${getToken({ payload: this.loggedUser })}123`;
+        const token = `${authentication.getToken({ payload: this.loggedUser })}123`;
         try {
-          verifyToken(token);
+          authentication.verifyToken(token);
         } catch (error) {
           expect(error.message).to.be.equal('invalid signature');
         }
@@ -86,14 +86,14 @@ describe('Authentication module', function () {
 
       it('Should should verify token under expiration time', function () {
         this.timeout(5000);
-        const token = getToken({
+        const token = authentication.getToken({
           payload: this.loggedUser,
           tokenGenerationOptions: {
             expiresIn: '4s'
           }
         });
         setTimeout(function () {
-          const decodedToken = verifyToken(token);
+          const decodedToken = authentication.verifyToken(token);
           expect(decodedToken).to.have.property('firstname');
           expect(decodedToken).to.have.property('lastname');
           expect(decodedToken).to.have.property('email');
@@ -102,7 +102,7 @@ describe('Authentication module', function () {
 
       it('Should should throw an error when verify token is out of expiration time', function () {
         this.timeout(5000);
-        const token = getToken({
+        const token = authentication.getToken({
           payload: this.loggedUser,
           tokenGenerationOptions: {
             expiresIn: '1s'
@@ -110,7 +110,7 @@ describe('Authentication module', function () {
         });
         setTimeout(function () {
           try {
-            verifyToken(token);
+            authentication.verifyToken(token);
           } catch (error) {
             expect(error.name).to.be.equal('TokenExpiredError');
           }
