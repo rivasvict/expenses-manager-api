@@ -118,4 +118,49 @@ describe('Authentication module', function () {
       });
     });
   });
+
+  describe('Verify user for passportJs strategy', function () {
+    beforeEach('Prepare stubs', function () {
+      this.setStub = this.setStub || function (stub) {
+        this.stub = stub;
+      };
+      this.username = 'test@test.com';
+      this.password = 'password';
+      this.userToAuthenticate = {
+        firstname: 'test',
+        email: this.username,
+        lastname: 'test'
+      };
+    });
+
+    it('Should successfully verify the user', async function () {
+      this.setStub(sinon.stub(userModule, 'authenticateUser')
+        .returns(Promise.resolve(this.userToAuthenticate)));
+      const done = sinon.fake();
+      await authentication.passportVerify({
+        username: this.username,
+        password: this.password
+      }, done);
+      expect(done.callCount).to.be.equal(1);
+      expect(done.calledOnceWith(null, this.userToAuthenticate)).to.be.equal(true);
+    });
+
+    it('Should call done with false when non authentic user', async function () {
+      this.setStub(sinon.stub(userModule, 'authenticateUser')
+        .returns(Promise.resolve(null)));
+      const done = sinon.fake();
+      await authentication.passportVerify({
+        username: this.username,
+        password: this.password
+      }, done);
+      expect(done.callCount).to.be.equal(1);
+      expect(done.calledOnceWith(null, false)).to.be.equal(true);
+    });
+
+    afterEach('Restore stubs', function () {
+      if (this.stub && this.stub.restore) {
+        this.stub.restore();
+      }
+    });
+  });
 });
