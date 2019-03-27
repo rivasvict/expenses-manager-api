@@ -6,7 +6,7 @@ const loginRouter = rewire('./index.js');
 const loginRouteHandler = loginRouter.__get__('loginRouteHandler');
 const authenticationModule = require('../../modules/authentication.js');
 
-describe.only('Authentication routes', function () {
+describe('Authentication routes', function () {
   beforeEach('Prepare user to authenticate', function () {
     this.userToAuthenticate = {
       firstName: 'firstName',
