@@ -1,1 +1,3 @@
 language: node_js
+env:
+  - SECRET=a_test_secret
