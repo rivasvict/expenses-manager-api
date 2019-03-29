@@ -21,6 +21,12 @@ const loginRouteHandler = async (req, res) => {
 const mountAuthenticationRoutes = ({ router, baseUrl }) => {
   // /api/authentication/login
   router.post(`${baseUrl}/login`, wrap(loginRouteHandler));
+  /*
+    * TODO: Remove this testing route
+    */
+  router.get(`${baseUrl}/bla`, wrap((req, res) => {
+    res.sendStatus(200);
+  }));
 };
 
 module.exports = mountAuthenticationRoutes;
