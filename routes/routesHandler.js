@@ -21,6 +21,19 @@ class RoutesHandler {
       console.warn(`${mountRouteCallbackFunctionName} Router: Using ${mainRouteUrl} (default), to set a custom one, please set baseUrl properly`);
     }
   }
+
+  static unless({ whitelistedPaths, whitelistedMiddleware }) {
+    return (req, res, next) => {
+      const requestedRoute = req.originalUrl;
+      const isItWhitelistedPath = whitelistedPaths
+        .find(whitelistedPath => whitelistedPath === requestedRoute);
+      if (isItWhitelistedPath) {
+        next();
+      } else {
+        whitelistedMiddleware(req, res, next);
+      }
+    };
+  }
 }
 
 module.exports = RoutesHandler;

@@ -6,10 +6,23 @@ const RoutesHandler = require('./routesHandler.js');
 const passport = require('../modules/passport.js');
 
 const baseApiUrl = '/api';
-const routesHandler = new RoutesHandler({ router, baseApiUrl });
-router.use(`${baseApiUrl}/*`, passport.authenticate('jwt', {
-    sesion: false
-  }));
+const whitelistedPaths = [
+  '/api/authentication/login',
+  '/api/authentication/sign-up'
+];
+const routesHandler = new RoutesHandler({
+  router,
+  baseApiUrl
+});
+
+const jwtStrategy = passport.authenticate('jwt', {
+  session: false
+});
+
+router.use(`${baseApiUrl}/*`, RoutesHandler.unless({
+  whitelistedPaths,
+  whitelistedMiddleware: jwtStrategy
+}));
 
 routesHandler.mountRoute({ mountRouteCallback: mountAuthenticationRoutes, mainRouteUrl: '/authentication' });
 
