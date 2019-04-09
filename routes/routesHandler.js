@@ -22,7 +22,11 @@ class RoutesHandler {
     }
   }
 
-  static unless({ whitelistedPaths, whitelistedMiddleware }) {
+  /*
+  * Prevent whitelisted paths from running given middleware.
+  * Instead, skip and run next middleware
+  */
+  static unless(middleware, ...whitelistedPaths) {
     return (req, res, next) => {
       const requestedRoute = req.originalUrl;
       const isItWhitelistedPath = whitelistedPaths
@@ -30,7 +34,7 @@ class RoutesHandler {
       if (isItWhitelistedPath) {
         next();
       } else {
-        whitelistedMiddleware(req, res, next);
+        middleware(req, res, next);
       }
     };
   }
