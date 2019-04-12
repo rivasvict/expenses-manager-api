@@ -1,6 +1,7 @@
 const wrap = require('express-async-wrapper');
 
 const authentication = require('../../modules/authentication.js');
+const userModule = require('../../modules/user.js');
 
 const loginRouteHandler = async (req, res) => {
   try {
@@ -18,9 +19,25 @@ const loginRouteHandler = async (req, res) => {
   }
 };
 
-const mountAuthenticationRoutes = ({ router, baseUrl }) => {
-  // /api/authentication/login
+const signUpRouteHandler = async (req, res) => {
+  try {
+    const user = await userModule.signUp(req.body.user);
+    res.status(200).json(user);
+  } catch (error) {
+    if ((error.name === 'ValidationError') || (error.message === 'Duplicated user')) {
+      res.status(error.name === 'ValidationError' ? 400 : 409).json(error);
+    } else {
+      res.status(500).json({ message: 'Internal server error' });
+      throw error;
+    }
+  }
+};
+
+const mountUserRoutes = ({ router, baseUrl }) => {
+  // /api/user/login
   router.post(`${baseUrl}/login`, wrap(loginRouteHandler));
+  // /api/user/sign-up
+  router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler));
   /*
     * TODO: Remove this testing route
     */
@@ -29,4 +46,4 @@ const mountAuthenticationRoutes = ({ router, baseUrl }) => {
   }));
 };
 
-module.exports = mountAuthenticationRoutes;
+module.exports = mountUserRoutes;

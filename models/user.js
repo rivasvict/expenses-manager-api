@@ -6,7 +6,7 @@ const {
 const { getObjectCopyWithoutKey } = require('../lib/util.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
-const DbUser = mongoose.model('Users', userSchema);
+const DbUser = (mongoose && mongoose.models && mongoose.models.Users) || mongoose.model('Users', userSchema);
 class User extends DbUser {
   constructor(user) {
     super(user);
