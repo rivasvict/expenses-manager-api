@@ -1,8 +1,9 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const _ = require('lodash');
 
 const User = require('./user');
-const { getSaltHash, getObjectCopyWithoutKey  } = require('../lib/util.js');
+const { getSaltHash } = require('../lib/util.js');
 
 describe('User class', function () {
   describe('User creation', function () {
@@ -52,12 +53,17 @@ describe('User class', function () {
 
     describe('user.getIsEmailDuplicated', function () {
       it('Should return the right number of found users by email', async function () {
-        this.findStub = sinon.stub(this.user.model('Users'), 'find').returns(Promise.resolve([this.user]));
+        const findMock = {
+          exec: () => Promise.resolve([this.user])
+        };
+        this.findStub = sinon
+          .stub(this.user.model('Users'), 'find').returns(findMock);
         try {
           const foundUsers = await this.user.getIsEmailDuplicated();
           expect(this.findStub.calledWith({ email: this.user.email })).to.be.equal(true);
           expect(this.findStub.calledOnce).to.be.equal(true);
-          expect(foundUsers).to.be.equal(1);
+          expect(foundUsers.email).to.be.equal(this.user.email);
+          expect(foundUsers.password).to.be.equal(this.user.password);
         } catch (error) {
           throw error;
         }
@@ -76,7 +82,8 @@ describe('User class', function () {
         password: hashedPassword,
         firstname: 'firstName',
         email: 'test@test.com',
-        lastName: 'lastName'
+        lastName: 'lastName',
+        get: userProperty => fabricatedUser[userProperty]
       };
       this.getUserStub = sinon.stub(User, 'getByEmail')
         .returns(Promise.resolve(fabricatedUser));
@@ -89,10 +96,10 @@ describe('User class', function () {
         firstname: 'firstName',
         lastName: 'lastName'
       };
-      const userWithoutPassword = getObjectCopyWithoutKey({ obj: user, keyToRemove: 'password' });
+      const userForComparison = _.omit(user, ['password']);
       const validCredentials = await User
         .authenticate({ email: user.email, password: user.password });
-      expect(validCredentials).to.be.deep.equal(userWithoutPassword);
+      expect(_.omit(validCredentials, 'get')).to.be.deep.equal(userForComparison);
     });
 
     it('Should return null when incorrect email', async function () {

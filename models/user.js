@@ -1,9 +1,9 @@
 const { mongoose, userSchema } = require('../db/schemas/user/');
+const _ = require('lodash');
 const {
   addPasswordEncryptionPreSaveHook,
   comparePassword
 } = require('../db/schemas/user/utils.js');
-const { getObjectCopyWithoutKey } = require('../lib/util.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
 const DbUser = (mongoose && mongoose.models && mongoose.models.Users) || mongoose.model('Users', userSchema);
@@ -56,7 +56,7 @@ class User extends DbUser {
           password, hashedPassword: user.get('password')
         });
         if (areCredentialsCorrect) {
-          const userWithoutPassword = getObjectCopyWithoutKey({ obj: user, keyToRemove: 'password' });
+          const userWithoutPassword = _.omit(user, ['password']);
           return userWithoutPassword;
         }
       }
