@@ -91,7 +91,8 @@ describe('User module', function () {
         firstName: 'firstName',
         lastName: 'lastName'
       };
-      const authenticateSuccess = sinon.stub(User, 'authenticate').returns(Promise.resolve(mockedUser));
+      const authenticateSuccess = sinon
+        .stub(User, 'authenticate').returns(Promise.resolve(mockedUser));
       const user = {
         email: 'test@extracker.com',
         password: 'myPass'
@@ -103,11 +104,6 @@ describe('User module', function () {
     });
 
     it('Should return null when failed to authenticate user', async function () {
-      const mockedFailedAuthenticationResponse = {
-        email: 'test@extracker.com',
-        firstName: 'firstName',
-        lastName: 'lastName'
-      };
       const authenticateFail = sinon.stub(User, 'authenticate')
         .returns(Promise.resolve(null));
       const user = {

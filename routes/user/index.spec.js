@@ -7,6 +7,7 @@ const userModule = rewire('../../modules/user.js');
 const loginRouteHandler = loginRouter.__get__('loginRouteHandler');
 const signUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
 const authenticationModule = require('../../modules/authentication.js');
+
 const User = userModule.__get__('User');
 
 describe('Authentication routes', function () {
@@ -27,7 +28,9 @@ describe('Authentication routes', function () {
         password: 'password'
       };
       this.rec = {
-        body: this.userToAuthenticate
+        body: {
+          user: this.userToAuthenticate
+        }
       };
     });
 

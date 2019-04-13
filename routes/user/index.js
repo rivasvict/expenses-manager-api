@@ -5,8 +5,8 @@ const userModule = require('../../modules/user.js');
 
 const loginRouteHandler = async (req, res) => {
   try {
-    const { email } = req.body;
-    const { password } = req.body;
+    const { email } = req.body.user;
+    const { password } = req.body.user;
     const userToken = await authentication.verifyAuthenticUser(email, password);
     if (userToken) {
       res.status(200).json({ userToken });
@@ -25,7 +25,8 @@ const signUpRouteHandler = async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     if ((error.name === 'ValidationError') || (error.message === 'Duplicated user')) {
-      res.status(error.name === 'ValidationError' ? 400 : 409).json(error);
+      res.status(error.name === 'ValidationError' ? 400 : 409)
+        .json({ message: error.message });
     } else {
       res.status(500).json({ message: 'Internal server error' });
       throw error;
