@@ -1,12 +1,11 @@
-require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 
 const user = require('./user.js');
-const config = require('../config.js');
+const config = require('../../../config.js');
 
 const getToken = ({ payload, tokenGenerationOptions = {} }) => jwt
-  .sign(payload, process.env.SECRET, tokenGenerationOptions);
+  .sign(payload, config.SECRET, tokenGenerationOptions);
 
 const verifyAuthenticUser = async (username, password) => {
   try {
@@ -30,7 +29,7 @@ const verifyAuthenticUser = async (username, password) => {
   }
 };
 
-const verifyToken = payload => jwt.verify(payload, process.env.SECRET);
+const verifyToken = payload => jwt.verify(payload, config.SECRET);
 
 const passportVerify = (jwtPayload, done) => {
   try {

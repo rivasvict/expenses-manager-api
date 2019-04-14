@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
+const config = require('../../../config.js');
 
-const isDebugEnabled = process.env.DEBUG;
-const dbCredentials = `${process.env.DB_USER}:${process.env.DB_PASSWORD}@`;
-const dbTestCredentials = `${process.env.DB_TEST_USER}:${process.env.DB_TEST_PASSWORD}@`;
+const isDebugEnabled = config.DEBUG;
+const dbCredentials = `${config.DB_USER}:${config.DB_PASSWORD}@`;
+const dbTestCredentials = `${config.DB_TEST_USER}:${config.DB_TEST_PASSWORD}@`;
 const authenticatedMongoUrl = isDebugEnabled ? dbTestCredentials : dbCredentials;
-const dbServer = isDebugEnabled ? process.env.DB_TEST_SERVER : process.env.DB_SERVER;
-const dbPort = isDebugEnabled ? process.env.DB_TEST_PORT : process.env.DB_PORT;
-const dbName = isDebugEnabled ? process.env.DB_TEST_NAME : process.env.DB_NAME;
+const dbServer = isDebugEnabled ? config.DB_TEST_SERVER : config.DB_SERVER;
+const dbPort = isDebugEnabled ? config.DB_TEST_PORT : config.DB_PORT;
+const dbName = isDebugEnabled ? config.DB_TEST_NAME : config.DB_NAME;
+
 const initialize = async () => {
   try {
     const dbUrl = `mongodb://${authenticatedMongoUrl}${dbServer}:${dbPort}/${dbName}`;

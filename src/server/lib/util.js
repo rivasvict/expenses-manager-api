@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt');
-const _ = require('lodash');
-require('dotenv').config();
+const config = require('../../../config.js');
 
-const SALT_DEFAULT_WORK_FACTOR = parseInt(process.env.SALT_DEFAULT_WORK_FACTOR);
+const SALT_DEFAULT_WORK_FACTOR = parseInt(config.SALT_DEFAULT_WORK_FACTOR);
 const getSaltHash = async ({ dataToHash, saltWorkFactor = SALT_DEFAULT_WORK_FACTOR }) => {
   try {
     const salt = await bcrypt.genSalt(saltWorkFactor);

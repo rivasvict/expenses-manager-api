@@ -1,15 +1,15 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-require('dotenv').config();
 const db = require('./src/server/db');
+const config = require('./config.js');
 
 db.initialize();
 const router = require('./src/server/routes/');
 
 const app = express();
 
-if (process.env.NODE_ENV === 'development') {
+if (config.NODE_ENV === 'development') {
   app.use(logger('dev'));
 }
 app.use(express.json());
