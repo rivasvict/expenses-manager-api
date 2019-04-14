@@ -1,5 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
 const user = require('./user.js');
 const config = require('../config.js');
@@ -19,7 +20,7 @@ const verifyAuthenticUser = async (username, password) => {
     }
 
     return getToken({
-      payload: loggedUser.toJSON(),
+      payload: _.omit(loggedUser.toJSON(), ['password']),
       tokenGenerationOptions: {
         expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
       }
