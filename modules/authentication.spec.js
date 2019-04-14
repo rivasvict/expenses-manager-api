@@ -1,5 +1,6 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
+const _ = require('lodash');
 
 const userModule = require('./user.js');
 const authentication = require('./authentication.js');
@@ -15,14 +16,16 @@ describe('Authentication module', function () {
       this.userToAuthenticate = {
         firstname: 'test',
         email: this.username,
-        lastname: 'test'
+        lastname: 'test',
+        toJSON: () => _.omit(this.userToAuthenticate, ['toJSON'])
       };
     });
 
     it('Should return user valid user token when correct credentials', async function () {
       this.setStub(sinon.stub(userModule, 'authenticateUser')
         .returns(Promise.resolve(this.userToAuthenticate)));
-      const verifiedUserToken = await authentication.verifyAuthenticUser(this.username, this.password);
+      const verifiedUserToken = await authentication
+        .verifyAuthenticUser(this.username, this.password);
       const decodedUserToken = authentication.verifyToken(verifiedUserToken);
       expect(decodedUserToken).to.have.property('firstname');
       expect(decodedUserToken).to.have.property('lastname');
@@ -36,7 +39,8 @@ describe('Authentication module', function () {
     it('Should return null when non authentic user', async function () {
       this.setStub(sinon.stub(userModule, 'authenticateUser')
         .returns(Promise.resolve(null)));
-      const verifiedUserToken = await authentication.verifyAuthenticUser(this.username, this.password);
+      const verifiedUserToken = await authentication
+        .verifyAuthenticUser(this.username, this.password);
       expect(verifiedUserToken).to.deep.equal(null);
     });
 
