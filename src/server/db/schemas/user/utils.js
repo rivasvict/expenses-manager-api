@@ -1,4 +1,4 @@
-const { getSaltHash } = require('../../../lib/util.js');
+const { getSaltHash, compareHashed } = require('../../../lib/util.js');
 
 const addPasswordEncryptionPreSaveHook = ({ schema, fieldToHash }) => {
   schema.pre('save', async function (next) {
@@ -17,6 +17,14 @@ const addPasswordEncryptionPreSaveHook = ({ schema, fieldToHash }) => {
   });
 };
 
+const comparePassword = ({ password, hashedPassword }) => {
+  return compareHashed({
+    plainString: password,
+    hashedString: hashedPassword
+  });
+};
+
 module.exports = {
-  addPasswordEncryptionPreSaveHook
+  addPasswordEncryptionPreSaveHook,
+  comparePassword
 };
