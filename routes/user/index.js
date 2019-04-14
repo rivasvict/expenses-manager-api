@@ -39,12 +39,6 @@ const mountUserRoutes = ({ router, baseUrl }) => {
   router.post(`${baseUrl}/login`, wrap(loginRouteHandler));
   // /api/user/sign-up
   router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler));
-  /*
-    * TODO: Remove this testing route
-    */
-  router.get(`${baseUrl}/bla`, (req, res) => {
-    res.sendStatus(200);
-  });
 };
 
 module.exports = mountUserRoutes;

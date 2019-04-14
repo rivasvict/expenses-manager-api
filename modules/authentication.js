@@ -2,6 +2,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const user = require('./user.js');
+const config = require('../config.js');
 
 const getToken = ({ payload, tokenGenerationOptions = {} }) => jwt
   .sign(payload, process.env.SECRET, tokenGenerationOptions);
@@ -20,7 +21,7 @@ const verifyAuthenticUser = async (username, password) => {
     return getToken({
       payload: loggedUser.toJSON(),
       tokenGenerationOptions: {
-        expiresIn: '2h'
+        expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
       }
     });
   } catch (error) {
