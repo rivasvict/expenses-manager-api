@@ -1,12 +1,14 @@
-const { mongoose, userSchema } = require('../db/schemas/user/');
 const _ = require('lodash');
+
+const { mongoose, userSchema } = require('../db/schemas/user/');
 const {
   addPasswordEncryptionPreSaveHook,
   comparePassword
 } = require('../db/schemas/user/utils.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
-const DbUser = (mongoose && mongoose.models && mongoose.models.Users) || mongoose.model('Users', userSchema);
+const existingUserModel = mongoose && mongoose.models && mongoose.models.Users;
+const DbUser = existingUserModel || mongoose.model('Users', userSchema);
 class User extends DbUser {
   constructor(user) {
     super(user);

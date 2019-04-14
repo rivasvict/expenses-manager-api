@@ -40,13 +40,13 @@ services:
     working_dir: /home/node/app
     ports:
       - ${PORT}:${PORT}
-      - ${DEBBUG_NODE_PORT}:${DEBBUG_NODE_PORT}
+      - ${DEBUG_NODE_PORT}:${DEBUG_NODE_PORT}
     volumes:
       - ./:/home/node/app
     environment:
       NODE_ENV: ${NODE_ENV}
-      DEBBUG_NODE_SERVER: ${DEBBUG_NODE_SERVER}
-      DEBBUG_NODE_PORT: ${DEBBUG_NODE_PORT}
+      DEBUG_NODE_SERVER: ${DEBUG_NODE_SERVER}
+      DEBUG_NODE_PORT: ${DEBUG_NODE_PORT}
     expose:
       - "${PORT}"
     command: "npm start"
