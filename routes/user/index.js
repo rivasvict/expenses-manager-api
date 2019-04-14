@@ -42,9 +42,9 @@ const mountUserRoutes = ({ router, baseUrl }) => {
   /*
     * TODO: Remove this testing route
     */
-  router.get(`${baseUrl}/bla`, wrap((req, res) => {
+  router.get(`${baseUrl}/bla`, (req, res) => {
     res.sendStatus(200);
-  }));
+  });
 };
 
 module.exports = mountUserRoutes;

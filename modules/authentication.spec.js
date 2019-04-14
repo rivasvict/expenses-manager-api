@@ -138,25 +138,19 @@ describe('Authentication module', function () {
     });
 
     it('Should successfully verify the user', async function () {
-      this.setStub(sinon.stub(userModule, 'authenticateUser')
-        .returns(Promise.resolve(this.userToAuthenticate)));
       const done = sinon.fake();
-      await authentication.passportVerify({
+      const jwtPayload = {
         username: this.username,
         password: this.password
-      }, done);
+      };
+      await authentication.passportVerify(jwtPayload, done);
       expect(done.callCount).to.be.equal(1);
-      expect(done.calledOnceWith(null, this.userToAuthenticate)).to.be.equal(true);
+      expect(done.calledOnceWith(null, jwtPayload)).to.be.equal(true);
     });
 
     it('Should call done with false when non authentic user', async function () {
-      this.setStub(sinon.stub(userModule, 'authenticateUser')
-        .returns(Promise.resolve(null)));
       const done = sinon.fake();
-      await authentication.passportVerify({
-        username: this.username,
-        password: this.password
-      }, done);
+      await authentication.passportVerify(null, done);
       expect(done.callCount).to.be.equal(1);
       expect(done.calledOnceWith(null, false)).to.be.equal(true);
     });
