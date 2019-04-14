@@ -2,10 +2,10 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 require('dotenv').config();
-const db = require('./db');
+const db = require('./src/server/db');
 
 db.initialize();
-const router = require('./routes/');
+const router = require('./src/server/routes/');
 
 const app = express();
 
