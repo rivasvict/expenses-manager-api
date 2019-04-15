@@ -2,8 +2,7 @@ const _ = require('lodash');
 
 const { mongoose, userSchema } = require('../db/schemas/user/');
 const {
-  addPasswordEncryptionPreSaveHook,
-  comparePassword
+  addPasswordEncryptionPreSaveHook
 } = require('../db/schemas/user/utils.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
@@ -45,25 +44,6 @@ class User extends DbUser {
     try {
       const foundUsers = await this.model('Users').find({ email }).exec();
       return foundUsers.find(foundUser => foundUser.email === email);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  static async authenticate({ email, password }) {
-    try {
-      const user = await this.getByEmail({ email });
-      if (user && user.get('email') === email) {
-        const areCredentialsCorrect = await comparePassword({
-          password, hashedPassword: user.get('password')
-        });
-        if (areCredentialsCorrect) {
-          const userWithoutPassword = _.omit(user, ['password']);
-          return userWithoutPassword;
-        }
-      }
-
-      return null;
     } catch (error) {
       throw error;
     }
