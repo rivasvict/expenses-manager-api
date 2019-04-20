@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const { mongoose, userSchema } = require('../db/schemas/user/');
 const {
   addPasswordEncryptionPreSaveHook
@@ -44,6 +42,14 @@ class User extends DbUser {
     try {
       const foundUsers = await this.model('Users').find({ email }).exec();
       return foundUsers.find(foundUser => foundUser.email === email);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateRecord(selector, update) {
+    try {
+      return this.updateOne(selector, update).query();
     } catch (error) {
       throw error;
     }

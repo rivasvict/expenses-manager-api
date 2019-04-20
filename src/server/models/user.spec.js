@@ -1,9 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 const User = require('./user');
-const { getSaltHash } = require('../lib/util.js');
 
 describe('User class', function () {
   describe('User creation', function () {

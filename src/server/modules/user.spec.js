@@ -4,10 +4,12 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 
 const { getSaltHash } = require('../lib/util.js');
+
 const userModule = rewire('./user.js');
 const signUp = userModule.__get__('signUp');
 const User = userModule.__get__('User');
 const authenticateUser = userModule.__get__('authenticateUser');
+const setTokenForUser = userModule.__get__('setTokenForUser');
 
 describe('User module', function () {
   describe('Implementation: Sign regular user up', function () {
@@ -126,6 +128,26 @@ describe('User module', function () {
 
     afterEach('Restore user authentication stubs', function () {
       this.stub.restore();
+    });
+  });
+
+  describe.only('Integration: Save token to db', function () {
+    it('Should call update user with new token', async function () {
+      const token = 'Thisisjustatoken';
+      const user = {
+        firstName: 'Vic',
+        lastName: 'thor',
+        password: 'passw0rd',
+        email: 'vic@test.com'
+      };
+      const userToSaveTokenFor = new User(user);
+      this.stub = sinon.stub(userToSaveTokenFor, 'updateOne').returns({
+        query: () => Promise.resolve()
+      });
+      await setTokenForUser(userToSaveTokenFor, token);
+      expect(this.stub.calledOnce).to.be.equal(true);
+      expect(this.stub.calledWith({ email: user.email }, { userToken: token }))
+        .to.be.equal(true);
     });
   });
 });
