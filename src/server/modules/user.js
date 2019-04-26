@@ -31,12 +31,4 @@ const authenticateUser = async ({ email, password }) => {
   }
 };
 
-const setTokenForUser = async (user, token) => {
-  try {
-    await user.updateRecord({ email: user.email }, { userToken: token });
-  } catch (error) {
-    throw error;
-  }
-};
-
 module.exports = { signUp, authenticateUser };
