@@ -18,5 +18,7 @@ module.exports = {
   DB_TEST_PORT: environment.DB_TEST_PORT,
   DB_PORT: environment.DB_PORT,
   DB_TEST_NAME: environment.DB_TEST_NAME,
-  DB_NAME: environment.DB_NAME
+  DB_NAME: environment.DB_NAME,
+  REDIS_SERVER: environment.REDIS_SERVER || '0.0.0.0',
+  REDIS_PORT: environment.REDIS_PORT || '6379'
 };
