@@ -33,6 +33,8 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_ADMIN_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_ADMIN_PASSWORD}
+    depends_on:
+      - mongo
 
   node:
     image: node:8.15.0-jessie
@@ -52,10 +54,8 @@ services:
     command: "npm start"
 
   redis:
-    image: bitnami/redis:latest
+    image: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - ${REDIS_PORT}:6379
-    volumes:
-      - ${REDIS_DATA_DIR}:/bitnami/redis/data
