@@ -123,7 +123,7 @@ describe('Authentication module', function () {
     });
   });
 
-  describe('Verify user for passportJs strategy', function () {
+  describe('passportVerify: Verify user for passportJs strategy', function () {
     beforeEach('Prepare stubs', function () {
       this.setStub = this.setStub || function (stub) {
         this.stub = stub;

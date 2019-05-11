@@ -26,16 +26,18 @@ class RoutesHandler {
   * Prevent whitelisted paths from running given middleware.
   * Instead, skip and run next middleware
   */
-  static unless(middleware, ...whitelistedPaths) {
+  static mountMiddlewaresUnless(middlewares, ...whitelistedPaths) {
     return (req, res, next) => {
-      const requestedRoute = req.originalUrl;
-      const isItWhitelistedPath = whitelistedPaths
-        .find(whitelistedPath => whitelistedPath === requestedRoute);
-      if (isItWhitelistedPath) {
-        next();
-      } else {
-        middleware(req, res, next);
-      }
+      middlewares.forEach((middleware) => {
+        const requestedRoute = req.originalUrl;
+        const isItWhitelistedPath = whitelistedPaths
+          .find(whitelistedPath => whitelistedPath === requestedRoute);
+        if (isItWhitelistedPath) {
+          next();
+        } else {
+          middleware(req, res, next);
+        }
+      });
     };
   }
 }

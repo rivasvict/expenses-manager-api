@@ -15,8 +15,10 @@ const jwtStrategy = passport.authenticate('jwt', {
   session: false
 });
 
-router.use(`${baseApiUrl}/*`, RoutesHandler.unless(
-  jwtStrategy,
+router.use(`${baseApiUrl}/*`, RoutesHandler.mountMiddlewaresUnless(
+  [
+    jwtStrategy
+  ],
   '/api/user/login',
   '/api/user/sign-up'
 ));
