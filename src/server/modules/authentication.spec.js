@@ -161,4 +161,14 @@ describe('Authentication module', function () {
       }
     });
   });
+
+  describe.only('isTokenInvalidated: Token invalidation check through blacklist', function() {
+    it('Should return true when token is blacklisted', async function () {
+      const isTokenInvalidated = await authentication
+        .isTokenInvalidated('Bearer invalidToken');
+      expect(isTokenInvalidated).to.be.equal(true);
+    });
+
+    it.skip('Should return false when token is NOT blacklisted');
+  });
 });

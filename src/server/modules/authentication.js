@@ -43,6 +43,10 @@ const passportVerify = (jwtPayload, done) => {
   }
 };
 
+const isTokenInvalidated = bearer => {
+  const token = bearer.split(' ', bearer)[1];
+}
+
 const authenticationModule = {
   verifyAuthenticUser,
   getToken,

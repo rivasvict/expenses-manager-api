@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class RoutesHandler {
   constructor({ router, baseApiUrl = '/api' }) {
     this.baseApiUrl = baseApiUrl;
@@ -22,22 +24,41 @@ class RoutesHandler {
     }
   }
 
+  static runAsMiddlewares(middlewareRunOptions) {
+    const { req, res, middlewares, lastMiddleware } = middlewareRunOptions;
+    let nextMiddlewareIndex = -1;
+
+    const next = () => {
+      nextMiddlewareIndex += 1;
+      if (middlewares[nextMiddlewareIndex]) {
+        middlewares[nextMiddlewareIndex](req, res, next);
+      } else {
+        lastMiddleware();
+      }
+    };
+
+    next();
+  }
+
   /*
-  * Prevent whitelisted paths from running given middleware.
+  * Prevent whitelisted paths from running given middlewares.
   * Instead, skip and run next middleware
   */
   static mountMiddlewaresUnless(middlewares, ...whitelistedPaths) {
     return (req, res, next) => {
-      middlewares.forEach((middleware) => {
-        const requestedRoute = req.originalUrl;
-        const isItWhitelistedPath = whitelistedPaths
-          .find(whitelistedPath => whitelistedPath === requestedRoute);
-        if (isItWhitelistedPath) {
-          next();
-        } else {
-          middleware(req, res, next);
-        }
-      });
+      const requestedRoute = req.originalUrl;
+      const isItWhitelistedPath = whitelistedPaths
+        .find(whitelistedPath => whitelistedPath === requestedRoute);
+      if (isItWhitelistedPath) {
+        next();
+      } else {
+        RoutesHandler.runAsMiddlewares({
+          req,
+          res,
+          middlewares,
+          lastMiddleware: next
+        });
+      }
     };
   }
 }

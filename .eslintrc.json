@@ -1,6 +1,6 @@
 {
     "extends": "airbnb-base",
-    "rules" : {"comma-dangle": ["error", "never"], "prefer-arrow-callback": "off", "func-names": "off", "no-underscore-dangle": "off"},
+    "rules" : {"comma-dangle": ["error", "never"], "prefer-arrow-callback": "off", "func-names": "off", "no-underscore-dangle": "off", "object-curly-newline": "off"},
     "plugins": ["jest"],
     "env": {
       "jest/globals": true,
