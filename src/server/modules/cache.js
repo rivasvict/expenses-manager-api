@@ -8,7 +8,6 @@ class Cache {
       port: parseInt(config.REDIS_PORT),
       host: config.REDIS_SERVER
     });
-    debugger;
   }
 
   addToSet({ setName, members }) {
