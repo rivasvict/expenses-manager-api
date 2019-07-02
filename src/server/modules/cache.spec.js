@@ -3,17 +3,25 @@ const rewire = require('rewire');
 
 const cacheModule = rewire('./cache.js');
 const Cache = cacheModule.__get__('Cache');
-const Redis = cacheModule.__get__('Redis');
 
 describe('Save set element', function () {
   beforeEach('Prepare cacheCLient for testing', async function () {
     class CacheClient {
+      constructor() {
+        this.saddStub = () => {
+          sinon.stub().returns(Promise.resolve('Success'));
+        };
+        this.sismemberStub = () => {
+          sinon.stub().returns(Promise.resolve('Success'));
+        };
+      }
+
       sadd() {
-        sinon.stub().returns(Promise.resolve('Success'));
+        this.saddStub();
       }
 
       sismember() {
-        sinon.stub().returns(Promise.resolve('Success'));
+        this.sismemberStub();
       }
     }
 
