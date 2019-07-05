@@ -57,5 +57,3 @@ services:
     image: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - ${REDIS_PORT}:6379

@@ -9,10 +9,12 @@ describe('Save set element', function () {
     class CacheClient {
       constructor() {
         this.saddStub = () => {
-          sinon.stub().returns(Promise.resolve('Success'));
+          const numberOfMembersCreated = 3;
+          sinon.stub().returns(Promise.resolve(numberOfMembersCreated));
         };
         this.sismemberStub = () => {
-          sinon.stub().returns(Promise.resolve('Success'));
+          const memberDoesExist = 1;
+          sinon.stub().returns(Promise.resolve(memberDoesExist));
         };
       }
 

@@ -20,5 +20,5 @@ module.exports = {
   DB_TEST_NAME: environment.DB_TEST_NAME,
   DB_NAME: environment.DB_NAME,
   REDIS_SERVER: environment.REDIS_SERVER || '0.0.0.0',
-  REDIS_PORT: environment.REDIS_PORT || '6379'
+  REDIS_PORT: '6379'
 };
