@@ -3,37 +3,24 @@ const rewire = require('rewire');
 
 const cacheModule = rewire('./cache.js');
 const Cache = cacheModule.__get__('Cache');
+// const CacheClient = cacheModule.__get__('Redis');
 
 describe('Save set element', function () {
   beforeEach('Prepare cacheCLient for testing', async function () {
-    class CacheClient {
-      constructor() {
-        this.saddStub = () => {
-          const numberOfMembersCreated = 3;
-          sinon.stub().returns(Promise.resolve(numberOfMembersCreated));
-        };
-        this.sismemberStub = () => {
-          const memberDoesExist = 1;
-          sinon.stub().returns(Promise.resolve(memberDoesExist));
-        };
-      }
+    function CacheClientStubClass() {}
+    CacheClientStubClass.prototype.sadd = () => Promise.resolve(3);
+    CacheClientStubClass.prototype.sismember = () => Promise.resolve(1);
 
-      sadd() {
-        this.saddStub();
-      }
+    this.saddStub = sinon.spy(CacheClientStubClass.prototype, 'sadd');
+    this.sismemberStub = sinon.spy(CacheClientStubClass.prototype, 'sismember');
 
-      sismember() {
-        this.sismemberStub();
-      }
-    }
-
-    this.restoreCacheClient = cacheModule.__set__('Redis', CacheClient);
+    this.restoreCacheClient = cacheModule.__set__('Redis', CacheClientStubClass);
     this.cache = new Cache();
   });
 
-  it.only('Should return success when there is no existing element in the set of the same value', function () {
+  it.only('Should return success when there is no existing element in the set of the same value', async function () {
     try {
-      this.cache.addToSet({setName: 'testSet', members: ['memner1']});
+      await this.cache.addToSet({ setName: 'testSet', members: ['memner1'] });
     } catch (error) {
       throw error;
     }
