@@ -17,6 +17,10 @@ class Cache {
   isMemberOfSet({ setName, member }) {
     return this.cacheClient.sismember(setName, member);
   }
+
+  removeMemberFromSet({ setName, member }) {
+    return this.cacheClient.srem(setName, member);
+  }
 }
 
 module.exports = Cache;
