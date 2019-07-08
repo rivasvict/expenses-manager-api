@@ -2,8 +2,6 @@ const _ = require('lodash');
 
 const User = require('../models/user.js');
 const { comparePassword } = require('../db/schemas/user/utils.js');
-const Cache = require('./cache.js');
-const myCache = new Cache();
 
 const signUp = async (userToCreate) => {
   try {

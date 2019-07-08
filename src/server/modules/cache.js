@@ -2,25 +2,15 @@ const Redis = require('ioredis');
 
 const config = require('./../../../config.js');
 
-class Cache {
-  constructor() {
-    this.cacheClient = new Redis({
-      port: parseInt(config.REDIS_PORT),
-      host: config.REDIS_SERVER
-    });
-  }
+const cacheClient = new Redis({
+  port: parseInt(config.REDIS_PORT),
+  host: config.REDIS_SERVER
+});
 
-  addToSet({ setName, members }) {
-    return this.cacheClient.sadd(setName, members);
-  }
+const addToSet = ({ setName, members }) => cacheClient.sadd(setName, members);
 
-  isMemberOfSet({ setName, member }) {
-    return this.cacheClient.sismember(setName, member);
-  }
+const isMemberOfSet = ({ setName, member }) => cacheClient.sismember(setName, member);
 
-  removeMemberFromSet({ setName, member }) {
-    return this.cacheClient.srem(setName, member);
-  }
-}
+const removeMemberFromSet = ({ setName, member }) => cacheClient.srem(setName, member);
 
-module.exports = Cache;
+module.exports = {addToSet, isMemberOfSet, removeMemberFromSet};

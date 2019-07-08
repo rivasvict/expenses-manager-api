@@ -1,13 +1,11 @@
 const sinon = require('sinon');
-const rewire = require('rewire');
-
-const cacheModule = rewire('./cache.js');
-const Cache = cacheModule.__get__('Cache');
 const { expect } = require('chai');
-// const CacheClient = cacheModule.__get__('Redis');
+const mock = require('mock-require');
 
-describe('Save set element', function () {
-  beforeEach('Prepare cacheCLient for testing', async function () {
+
+describe('Cache CRD operations', function () {
+
+  before('Prepare mock for Cache', function () {
     this.membersToSet = ['memner1'];
     this.itIsMemberCodeNumber = 1;
     this.removedMemberOfSetCodeNumber = 1;
@@ -19,9 +17,8 @@ describe('Save set element', function () {
     this.saddStub = sinon.spy(CacheClientStubClass.prototype, 'sadd');
     this.sismemberStub = sinon.spy(CacheClientStubClass.prototype, 'sismember');
     this.sremStub = sinon.spy(CacheClientStubClass.prototype, 'srem');
-
-    this.restoreCacheClient = cacheModule.__set__('Redis', CacheClientStubClass);
-    this.cache = new Cache();
+    mock('ioredis', CacheClientStubClass);
+    this.cache = require('./cache.js');
   });
 
   it('It should persist into set successfully', async function () {
@@ -70,6 +67,6 @@ describe('Save set element', function () {
   });
 
   afterEach('Restore Cache', function () {
-    this.restoreCacheClient();
+    mock.stop('ioredis');
   });
 });

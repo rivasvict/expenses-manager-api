@@ -45,13 +45,15 @@ const passportVerify = (jwtPayload, done) => {
 
 const isTokenInvalidated = bearer => {
   const token = bearer.split(' ', bearer)[1];
+  return true;
 }
 
 const authenticationModule = {
   verifyAuthenticUser,
   getToken,
   verifyToken,
-  passportVerify
+  passportVerify,
+  isTokenInvalidated
 };
 
 module.exports = authenticationModule;
