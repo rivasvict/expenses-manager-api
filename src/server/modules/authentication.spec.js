@@ -175,7 +175,7 @@ describe('Authentication module', function () {
     });
   });
 
-  describe('isTokenInvalidated: Token invalidation check through blacklist', function () {
+  describe.only('isTokenInvalidated: Token invalidation check through blacklist', function () {
     beforeEach('Preconfigure tests', function () {
       this.invalidToken = 'Bearer invalidToken';
       this.rawToken = 'invalidToken';
@@ -204,5 +204,7 @@ describe('Authentication module', function () {
         setName: config.sets.INVALID_USER_TOKEN_SET, member: this.rawToken
       })).to.be.equal(true);
     });
+
+    it('Should remove all invalid tokens from black list');
   });
 });

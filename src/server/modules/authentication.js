@@ -57,6 +57,9 @@ const isTokenInvalidated = async (bearer) => {
   }
 };
 
+const removeInvalidTokensFromBlackList = () => {
+};
+
 const authenticationModule = {
   verifyAuthenticUser,
   getToken,
