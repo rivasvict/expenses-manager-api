@@ -61,7 +61,7 @@ describe('Cache CRD operations', function () {
       };
       const removeMemberOfSetResult = await this.cache.removeMemberFromSet(removeMemberOfSetOptions);
       expect(removeMemberOfSetResult).to.be.equal(this.removedMemberOfSetCodeNumber);
-      expect(this.sremStub.calledWith(removeMemberOfSetOptions.setName, removeMemberOfSetOptions.member))
+      expect(this.sremStub.calledWith(removeMemberOfSetOptions.setName, removeMemberOfSetOptions.members))
         .to.be.equal(true);
     } catch (error) {
       throw error;

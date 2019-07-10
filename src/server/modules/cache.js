@@ -11,7 +11,7 @@ const addToSet = ({ setName, members }) => cacheClient.sadd(setName, members);
 
 const isMemberOfSet = ({ setName, member }) => cacheClient.sismember(setName, member);
 
-const removeMemberFromSet = ({ setName, member }) => cacheClient.srem(setName, member);
+const removeMemberFromSet = ({ setName, members }) => cacheClient.srem(setName, members);
 
 const getAllMembersOfSet = setName => cacheClient.smembers(setName);
 
