@@ -175,7 +175,7 @@ describe('Authentication module', function () {
     });
   });
 
-  describe.only('isTokenInvalidated: Token invalidation check through blacklist', function () {
+  describe('isTokenInvalidated: Token invalidation check through blacklist', function () {
     beforeEach('Preconfigure tests', function () {
       this.invalidToken = 'Bearer invalidToken';
       this.rawToken = 'invalidToken';

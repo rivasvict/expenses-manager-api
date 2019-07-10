@@ -13,4 +13,6 @@ const isMemberOfSet = ({ setName, member }) => cacheClient.sismember(setName, me
 
 const removeMemberFromSet = ({ setName, member }) => cacheClient.srem(setName, member);
 
-module.exports = {addToSet, isMemberOfSet, removeMemberFromSet};
+const getAllMembersOfSet = setName => cacheClient.smembers(setName);
+
+module.exports = { addToSet, isMemberOfSet, removeMemberFromSet, getAllMembersOfSet };
