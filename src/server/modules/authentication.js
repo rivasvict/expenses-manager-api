@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 const user = require('./user.js');
 const config = require('../../../config.js');
+const cache = require('./cache.js');
 
 const getToken = ({ payload, tokenGenerationOptions = {} }) => jwt
   .sign(payload, config.SECRET, tokenGenerationOptions);
@@ -43,10 +44,18 @@ const passportVerify = (jwtPayload, done) => {
   }
 };
 
-const isTokenInvalidated = bearer => {
-  const token = bearer.split(' ', bearer)[1];
-  return true;
-}
+const isTokenInvalidated = async (bearer) => {
+  try {
+    const token = bearer.split(' ')[1];
+    const isTokenInBlacklist = await cache.isMemberOfSet({
+      setName: config.sets.INVALID_USER_TOKEN_SET, member: token
+    });
+    const tokenIsInBlacklist = isTokenInBlacklist === 1;
+    return tokenIsInBlacklist || false;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const authenticationModule = {
   verifyAuthenticUser,

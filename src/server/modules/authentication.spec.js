@@ -1,6 +1,19 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
 const _ = require('lodash');
+const mock = require('mock-require');
+
+const config = require('../../../config.js');
+const ioredisMock = function () {};
+ioredisMock.prototype.sismember = () => {};
+ioredisMock.prototype.sadd = () => {};
+ioredisMock.prototype.srem = () => {};
+mock('ioredis', ioredisMock);
+
+const cacheMock = {};
+mock('./cache.js', cacheMock);
+
+mock.reRequire('./cache.js');
 
 const userModule = require('./user.js');
 const authentication = require('./authentication.js');
@@ -162,13 +175,34 @@ describe('Authentication module', function () {
     });
   });
 
-  describe.only('isTokenInvalidated: Token invalidation check through blacklist', function() {
-    it('Should return true when token is blacklisted', async function () {
-      const isTokenInvalidated = await authentication
-        .isTokenInvalidated('Bearer invalidToken');
-      expect(isTokenInvalidated).to.be.equal(true);
+  describe.only('isTokenInvalidated: Token invalidation check through blacklist', function () {
+    beforeEach('Preconfigure tests', function () {
+      this.invalidToken = 'Bearer invalidToken';
+      this.rawToken = 'invalidToken';
     });
 
-    it.skip('Should return false when token is NOT blacklisted');
+    it('Should return true when token is blacklisted', async function () {
+      const isMemberOfSetStub = sinon.fake.returns(Promise.resolve(1));
+      cacheMock.isMemberOfSet = isMemberOfSetStub;
+      const isTokenInvalidated = await authentication
+        .isTokenInvalidated(this.invalidToken);
+      expect(isTokenInvalidated).to.be.equal(true);
+      expect(isMemberOfSetStub.calledOnce).to.be.equal(true);
+      expect(isMemberOfSetStub.calledWith({
+        setName: config.sets.INVALID_USER_TOKEN_SET, member: this.rawToken
+      })).to.be.equal(true);
+    });
+
+    it('Should return false when token is NOT blacklisted', async function () {
+      const isMemberOfSetStub = sinon.fake.returns(Promise.resolve(0));
+      cacheMock.isMemberOfSet = isMemberOfSetStub;
+      const isTokenInvalidated = await authentication
+        .isTokenInvalidated('Bearer invalidToken');
+      expect(isTokenInvalidated).to.be.equal(false);
+      expect(isMemberOfSetStub.calledOnce).to.be.equal(true);
+      expect(isMemberOfSetStub.calledWith({
+        setName: config.sets.INVALID_USER_TOKEN_SET, member: this.rawToken
+      })).to.be.equal(true);
+    });
   });
 });
