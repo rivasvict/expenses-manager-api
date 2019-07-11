@@ -175,7 +175,7 @@ describe('Authentication module', function () {
     });
   });
 
-  describe.only('isTokenInvalidated: Token invalidation check through blacklist', function () {
+  describe('isTokenInvalidated: Token invalidation check through blacklist', function () {
     beforeEach('Preconfigure tests', function () {
       this.invalidToken = 'Bearer invalidToken';
       this.rawToken = 'invalidToken';
@@ -205,6 +205,24 @@ describe('Authentication module', function () {
       })).to.be.equal(true);
     });
 
-    it('Should remove all invalid tokens from black list');
+    it('Should remove all invalid tokens from black list', async function () {
+      const expiredTokens = [
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdG5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwibGFzdG5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTYyODA5OTgyLCJleHAiOjE1NjI4MDk5ODN9.zC0eXfTg9ucM69qZM92kDZOIZPgZqQOlYw8gnCwFC2M',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWxpZCI6InllcyIsImlhdCI6MTU2MjgxMDIwMiwiZXhwIjoxNTYyODEwMjAzfQ.qQGKW_CTlOR3KJa4X7-2169tnd5BBh3AdfYrk61AJrg'
+      ];
+      const validTokens = [
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWxpZCI6InllcyIsImlhdCI6MTU2MjgxMDIzNX0.298Bilrm42xwU03x8gPyg3MGrnPPP0w-OrnP_9LRqtM',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWxpZCI6ImJsO2Fhc2RuIiwiaWF0IjoxNTYyODEwMjcwfQ.Bo6V9_Cgg8_OWZ-TAD3bEthQUFXgEQrunw_4t0cec2s'
+      ];
+      const blacklistedTokens = [...expiredTokens, ...validTokens];
+      const removeMembersFromSetFake = sinon.fake.returns(Promise.resolve(2));
+      const getAllMembersOfSetFake = sinon.fake.returns(Promise.resolve(blacklistedTokens));
+      cacheMock.removeMembersFromSet = removeMembersFromSetFake;
+      cacheMock.getAllMembersOfSet = getAllMembersOfSetFake;
+      await authentication
+        .removeInvalidTokensFromBlackList(blacklistedTokens);
+      expect(removeMembersFromSetFake.calledOnce).to.be.equal(true);
+      expect(removeMembersFromSetFake.calledWith(expiredTokens)).to.be.equal(true);
+    });
   });
 });

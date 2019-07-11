@@ -11,8 +11,8 @@ const addToSet = ({ setName, members }) => cacheClient.sadd(setName, members);
 
 const isMemberOfSet = ({ setName, member }) => cacheClient.sismember(setName, member);
 
-const removeMemberFromSet = ({ setName, members }) => cacheClient.srem(setName, members);
+const removeMembersFromSet = ({ setName, members }) => cacheClient.srem(setName, members);
 
 const getAllMembersOfSet = setName => cacheClient.smembers(setName);
 
-module.exports = { addToSet, isMemberOfSet, removeMemberFromSet, getAllMembersOfSet };
+module.exports = { addToSet, isMemberOfSet, removeMembersFromSet, getAllMembersOfSet };

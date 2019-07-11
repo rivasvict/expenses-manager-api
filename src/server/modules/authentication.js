@@ -30,7 +30,17 @@ const verifyAuthenticUser = async (username, password) => {
   }
 };
 
-const verifyToken = payload => jwt.verify(payload, config.SECRET);
+const verifyToken = payload => {
+  try {
+    return jwt.verify(payload, config.SECRET);
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return null;
+    } else {
+      throw error;
+    }
+  }
+};
 
 const passportVerify = (jwtPayload, done) => {
   try {
@@ -57,7 +67,14 @@ const isTokenInvalidated = async (bearer) => {
   }
 };
 
-const removeInvalidTokensFromBlackList = () => {
+const getInvalidTokensFromBlackList = async () => {
+  const allTokensInBlackList = await cache.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
+  return allTokensInBlackList.filter(tokenInBlackList => verifyToken(tokenInBlackList) === null);
+};
+
+const removeInvalidTokensFromBlackList = async () => {
+  const invalidTokensFromBlackList = await getInvalidTokensFromBlackList();
+  await cache.removeMembersFromSet(invalidTokensFromBlackList);
 };
 
 const authenticationModule = {
@@ -65,7 +82,8 @@ const authenticationModule = {
   getToken,
   verifyToken,
   passportVerify,
-  isTokenInvalidated
+  isTokenInvalidated,
+  removeInvalidTokensFromBlackList
 };
 
 module.exports = authenticationModule;

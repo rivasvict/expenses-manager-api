@@ -7,12 +7,12 @@ describe('Cache CRD operations', function () {
   before('Prepare mock for Cache', function () {
     this.membersToSet = ['memner1'];
     this.itIsMemberCodeNumber = 1;
-    this.removedMemberOfSetCodeNumber = 1;
+    this.removedMembersOfSetCodeNumber = 1;
     this.allMembersOfSet = ['3', '435', 54];
     function CacheClientStubClass() {}
     CacheClientStubClass.prototype.sadd = () => Promise.resolve(this.membersToSet.length);
     CacheClientStubClass.prototype.sismember = () => Promise.resolve(this.itIsMemberCodeNumber);
-    CacheClientStubClass.prototype.srem = () => Promise.resolve(this.removedMemberOfSetCodeNumber);
+    CacheClientStubClass.prototype.srem = () => Promise.resolve(this.removedMembersOfSetCodeNumber);
     CacheClientStubClass.prototype.smembers = () => Promise.resolve(this.allMembersOfSet);
 
     this.saddStub = sinon.spy(CacheClientStubClass.prototype, 'sadd');
@@ -55,13 +55,13 @@ describe('Cache CRD operations', function () {
 
   it('Should remove a set member', async function () {
     try {
-      const removeMemberOfSetOptions = {
+      const removeMembersOfSetOptions = {
         setName: 'testSet',
         members: ['Member remove from the set', 'second member to remove']
       };
-      const removeMemberOfSetResult = await this.cache.removeMemberFromSet(removeMemberOfSetOptions);
-      expect(removeMemberOfSetResult).to.be.equal(this.removedMemberOfSetCodeNumber);
-      expect(this.sremStub.calledWith(removeMemberOfSetOptions.setName, removeMemberOfSetOptions.members))
+      const removeMembersOfSetResult = await this.cache.removeMembersFromSet(removeMembersOfSetOptions);
+      expect(removeMembersOfSetResult).to.be.equal(this.removedMembersOfSetCodeNumber);
+      expect(this.sremStub.calledWith(removeMembersOfSetOptions.setName, removeMembersOfSetOptions.members))
         .to.be.equal(true);
     } catch (error) {
       throw error;
