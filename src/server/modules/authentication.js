@@ -54,9 +54,11 @@ const passportVerify = (jwtPayload, done) => {
   }
 };
 
+const getTokenOutOfBearer = bearer => bearer.split(' ')[1];
+
 const isTokenInvalidated = async (bearer) => {
   try {
-    const token = bearer.split(' ')[1];
+    const token = getTokenOutOfBearer(bearer);
     const isTokenInBlacklist = await cache.isMemberOfSet({
       setName: config.sets.INVALID_USER_TOKEN_SET, member: token
     });
@@ -68,14 +70,26 @@ const isTokenInvalidated = async (bearer) => {
 };
 
 const getInvalidTokensFromBlackList = async () => {
-  const allTokensInBlackList = await cache.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
-  return allTokensInBlackList.filter(tokenInBlackList => verifyToken(tokenInBlackList) === null);
+  try {
+    const allTokensInBlackList = await cache.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
+    return allTokensInBlackList.filter(tokenInBlackList => verifyToken(tokenInBlackList) === null);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const removeInvalidTokensFromBlackList = async () => {
-  const invalidTokensFromBlackList = await getInvalidTokensFromBlackList();
-  await cache.removeMembersFromSet(invalidTokensFromBlackList);
+  try {
+    const invalidTokensFromBlackList = await getInvalidTokensFromBlackList();
+    await cache.removeMembersFromSet(invalidTokensFromBlackList);
+  } catch (error) {
+    throw error;
+  }
 };
+
+const invalidateToken = userToken => cache.addToSet({
+  setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
+});
 
 const authenticationModule = {
   verifyAuthenticUser,
@@ -83,7 +97,8 @@ const authenticationModule = {
   verifyToken,
   passportVerify,
   isTokenInvalidated,
-  removeInvalidTokensFromBlackList
+  removeInvalidTokensFromBlackList,
+  invalidateToken
 };
 
 module.exports = authenticationModule;

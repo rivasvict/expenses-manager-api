@@ -220,9 +220,21 @@ describe('Authentication module', function () {
       cacheMock.removeMembersFromSet = removeMembersFromSetFake;
       cacheMock.getAllMembersOfSet = getAllMembersOfSetFake;
       await authentication
-        .removeInvalidTokensFromBlackList(blacklistedTokens);
+        .removeInvalidTokensFromBlackList();
       expect(removeMembersFromSetFake.calledOnce).to.be.equal(true);
       expect(removeMembersFromSetFake.calledWith(expiredTokens)).to.be.equal(true);
+    });
+
+    it('invalidateToken should call add to set on cache with token to invalidate', async function () {
+      const tokenToInvalidate = 'Bearer thisIsAnInvalidToken';
+      const addToSetFake = sinon.fake.returns(Promise.resolve(1));
+      cacheMock.addToSet = addToSetFake;
+      await authentication
+        .invalidateToken(tokenToInvalidate);
+      expect(addToSetFake.calledOnce).to.be.equal(true);
+      expect(addToSetFake.calledWith({
+        setName: config.sets.INVALID_USER_TOKEN_SET, members: [tokenToInvalidate]
+      })).to.be.equal(true);
     });
   });
 });
