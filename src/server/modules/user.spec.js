@@ -129,4 +129,8 @@ describe('User module', function () {
       this.stub.restore();
     });
   });
+
+  describe('Log out user', function () {
+    it('Should call invalidate token on authentication mocule');
+  });
 });
