@@ -87,9 +87,12 @@ const removeInvalidTokensFromBlackList = async () => {
   }
 };
 
-const invalidateToken = userToken => cache.addToSet({
-  setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
-});
+const invalidateToken = bearer => {
+  const userToken = getTokenOutOfBearer(bearer);
+  cache.addToSet({
+    setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
+  });
+};
 
 const authenticationModule = {
   verifyAuthenticUser,

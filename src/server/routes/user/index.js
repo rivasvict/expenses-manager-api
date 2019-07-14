@@ -34,11 +34,28 @@ const signUpRouteHandler = async (req, res) => {
   }
 };
 
+const logOutHandler = async (req, res) => {
+  try {
+    const bearer = req.headers.authorization;
+    if (bearer) {
+      await authentication.invalidateToken(bearer);
+      res.status(200);
+    } else {
+      res.status(400).json({ message: 'Bearer is missing' });
+    }
+  } catch (error) {
+    res.status(500);
+    throw error;
+  }
+};
+
 const mountUserRoutes = ({ router, baseUrl }) => {
   // /api/user/login
   router.post(`${baseUrl}/login`, wrap(loginRouteHandler));
   // /api/user/sign-up
   router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler));
+  // /api/user/log-out
+  router.post(`${baseUrl}/log-out`, wrap(logOutHandler));
 };
 
 module.exports = mountUserRoutes;

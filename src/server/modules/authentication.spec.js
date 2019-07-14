@@ -226,11 +226,12 @@ describe('Authentication module', function () {
     });
 
     it('invalidateToken should call add to set on cache with token to invalidate', async function () {
-      const tokenToInvalidate = 'Bearer thisIsAnInvalidToken';
+      const tokenToInvalidate = 'thisIsAnInvalidToken';
+      const bearer = `Bearer ${tokenToInvalidate}`;
       const addToSetFake = sinon.fake.returns(Promise.resolve(1));
       cacheMock.addToSet = addToSetFake;
       await authentication
-        .invalidateToken(tokenToInvalidate);
+        .invalidateToken(bearer);
       expect(addToSetFake.calledOnce).to.be.equal(true);
       expect(addToSetFake.calledWith({
         setName: config.sets.INVALID_USER_TOKEN_SET, members: [tokenToInvalidate]

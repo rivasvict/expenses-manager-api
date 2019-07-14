@@ -19,7 +19,8 @@ router.use(`${baseApiUrl}/*`, wrap(RoutesHandler.mountMiddlewaresUnless(
     jwtStrategy
   ],
   '/api/user/login',
-  '/api/user/sign-up'
+  '/api/user/sign-up',
+  '/api/user/log-out'
 )));
 
 routesHandler.mountRoute({ mountRouteCallback: mountUserRoutes, mainRouteUrl: '/user' });
