@@ -43,7 +43,6 @@ const verifyToken = payload => {
 };
 
 const passportVerify = (jwtPayload, done) => {
-  debugger;
   try {
     if (jwtPayload) {
       return done(null, jwtPayload);

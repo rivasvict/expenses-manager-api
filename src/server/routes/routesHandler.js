@@ -24,35 +24,38 @@ class RoutesHandler {
     }
   }
 
-  static runAsMiddlewares(middlewareRunOptions) {
-    const { req, res, middlewares, lastMiddleware } = middlewareRunOptions;
-    let nextMiddlewareIndex = -1;
+  static async runAsMiddlewares(middlewareRunOptions) {
+    try {
+      const { req, res, middlewares, lastMiddleware } = middlewareRunOptions;
+      let nextMiddlewareIndex = -1;
 
-    const next = () => {
-      nextMiddlewareIndex += 1;
-      if (middlewares[nextMiddlewareIndex]) {
-        middlewares[nextMiddlewareIndex](req, res, next);
-      } else {
-        lastMiddleware();
-      }
-    };
-
-    next();
+      const next = async () => {
+        nextMiddlewareIndex += 1;
+        if (middlewares[nextMiddlewareIndex]) {
+          await middlewares[nextMiddlewareIndex](req, res, next);
+        } else {
+          await lastMiddleware();
+        }
+      };
+      await next();
+    } catch (error) {
+      throw error;
+    }
   }
 
   /*
-  * Prevent whitelisted paths from running given middlewares.
-  * Instead, skip and run next middleware
-  */
+   * Prevent whitelisted paths from running given middlewares.
+   * Instead, skip and run next middleware
+   */
   static mountMiddlewaresUnless(middlewares, ...whitelistedPaths) {
-    return (req, res, next) => {
+    return async (req, res, next) => {
       const requestedRoute = req.originalUrl;
       const isItWhitelistedPath = whitelistedPaths
         .find(whitelistedPath => whitelistedPath === requestedRoute);
       if (isItWhitelistedPath) {
-        next();
+        await next();
       } else {
-        RoutesHandler.runAsMiddlewares({
+        await RoutesHandler.runAsMiddlewares({
           req,
           res,
           middlewares,
