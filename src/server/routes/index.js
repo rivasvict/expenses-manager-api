@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mountUserRoutes = require('./user/');
 const RoutesHandler = require('./routesHandler.js');
-const passport = require('../modules/passport.js');
+const passportHandlers = require('../modules/passportHandlers.js');
 
 const baseApiUrl = '/api';
 const routesHandler = new RoutesHandler({
@@ -11,9 +11,7 @@ const routesHandler = new RoutesHandler({
   baseApiUrl
 });
 
-const jwtStrategy = passport.authenticate('jwt', {
-  session: false
-});
+const jwtStrategy = passportHandlers.isAuthorized;
 
 router.use(`${baseApiUrl}/*`, RoutesHandler.mountMiddlewaresUnless(
   [
