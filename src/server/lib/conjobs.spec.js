@@ -8,7 +8,7 @@ mock('../modules/cache.js', {});
 const cronJobs = rewire('./cronjobs.js');
 
 describe('Cron jobs test', function () {
-  describe('Check cronJob initialization', function () {
+  describe('Check cronJob initializeialization', function () {
     beforeEach('Fake start call', function () {
       this.cronTab = [
         { schedule: '* * * * *', task: () => {} },
@@ -18,7 +18,7 @@ describe('Cron jobs test', function () {
       this.restoreCronJobs = cronJobs.__set__('cronTab', this.cronTab);
       this.startFake = sinon.fake(() => {});
       this.restoreStart = cronJobs.__set__('start', this.startFake);
-      cronJobs.init();
+      cronJobs.initialize();
     });
 
     it('Should have called all cron instances constructor', function () {

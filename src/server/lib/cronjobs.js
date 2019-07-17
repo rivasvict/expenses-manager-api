@@ -10,12 +10,12 @@ const start = ({ schedule, task }) => {
   new Cron(schedule, task);
 };
 
-const init = () => {
+const initialize = () => {
   cronTab.forEach(cronJob => start({ schedule: cronJob.schedule, task: cronJob.task }));
 };
 
 const cronJobs = {
-  init
+  initialize
 };
 
 module.exports = cronJobs;
