@@ -4,11 +4,11 @@
   "description": "An open source API designed to serve all needs for tracking expenses",
   "private": true,
   "scripts": {
-    "dev-test": "DEBUG=true nodemon --exec 'mocha **/*.spec.js **/**/*.spec.js'",
-    "test": "DEBUG=true mocha **/*.spec.js **/**/*.spec.js",
+    "test": "DEBUG=true mocha *.spec.js **/*.spec.js **/**/*.spec.js",
+    "test-debug" : "npm run test -- --inspect=${DEBUG_NODE_SERVER} --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
-    "start:development": "nodemon --inspect-brk=${DEBUG_NODE_SERVER}:${DEBUG_NODE_PORT} --exec babel-node ./bin/www"
+    "start:development": "nodemon --inspect=${DEBUG_NODE_SERVER}:${DEBUG_NODE_PORT} --exec babel-node ./bin/www"
   },
   "repository": {
     "type": "git",

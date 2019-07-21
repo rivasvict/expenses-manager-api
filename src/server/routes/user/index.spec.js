@@ -5,6 +5,8 @@ const mock = require('mock-require');
 
 const cacheMock = {};
 mock('../../modules/cache.js', cacheMock);
+mock.reRequire('../../modules/cache.js');
+mock.reRequire('../../modules/authentication.js');
 const config = require('../../../../config.js');
 const loginRouter = rewire('./index.js');
 const userModule = rewire('../../modules/user.js');
