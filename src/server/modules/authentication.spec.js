@@ -2,16 +2,21 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 const _ = require('lodash');
 const mock = require('mock-require');
-mock.stopAll();
 
 const config = require('../../../config.js');
+
 const ioredisMock = function () {};
 ioredisMock.prototype.sismember = () => {};
 ioredisMock.prototype.sadd = () => {};
 ioredisMock.prototype.srem = () => {};
 mock('ioredis', ioredisMock);
 
-const cacheMock = {};
+const cacheMock = {
+  isMemberOfSet: () => {},
+  addToSet: () => {},
+  removeMembersFromSet: () => {},
+  getAllMembersOfSet: () => {}
+};
 mock('./cache.js', cacheMock);
 mock.reRequire('./cache.js');
 mock.reRequire('./authentication.js');
@@ -187,8 +192,7 @@ describe('Authentication module', function () {
     });
 
     it('Should return true when token is blacklisted', async function () {
-      const isMemberOfSetStub = sinon.fake.returns(Promise.resolve(1));
-      cacheMock.isMemberOfSet = isMemberOfSetStub;
+      const isMemberOfSetStub = sinon.stub(cacheMock, 'isMemberOfSet').returns(Promise.resolve(1));
       const isTokenInvalidated = await authentication
         .isTokenInvalidated(this.invalidToken);
       expect(isTokenInvalidated).to.be.equal(true);
@@ -196,11 +200,11 @@ describe('Authentication module', function () {
       expect(isMemberOfSetStub.calledWith({
         setName: config.sets.INVALID_USER_TOKEN_SET, member: this.rawToken
       })).to.be.equal(true);
+      isMemberOfSetStub.restore();
     });
 
     it('Should return false when token is NOT blacklisted', async function () {
-      const isMemberOfSetStub = sinon.fake.returns(Promise.resolve(0));
-      cacheMock.isMemberOfSet = isMemberOfSetStub;
+      const isMemberOfSetStub = sinon.stub(cacheMock, 'isMemberOfSet').returns(Promise.resolve(0));
       const isTokenInvalidated = await authentication
         .isTokenInvalidated('Bearer invalidToken');
       expect(isTokenInvalidated).to.be.equal(false);
@@ -208,6 +212,7 @@ describe('Authentication module', function () {
       expect(isMemberOfSetStub.calledWith({
         setName: config.sets.INVALID_USER_TOKEN_SET, member: this.rawToken
       })).to.be.equal(true);
+      isMemberOfSetStub.restore();
     });
 
     it('Should remove all invalid tokens from black list', async function () {
@@ -232,30 +237,32 @@ describe('Authentication module', function () {
 
       try {
         const blacklistedTokens = [...expiredTokens, ...validTokens];
-        const removeMembersFromSetFake = sinon.fake.returns(Promise.resolve(2));
-        const getAllMembersOfSetFake = sinon.fake.returns(Promise.resolve(blacklistedTokens));
-        cacheMock.removeMembersFromSet = removeMembersFromSetFake;
-        cacheMock.getAllMembersOfSet = getAllMembersOfSetFake;
+        const removeMembersFromSetStub = sinon.stub(cacheMock, 'removeMembersFromSet')
+          .returns(Promise.resolve(2));
+        const getAllMembersOfSetStub = sinon.stub(cacheMock, 'getAllMembersOfSet')
+          .returns(Promise.resolve(blacklistedTokens));
         await authentication
           .removeInvalidTokensFromBlackList();
-        expect(removeMembersFromSetFake.calledOnce).to.be.equal(true);
-        expect(removeMembersFromSetFake.calledWith(expiredTokens)).to.be.equal(true);
+        expect(removeMembersFromSetStub.calledOnce).to.be.equal(true);
+        expect(removeMembersFromSetStub.calledWith(expiredTokens)).to.be.equal(true);
+        removeMembersFromSetStub.restore();
+        getAllMembersOfSetStub.restore();
       } catch (error) {
         throw error;
       }
     });
 
     it('invalidateToken should call add to set on cache with token to invalidate', async function () {
+      const addToSetStub = sinon.stub(cacheMock, 'addToSet').returns(Promise.resolve(1));
       const tokenToInvalidate = 'thisIsAnInvalidToken';
       const bearer = `Bearer ${tokenToInvalidate}`;
-      const addToSetFake = sinon.fake.returns(Promise.resolve(1));
-      cacheMock.addToSet = addToSetFake;
       await authentication
         .invalidateToken(bearer);
-      expect(addToSetFake.calledOnce).to.be.equal(true);
-      expect(addToSetFake.calledWith({
+      expect(addToSetStub.calledOnce).to.be.equal(true);
+      expect(addToSetStub.calledWith({
         setName: config.sets.INVALID_USER_TOKEN_SET, members: [tokenToInvalidate]
       })).to.be.equal(true);
+      addToSetStub.restore();
     });
   });
 });
