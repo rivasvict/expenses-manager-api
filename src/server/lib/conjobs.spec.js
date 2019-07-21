@@ -37,7 +37,7 @@ describe('Cron jobs test', function () {
   describe('Start function', function () {
     beforeEach('Prepare stubs and mocks for start function', function () {
       this.CronStub = sinon.fake(function () {});
-      this.restoreCron = cronJobs.__set__('Cron', this.CronStub);
+      this.restoreCron = cronJobs.__set__('CronJob', this.CronStub);
       this.start = cronJobs.__get__('start');
     });
 
