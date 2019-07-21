@@ -83,6 +83,11 @@ describe('Authentication module', function () {
           email: 'test@test.com',
           lastname: 'test'
         };
+        sinon.spy(authentication, 'verifyToken');
+      });
+
+      afterEach('Restore spy', function () {
+        sinon.restore();
       });
 
       it('Should verify correct token with no expiration time', function () {
@@ -119,20 +124,15 @@ describe('Authentication module', function () {
       });
 
       it('Should should throw an error when verify token is out of expiration time', function () {
-        this.timeout(5000);
         const token = authentication.getToken({
           payload: this.loggedUser,
           tokenGenerationOptions: {
-            expiresIn: '1s'
+            expiresIn: '-1s'
           }
         });
-        setTimeout(function () {
-          try {
-            authentication.verifyToken(token);
-          } catch (error) {
-            expect(error.name).to.be.equal('TokenExpiredError');
-          }
-        }, 3000);
+
+        const decodedToken = authentication.verifyToken(token);
+        expect(decodedToken).to.be.equal(null);
       });
     });
   });
@@ -212,22 +212,37 @@ describe('Authentication module', function () {
 
     it('Should remove all invalid tokens from black list', async function () {
       const expiredTokens = [
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdG5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwibGFzdG5hbWUiOiJ0ZXN0IiwiaWF0IjoxNTYyODA5OTgyLCJleHAiOjE1NjI4MDk5ODN9.zC0eXfTg9ucM69qZM92kDZOIZPgZqQOlYw8gnCwFC2M',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWxpZCI6InllcyIsImlhdCI6MTU2MjgxMDIwMiwiZXhwIjoxNTYyODEwMjAzfQ.qQGKW_CTlOR3KJa4X7-2169tnd5BBh3AdfYrk61AJrg'
+        authentication.getToken({
+          payload: { user: 'test1' },
+          tokenGenerationOptions: {
+            expiresIn: '-120s'
+          }
+        }),
+        authentication.getToken({
+          payload: { user: 'test2' },
+          tokenGenerationOptions: {
+            expiresIn: '-120s'
+          }
+        })
       ];
       const validTokens = [
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWxpZCI6InllcyIsImlhdCI6MTU2MjgxMDIzNX0.298Bilrm42xwU03x8gPyg3MGrnPPP0w-OrnP_9LRqtM',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWxpZCI6ImJsO2Fhc2RuIiwiaWF0IjoxNTYyODEwMjcwfQ.Bo6V9_Cgg8_OWZ-TAD3bEthQUFXgEQrunw_4t0cec2s'
+        authentication.getToken({ payload: { user: 'test3' } }),
+        authentication.getToken({ payload: { user: 'test4' } })
       ];
-      const blacklistedTokens = [...expiredTokens, ...validTokens];
-      const removeMembersFromSetFake = sinon.fake.returns(Promise.resolve(2));
-      const getAllMembersOfSetFake = sinon.fake.returns(Promise.resolve(blacklistedTokens));
-      cacheMock.removeMembersFromSet = removeMembersFromSetFake;
-      cacheMock.getAllMembersOfSet = getAllMembersOfSetFake;
-      await authentication
-        .removeInvalidTokensFromBlackList();
-      expect(removeMembersFromSetFake.calledOnce).to.be.equal(true);
-      expect(removeMembersFromSetFake.calledWith(expiredTokens)).to.be.equal(true);
+
+      try {
+        const blacklistedTokens = [...expiredTokens, ...validTokens];
+        const removeMembersFromSetFake = sinon.fake.returns(Promise.resolve(2));
+        const getAllMembersOfSetFake = sinon.fake.returns(Promise.resolve(blacklistedTokens));
+        cacheMock.removeMembersFromSet = removeMembersFromSetFake;
+        cacheMock.getAllMembersOfSet = getAllMembersOfSetFake;
+        await authentication
+          .removeInvalidTokensFromBlackList();
+        expect(removeMembersFromSetFake.calledOnce).to.be.equal(true);
+        expect(removeMembersFromSetFake.calledWith(expiredTokens)).to.be.equal(true);
+      } catch (error) {
+        throw error;
+      }
     });
 
     it('invalidateToken should call add to set on cache with token to invalidate', async function () {
