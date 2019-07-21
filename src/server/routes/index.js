@@ -23,6 +23,11 @@ router.use(`${baseApiUrl}/*`, wrap(RoutesHandler.mountMiddlewaresUnless(
   '/api/user/log-out'
 )));
 
+/*
+ * TODO: Make an additional manual test (besides automated) on authenticated routes
+ * when using an exired token.
+ */
+
 routesHandler.mountRoute({ mountRouteCallback: mountUserRoutes, mainRouteUrl: '/user' });
 
 module.exports = router;
