@@ -2,6 +2,7 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 const _ = require('lodash');
 const mock = require('mock-require');
+mock.stopAll();
 
 const config = require('../../../config.js');
 const ioredisMock = function () {};
@@ -12,8 +13,8 @@ mock('ioredis', ioredisMock);
 
 const cacheMock = {};
 mock('./cache.js', cacheMock);
-
 mock.reRequire('./cache.js');
+mock.reRequire('./authentication.js');
 
 const userModule = require('./user.js');
 const authentication = require('./authentication.js');
@@ -179,6 +180,10 @@ describe('Authentication module', function () {
     beforeEach('Preconfigure tests', function () {
       this.invalidToken = 'Bearer invalidToken';
       this.rawToken = 'invalidToken';
+    });
+
+    after('Stop mock', function () {
+      mock.stopAll();
     });
 
     it('Should return true when token is blacklisted', async function () {

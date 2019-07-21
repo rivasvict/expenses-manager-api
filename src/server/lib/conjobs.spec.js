@@ -21,6 +21,10 @@ describe('Cron jobs test', function () {
       cronJobs.initialize();
     });
 
+    after('Stop all mocks on require', function () {
+      mock.stopAll();
+    });
+
     it('Should have called all cron instances constructor', function () {
       expect(this.startFake.callCount).to.be.equal(this.cronTab.length);
     });

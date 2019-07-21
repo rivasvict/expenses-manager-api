@@ -165,6 +165,10 @@ describe('Authentication routes', function () {
       delete cacheMock.addToSet;
     });
 
+    after('Stop mocks on require', function () {
+      mock.stopAll();
+    });
+
     it('Should call cache.addToSet with set and token to invalidate when there is a token', async function () {
       const addToSeFake = sinon.fake.returns(Promise.resolve(1));
       cacheMock.addToSet = addToSeFake;

@@ -2,7 +2,7 @@ const mock = require('mock-require');
 const sinon = require('sinon');
 const { expect } = require('chai');
 
-mock('./cache.js', {});
+mock('./cache.js', {isMemberOfSet: () => {console.log('other')}});
 const authenticationModule = require('./authentication.js');
 const passportHandlers = require('./passportHandlers.js');
 const config = require('../../../config.js');
@@ -29,6 +29,10 @@ describe('Authorization function', function () {
     this.passportAuthenticateStub.restore();
     this.isTokenInBlackListStub.restore();
     sinon.restore();
+  });
+
+  after('Stop all mocks on require', function () {
+    mock.stopAll();
   });
 
   it('isAuthorized: Should call passport.authenicate when no token is found on blacklist', async function () {
