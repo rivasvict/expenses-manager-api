@@ -113,19 +113,16 @@ describe('Authentication module', function () {
       });
 
       it('Should should verify token under expiration time', function () {
-        this.timeout(5000);
         const token = authentication.getToken({
           payload: this.loggedUser,
           tokenGenerationOptions: {
             expiresIn: '4s'
           }
         });
-        setTimeout(function () {
-          const decodedToken = authentication.verifyToken(token);
-          expect(decodedToken).to.have.property('firstname');
-          expect(decodedToken).to.have.property('lastname');
-          expect(decodedToken).to.have.property('email');
-        }, 3000);
+        const decodedToken = authentication.verifyToken(token);
+        expect(decodedToken).to.have.property('firstname');
+        expect(decodedToken).to.have.property('lastname');
+        expect(decodedToken).to.have.property('email');
       });
 
       it('Should should throw an error when verify token is out of expiration time', function () {
