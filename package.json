@@ -8,7 +8,7 @@
     "test-debug" : "npm run test -- --inspect=${DEBUG_NODE_SERVER} --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
-    "start:development": "nodemon --inspect=${DEBUG_NODE_SERVER}:${DEBUG_NODE_PORT} --exec babel-node ./bin/www"
+    "start:development": "nodemon --inspect=${DEBUG_NODE_SERVER} --exec babel-node ./bin/www"
   },
   "repository": {
     "type": "git",

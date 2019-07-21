@@ -1,4 +1,4 @@
-const Cron = require('cron');
+const { CronJob } = require('cron');
 const { removeInvalidTokensFromBlackList } = require('../modules/authentication.js');
 
 const cronTab = [{
@@ -7,7 +7,7 @@ const cronTab = [{
 }];
 
 const start = ({ schedule, task }) => {
-  new Cron(schedule, task);
+  new CronJob(schedule, task);
 };
 
 const initialize = () => {

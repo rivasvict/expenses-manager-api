@@ -39,12 +39,12 @@ const logOutHandler = async (req, res) => {
     const bearer = req.headers.authorization;
     if (bearer) {
       await authentication.invalidateToken(bearer);
-      res.status(200);
+      res.status(200).json({ messaje: 'Successfully logged out' });
     } else {
       res.status(400).json({ message: 'Bearer is missing' });
     }
   } catch (error) {
-    res.status(500);
+    res.status(500).json({ message: 'Internal server error' });
     throw error;
   }
 };

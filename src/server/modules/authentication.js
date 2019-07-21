@@ -87,11 +87,15 @@ const removeInvalidTokensFromBlackList = async () => {
   }
 };
 
-const invalidateToken = bearer => {
-  const userToken = getTokenOutOfBearer(bearer);
-  cache.addToSet({
-    setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
-  });
+const invalidateToken = async bearer => {
+  try {
+    const userToken = getTokenOutOfBearer(bearer);
+    await cache.addToSet({
+      setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 const authenticationModule = {
