@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 const user = require('./user.js');
 const config = require('../../../config.js');
+const cache = require('./cache.js');
 
 const getToken = ({ payload, tokenGenerationOptions = {} }) => jwt
   .sign(payload, config.SECRET, tokenGenerationOptions);
@@ -29,7 +30,17 @@ const verifyAuthenticUser = async (username, password) => {
   }
 };
 
-const verifyToken = payload => jwt.verify(payload, config.SECRET);
+const verifyToken = payload => {
+  try {
+    return jwt.verify(payload, config.SECRET);
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return null;
+    } else {
+      throw error;
+    }
+  }
+};
 
 const passportVerify = (jwtPayload, done) => {
   try {
@@ -43,11 +54,58 @@ const passportVerify = (jwtPayload, done) => {
   }
 };
 
+const getTokenOutOfBearer = bearer => bearer.split(' ')[1];
+
+const isTokenInvalidated = async (bearer) => {
+  try {
+    const token = getTokenOutOfBearer(bearer);
+    const isTokenInBlacklist = await cache.isMemberOfSet({
+      setName: config.sets.INVALID_USER_TOKEN_SET, member: token
+    });
+    const tokenIsInBlacklist = isTokenInBlacklist === 1;
+    return tokenIsInBlacklist || false;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getInvalidTokensFromBlackList = async () => {
+  try {
+    const allTokensInBlackList = await cache.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
+    return allTokensInBlackList.filter(tokenInBlackList => verifyToken(tokenInBlackList) === null);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const removeInvalidTokensFromBlackList = async () => {
+  try {
+    const invalidTokensFromBlackList = await getInvalidTokensFromBlackList();
+    await cache.removeMembersFromSet(invalidTokensFromBlackList);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const invalidateToken = async bearer => {
+  try {
+    const userToken = getTokenOutOfBearer(bearer);
+    await cache.addToSet({
+      setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const authenticationModule = {
   verifyAuthenticUser,
   getToken,
   verifyToken,
-  passportVerify
+  passportVerify,
+  isTokenInvalidated,
+  removeInvalidTokensFromBlackList,
+  invalidateToken
 };
 
 module.exports = authenticationModule;

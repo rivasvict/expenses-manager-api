@@ -1,9 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 const User = require('./user');
-const { getSaltHash } = require('../lib/util.js');
 
 describe('User class', function () {
   describe('User creation', function () {
@@ -72,62 +70,6 @@ describe('User class', function () {
       afterEach('Restore stubs', function () {
         this.findStub.restore();
       });
-    });
-  });
-
-  describe('User authentication', function () {
-    beforeEach(async function () {
-      const hashedPassword = await getSaltHash({ dataToHash: 'myPassword' });
-      const fabricatedUser = {
-        password: hashedPassword,
-        firstname: 'firstName',
-        email: 'test@test.com',
-        lastName: 'lastName',
-        get: userProperty => fabricatedUser[userProperty]
-      };
-      this.getUserStub = sinon.stub(User, 'getByEmail')
-        .returns(Promise.resolve(fabricatedUser));
-    });
-
-    it('Should return user when user credentials are valid', async function () {
-      const user = {
-        email: 'test@test.com',
-        password: 'myPassword',
-        firstname: 'firstName',
-        lastName: 'lastName'
-      };
-      const userForComparison = _.omit(user, ['password']);
-      const validCredentials = await User
-        .authenticate({ email: user.email, password: user.password });
-      expect(_.omit(validCredentials, 'get')).to.be.deep.equal(userForComparison);
-    });
-
-    it('Should return null when incorrect email', async function () {
-      const user = {
-        email: 'tes@test.com',
-        password: 'myPassword',
-        firstname: 'firstName',
-        lastName: 'lastName'
-      };
-      const validCredentials = await User
-        .authenticate({ email: user.email, password: user.password });
-      expect(validCredentials).to.be.deep.equal(null);
-    });
-
-    it('Should return null when incorrect password', async function () {
-      const user = {
-        email: 'test@test.com',
-        password: 'myPasswor',
-        firstname: 'firstName',
-        lastName: 'lastName'
-      };
-      const validCredentials = await User
-        .authenticate({ email: user.email, password: user.password });
-      expect(validCredentials).to.be.deep.equal(null);
-    });
-
-    afterEach('Restores stub', function () {
-      this.getUserStub.restore();
     });
   });
 });

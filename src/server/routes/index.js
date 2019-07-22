@@ -1,9 +1,10 @@
 const express = require('express');
+const wrap = require('express-async-wrapper');
 
 const router = express.Router();
 const mountUserRoutes = require('./user/');
 const RoutesHandler = require('./routesHandler.js');
-const passport = require('../modules/passport.js');
+const passportHandlers = require('../modules/passportHandlers.js');
 
 const baseApiUrl = '/api';
 const routesHandler = new RoutesHandler({
@@ -11,15 +12,21 @@ const routesHandler = new RoutesHandler({
   baseApiUrl
 });
 
-const jwtStrategy = passport.authenticate('jwt', {
-  session: false
-});
+const jwtStrategy = passportHandlers.isAuthorized;
 
-router.use(`${baseApiUrl}/*`, RoutesHandler.unless(
-  jwtStrategy,
+router.use(`${baseApiUrl}/*`, wrap(RoutesHandler.mountMiddlewaresUnless(
+  [
+    jwtStrategy
+  ],
   '/api/user/login',
-  '/api/user/sign-up'
-));
+  '/api/user/sign-up',
+  '/api/user/log-out'
+)));
+
+/*
+ * TODO: Make an additional manual test (besides automated) on authenticated routes
+ * when using an exired token.
+ */
 
 routesHandler.mountRoute({ mountRouteCallback: mountUserRoutes, mainRouteUrl: '/user' });
 

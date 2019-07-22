@@ -3,8 +3,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const db = require('./src/server/db');
 const config = require('./config.js');
+const cronJobs = require('./src/server/lib/cronjobs.js');
 
 db.initialize();
+cronJobs.initialize();
 const router = require('./src/server/routes/');
 
 const app = express();

@@ -1,4 +1,7 @@
+const _ = require('lodash');
+
 const User = require('../models/user.js');
+const { comparePassword } = require('../db/schemas/user/utils.js');
 
 const signUp = async (userToCreate) => {
   try {
@@ -11,7 +14,18 @@ const signUp = async (userToCreate) => {
 
 const authenticateUser = async ({ email, password }) => {
   try {
-    return User.authenticate({ email, password });
+    const user = await User.getByEmail({ email });
+    if (user && user.get('email') === email) {
+      const areCredentialsCorrect = await comparePassword({
+        password, hashedPassword: user.get('password')
+      });
+      if (areCredentialsCorrect) {
+        const userWithoutPassword = _.omit(user, ['password']);
+        return userWithoutPassword;
+      }
+    }
+
+    return null;
   } catch (error) {
     throw error;
   }

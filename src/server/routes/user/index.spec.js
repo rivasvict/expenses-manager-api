@@ -1,11 +1,18 @@
 const { expect } = require('chai');
 const rewire = require('rewire');
 const sinon = require('sinon');
+const mock = require('mock-require');
 
+const cacheMock = {};
+mock('../../modules/cache.js', cacheMock);
+mock.reRequire('../../modules/cache.js');
+mock.reRequire('../../modules/authentication.js');
+const config = require('../../../../config.js');
 const loginRouter = rewire('./index.js');
 const userModule = rewire('../../modules/user.js');
 const loginRouteHandler = loginRouter.__get__('loginRouteHandler');
 const signUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+const logOutHandler = loginRouter.__get__('logOutHandler');
 const authenticationModule = require('../../modules/authentication.js');
 
 const User = userModule.__get__('User');
@@ -137,6 +144,55 @@ describe('Authentication routes', function () {
 
     afterEach('Restore stubs for signUpRouteHandler', function () {
       this.stub.restore();
+    });
+  });
+
+  describe('logOutHandler test', function () {
+    beforeEach('Prepare logOutHandlerTest', function () {
+      this.token = 'testToken';
+      this.bearer = `bearer ${this.token}`;
+      this.jsonFake = sinon.fake(() => {});
+      this.statusFake = sinon.fake.returns({ json: this.jsonFake });
+      this.req = {
+        headers: {
+          authorization: this.bearer
+        }
+      };
+      this.res = {
+        status: this.statusFake
+      };
+    });
+
+    afterEach('Restore logOutHandlerTest', function () {
+      delete cacheMock.addToSet;
+    });
+
+    after('Stop mocks on require', function () {
+      mock.stopAll();
+    });
+
+    it('Should call cache.addToSet with set and token to invalidate when there is a token', async function () {
+      const addToSeFake = sinon.fake.returns(Promise.resolve(1));
+      cacheMock.addToSet = addToSeFake;
+      await logOutHandler(this.req, this.res);
+      expect(addToSeFake.callCount).to.be.equal(1);
+      expect(addToSeFake.calledWith({
+        setName: config.sets.INVALID_USER_TOKEN_SET, members: [this.token]
+      })).to.be.equal(true);
+      expect(this.statusFake.callCount).to.be.equal(1);
+      expect(this.statusFake.calledWith(200)).to.be.equal(true);
+    });
+
+    it('Should NOT call cache.addToSet and call response with 400 status when there is NO token', async function () {
+      const addToSeFake = sinon.fake(() => {});
+      cacheMock.addToSet = addToSeFake;
+      delete this.req.headers.authorization;
+      await logOutHandler(this.req, this.res);
+      expect(addToSeFake.callCount).to.be.equal(0);
+      expect(this.statusFake.callCount).to.be.equal(1);
+      expect(this.statusFake.calledWith(400)).to.be.equal(true);
+      expect(this.jsonFake.callCount).to.be.equal(1);
+      expect(this.jsonFake.calledWith({ message: 'Bearer is missing' })).to.be.equal(true);
     });
   });
 

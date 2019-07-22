@@ -3,6 +3,8 @@ const assert = require('assert');
 const sinon = require('sinon');
 const { expect } = require('chai');
 
+const { getSaltHash } = require('../lib/util.js');
+
 const userModule = rewire('./user.js');
 const signUp = userModule.__get__('signUp');
 const User = userModule.__get__('User');
@@ -85,27 +87,35 @@ describe('User module', function () {
   });
 
   describe('Integration: Authenticate user', function () {
-    it('Should return user when authentication success', async function () {
-      const mockedUser = {
+    beforeEach('Prepare user authentication stubs', async function () {
+      const hashedPassword = await getSaltHash({ dataToHash: 'myPassword' });
+      this.mockedUser = {
         email: 'test@extracker.com',
         firstName: 'firstName',
-        lastName: 'lastName'
+        lastName: 'lastName',
+        password: hashedPassword,
+        get: userProperty => this.mockedUser[userProperty]
       };
-      const authenticateSuccess = sinon
-        .stub(User, 'authenticate').returns(Promise.resolve(mockedUser));
+      this.setStub = (stub) => {
+        this.stub = stub;
+      };
+    });
+
+    it('Should return user when authentication success', async function () {
       const user = {
         email: 'test@extracker.com',
-        password: 'myPass'
+        password: 'myPassword'
       };
 
+      this.setStub(sinon.stub(User, 'getByEmail')
+        .returns(Promise.resolve(this.mockedUser)));
       const signedUser = await authenticateUser(user);
       expect(signedUser.email).to.be.equal(user.email);
-      authenticateSuccess.restore();
     });
 
     it('Should return null when failed to authenticate user', async function () {
-      const authenticateFail = sinon.stub(User, 'authenticate')
-        .returns(Promise.resolve(null));
+      this.setStub(sinon.stub(User, 'getByEmail')
+        .returns(Promise.resolve(this.mockedUser)));
       const user = {
         email: 'test@extracker.com',
         password: 'myPass'
@@ -113,7 +123,10 @@ describe('User module', function () {
 
       const signedUser = await authenticateUser(user);
       expect(signedUser).to.deep.equal(null);
-      authenticateFail.restore();
+    });
+
+    afterEach('Restore user authentication stubs', function () {
+      this.stub.restore();
     });
   });
 });
