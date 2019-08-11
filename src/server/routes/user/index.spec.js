@@ -14,8 +14,9 @@ const loginRouteHandler = loginRouter.__get__('loginRouteHandler');
 const signUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
 const logOutHandler = loginRouter.__get__('logOutHandler');
 const authenticationModule = require('../../modules/authentication.js');
+const constants = require('../../constants');
 
-const User = userModule.__get__('User');
+const User = userModule.__get__(constants.MODEL_NAMES.USER);
 
 describe('Authentication routes', function () {
   beforeEach('Initialize spies for authentication', function () {

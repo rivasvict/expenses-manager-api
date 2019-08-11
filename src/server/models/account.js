@@ -1,6 +1,6 @@
 const { mongoose, accountSchema } = require('../db/schemas/account/');
 
-const existingAccountModel = mongoose && mongoose.models && mongoose.models.Accounts;
+const existingAccountModel = mongoose && mongoose.models && mongoose.models.Account;
 const DbAccount = existingAccountModel || mongoose.model('Account', accountSchema);
 class Account extends DbAccount {
   constructor(account) {
