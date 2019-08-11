@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const Account = require('./account');
 
-describe.only('Account module', function () {
+describe('Account module', function () {
   describe('Instance account with validation', function () {
     beforeEach('Prepare invalid account data', function () {
       this.accountWithInvalidNameType = {
