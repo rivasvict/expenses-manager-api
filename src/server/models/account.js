@@ -1,8 +1,13 @@
 const { mongoose, accountSchema } = require('../db/schemas/account/');
 const constants = require('../constants');
+const { getDbModel } = require('../lib/db-helper'); 
 
-const existingAccountModel = mongoose && mongoose.models && mongoose.models.Account;
-const DbAccount = existingAccountModel || mongoose.model(constants.MODEL_NAMES.ACCOUNT, accountSchema);
+const DbAccount = getDbModel({
+  db: mongoose,
+  modelName: constants.MODEL_NAMES.ACCOUNT,
+  schema: accountSchema
+});
+
 class Account extends DbAccount {
   constructor(account) {
     super(account);

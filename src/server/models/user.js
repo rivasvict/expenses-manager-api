@@ -1,4 +1,5 @@
 const { mongoose, userSchema } = require('../db/schemas/user/');
+const { getDbModel } = require('../lib/db-helper');
 
 const constants = require('../constants');
 const {
@@ -6,8 +7,12 @@ const {
 } = require('../db/schemas/user/utils.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
-const existingUserModel = mongoose && mongoose.models && mongoose.models.User;
-const DbUser = existingUserModel || mongoose.model(constants.MODEL_NAMES.USER, userSchema);
+const DbUser = getDbModel({
+  db: mongoose,
+  modelName: constants.MODEL_NAMES.USER,
+  schema: userSchema
+});
+
 class User extends DbUser {
   constructor(user) {
     super(user);
