@@ -16,8 +16,7 @@ const user = {
     }
   },
   lastName: { type: String, required: true },
-  password: { type: String, required: true },
-  userToken: { type: String }
+  password: { type: String, required: true }
 };
 
 const { Schema } = mongoose;

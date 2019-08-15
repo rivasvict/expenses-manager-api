@@ -1,11 +1,18 @@
 const { mongoose, userSchema } = require('../db/schemas/user/');
+const { getDbModel } = require('../lib/db-helper');
+
+const constants = require('../constants');
 const {
   addPasswordEncryptionPreSaveHook
 } = require('../db/schemas/user/utils.js');
 
 addPasswordEncryptionPreSaveHook({ schema: userSchema, fieldToHash: 'password' });
-const existingUserModel = mongoose && mongoose.models && mongoose.models.Users;
-const DbUser = existingUserModel || mongoose.model('Users', userSchema);
+const DbUser = getDbModel({
+  db: mongoose,
+  modelName: constants.MODEL_NAMES.USER,
+  schema: userSchema
+});
+
 class User extends DbUser {
   constructor(user) {
     super(user);
@@ -40,7 +47,7 @@ class User extends DbUser {
 
   static async getByEmail({ email }) {
     try {
-      const foundUsers = await this.model('Users').find({ email }).exec();
+      const foundUsers = await this.model(constants.MODEL_NAMES.USER).find({ email }).exec();
       return foundUsers.find(foundUser => foundUser.email === email);
     } catch (error) {
       throw error;

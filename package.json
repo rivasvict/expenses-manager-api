@@ -5,10 +5,10 @@
   "private": true,
   "scripts": {
     "test": "DEBUG=true mocha *.spec.js **/*.spec.js **/**/*.spec.js",
-    "test-debug" : "npm run test -- --inspect=${DEBUG_NODE_SERVER} --watch",
+    "test-debug" : "npm run test -- --inspect=0.0.0.0 --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
-    "start:development": "nodemon --inspect=${DEBUG_NODE_SERVER} --exec babel-node ./bin/www"
+    "start:development": "nodemon --inspect=0.0.0.0 --exec babel-node ./bin/www"
   },
   "repository": {
     "type": "git",

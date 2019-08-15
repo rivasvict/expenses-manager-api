@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 
+const constants = require('../constants');
 const User = require('./user');
 
 describe('User class', function () {
@@ -55,7 +56,7 @@ describe('User class', function () {
           exec: () => Promise.resolve([this.user])
         };
         this.findStub = sinon
-          .stub(this.user.model('Users'), 'find').returns(findMock);
+          .stub(this.user.model(constants.MODEL_NAMES.USER), 'find').returns(findMock);
         try {
           const foundUsers = await this.user.getIsEmailDuplicated();
           expect(this.findStub.calledWith({ email: this.user.email })).to.be.equal(true);

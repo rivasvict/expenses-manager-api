@@ -4,10 +4,12 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 
 const { getSaltHash } = require('../lib/util.js');
+const constants = require('../constants.js');
 
 const userModule = rewire('./user.js');
+
 const signUp = userModule.__get__('signUp');
-const User = userModule.__get__('User');
+const User = userModule.__get__(constants.MODEL_NAMES.USER);
 const authenticateUser = userModule.__get__('authenticateUser');
 
 describe('User module', function () {
