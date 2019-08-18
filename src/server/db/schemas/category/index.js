@@ -3,6 +3,11 @@ const MpathPlugin = require('mongoose-mpath');
 
 const constants = require('../../../constants');
 
+/*
+ * Parent and path are not part of this schema definition
+ * given the fact that mongoose-mpath does this for us at
+ * this moment of category creation
+ */
 const category = {
   name: { type: String, required: true },
   type: {
