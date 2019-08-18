@@ -5,6 +5,7 @@ const Category = require('./category');
 
 describe('Category module', function () {
   beforeEach('Create category objects', function () {
+    this.getCategoryInstance = categoryToInstance => new Category(categoryToInstance);
     this.creationDate = new Date();
     this.validCategory = {
       name: 'test',
@@ -15,7 +16,6 @@ describe('Category module', function () {
   });
 
   describe('Instance category with validation', function () {
-
     describe('Data type errors', function () {
       it('Should throw an error when invalid name data type', function () {
         try {
@@ -26,7 +26,7 @@ describe('Category module', function () {
             type: 'income'
           };
 
-          const category = new Category(categoryInvalidNameType);
+          this.getCategoryInstance(categoryInvalidNameType);
         } catch (error) {
           expect(error.message).to.be.equal('Validation failed: name: Path `name` is required.');
         }
@@ -42,7 +42,7 @@ describe('Category module', function () {
               type: []
             };
 
-            const category = new Category(cathegoryInvalidTypeDataType); 
+            this.getCategoryInstance(cathegoryInvalidTypeDataType);
           } catch (error) {
             expect(error.message).to.be.equal('Validation failed: type: Path `type` is required.');
           }
@@ -57,7 +57,7 @@ describe('Category module', function () {
               type: 'myType'
             };
 
-            const category = new Category(categoryInvalidTypeValue);
+            this.getCategoryInstance(categoryInvalidTypeValue);
           } catch (error) {
             expect(error.message).to.be
               .equal('Validation failed: type: `myType` is not a valid enum value for path `type`.');
@@ -74,7 +74,7 @@ describe('Category module', function () {
             type: 'outcome'
           };
 
-          const category = new Category(categoryInvalidCreationDataType);
+          this.getCategoryInstance(categoryInvalidCreationDataType);
         } catch (error) {
           expect(error.message).to.be
             .equal('Validation failed: creation: Cast to Date failed for value "Just string" at path "creation"');
@@ -88,7 +88,7 @@ describe('Category module', function () {
           name: 'test'
         };
 
-        const category = new Category(categoryWithMissingRequiredAttributes); 
+        this.getCategoryInstance(categoryWithMissingRequiredAttributes);
       } catch (error) {
         expect(error.message)
           .to.be.equal('Validation failed: creation: Path `creation` is required., type: Path `type` is required.');
@@ -96,7 +96,7 @@ describe('Category module', function () {
     });
 
     it('Should create a new category object when valid data is passed', function () {
-      const category = new Category(this.validCategory);
+      const category = this.getCategoryInstance(this.validCategory);
       expect(category.name).to.be.equal(this.validCategory.name);
       expect(category.type).to.be.equal(this.validCategory.type);
       expect(category.description).to.be.equal(this.validCategory.description);
@@ -107,8 +107,9 @@ describe('Category module', function () {
 
   describe('category.create', function () {
     beforeEach('Prepare save stub', function () {
-      this.category = new Category(this.validCategory);
-      this.categoryToResolve = Object.assign(Object.create(this.validCategory), { id: this.category.id });
+      this.category = this.getCategoryInstance(this.validCategory);
+      this.categoryToResolve = Object
+        .assign(Object.create(this.validCategory), { id: this.category.id });
       this.saveStub = sinon.stub(this.category, 'save').returns(Promise.resolve(this.categoryToResolve));
     });
 

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const MpathPlugin = require('mongoose-mpath');
 
 const constants = require('../../../constants');
 
@@ -22,4 +23,9 @@ const category = {
 
 const { Schema } = mongoose;
 const categorySchema = new Schema(category);
+categorySchema.plugin(MpathPlugin, {
+  pathSeparator: ',',
+  onDelete: 'REPARENT',
+  idType: Schema.ObjectId
+});
 module.exports = { mongoose, categorySchema };

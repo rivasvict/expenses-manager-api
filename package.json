@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "DEBUG=true mocha *.spec.js **/*.spec.js **/**/*.spec.js",
-    "test-debug" : "npm run test -- --inspect=0.0.0.0 --watch",
+    "test-debug": "npm run test -- --inspect=0.0.0.0 --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon --inspect=0.0.0.0 --exec babel-node ./bin/www"
@@ -28,10 +28,11 @@
     "if-env": "^1.0.4",
     "ioredis": "^4.9.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "mocha": "^6.1.4",
     "mock-require": "^3.0.3",
     "mongoose": "^5.4.10",
+    "mongoose-mpath": "^2.0.14",
     "morgan": "~1.9.0",
     "nock-record": "^0.3.3",
     "passport": "^0.4.0",
