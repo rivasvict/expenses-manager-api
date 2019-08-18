@@ -12,7 +12,7 @@ const account = {
   description: { type: String, required: false },
   categories: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category'
+    ref: constants.MODEL_NAMES.CATEGORY
   }]
 };
 
