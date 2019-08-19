@@ -4,6 +4,10 @@ const sinon = require('sinon');
 const Account = require('./account');
 
 describe('Account module', function () {
+  beforeEach('Prepare getAccountInstance', function () {
+    this.getAccountInstance = accountToInstance => new Account(accountToInstance);
+  });
+
   describe('Instance account with validation', function () {
     beforeEach('Prepare invalid account data', function () {
       this.accountWithInvalidNameType = {
@@ -33,7 +37,7 @@ describe('Account module', function () {
     describe('Data type errors', function () {
       it('Should throw an error when invalid name data type', function () {
         try {
-          const account = new Account(this.accountWithInvalidNameType);
+          this.getAccountInstance(this.accountWithInvalidNameType);
         } catch (error) {
           expect(error.message).to.be.equal('Validation failed: name: Path `name` is required.');
         }
@@ -56,7 +60,7 @@ describe('Account module', function () {
 
         it('Should throw an error when invalid currency data type', function () {
           try {
-            const account = new Account(this.accountWithInvalidCurrencyType);
+            this.getAccountInstance(this.accountWithInvalidCurrencyType);
           } catch (error) {
             expect(error.message).to.be.equal('Validation failed: currency: Path `currency` is required.');
           }
@@ -64,7 +68,7 @@ describe('Account module', function () {
 
         it('Should throw an error when invalid currency value used', function () {
           try {
-            const account = new Account(this.accountWithInvalidCurrencyValue);
+            this.getAccountInstance(this.accountWithInvalidCurrencyValue);
           } catch (error) {
             expect(error.message).to.be
               .equal('Validation failed: currency: `test` is not a valid enum value for path `currency`.');
@@ -74,7 +78,7 @@ describe('Account module', function () {
 
       it('Should throw an error when invalid description data type', function () {
         try {
-          const account = new Account(this.accountWithInvalidDescriptionType);
+          this.getAccountInstance(this.accountWithInvalidDescriptionType);
         } catch (error) {
           expect(error.message).to.be.equal('Validation failed: description: Path `description` is required.');
         }
@@ -83,16 +87,16 @@ describe('Account module', function () {
 
     it('Should throw an error when missing attributes', function () {
       try {
-        const account = new Account(this.accountWithMissingAtributes);
+        this.getAccountInstance(this.accountWithMissingAtributes);
       } catch (error) {
         expect(error.message)
           .to.be.equal('Validation failed: currency: Path `currency` is required., name: Path `name` is required.');
       }
     });
 
-    it('Should create a new account object when valid data is passed', function() {
+    it('Should create a new account object when valid data is passed', function () {
       try {
-        const account = new Account(this.accountWithValidData);
+        const account = this.getAccountInstance(this.accountWithValidData);
         expect(account.errors).to.be.equal(undefined);
         expect(account.currency).to.be.equal(this.accountWithValidData.currency);
         expect(account.name).to.be.equal(this.accountWithValidData.name);
@@ -107,7 +111,7 @@ describe('Account module', function () {
 
   describe('account.create', function () {
     beforeEach('Define account to be created', function () {
-      this.account = new Account({
+      this.account = this.getAccountInstance({
         name: 'Test account',
         description: 'A simple description',
         currency: 'USD'
