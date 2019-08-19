@@ -10,7 +10,7 @@ describe('Expense module', function () {
       this.expense = {
         ammount: 12.3,
         description: 'A simple test description',
-        date: new Date()
+        date: new Date().toUTCString()
       };
       this.expenseInstance = getExpenseInstance(this.expense);
       this.expenseToResolve = Object
