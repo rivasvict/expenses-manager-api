@@ -1,6 +1,6 @@
 const { mongoose, accountSchema } = require('../db/schemas/account/');
 const constants = require('../constants');
-const { getDbModel } = require('../lib/db-helper'); 
+const { getDbModel } = require('../lib/db-helper');
 
 const DbAccount = getDbModel({
   db: mongoose,

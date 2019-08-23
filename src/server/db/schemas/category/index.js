@@ -22,7 +22,7 @@ const category = {
   description: { type: String, required: false },
   expenses: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Expense'
+    ref: constants.MODEL_NAMES.EXPENSE
   }]
 };
 
