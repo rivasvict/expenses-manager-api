@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const { validateEmailFormat } = require('../../../lib/validators');
+const constants = require('../../../constants');
 
 const user = {
   firstName: { type: String, required: true },
@@ -16,7 +17,11 @@ const user = {
     }
   },
   lastName: { type: String, required: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  accounts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: constants.MODEL_NAMES.ACCOUNT
+  }]
 };
 
 const { Schema } = mongoose;
