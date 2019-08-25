@@ -1,7 +1,7 @@
 const create = async ({ account, user }) => {
   try {
     if (!account && !user) {
-      return new Error('ValidationErroro: account and user instances are required');
+      return new Error('ValidationError: account and user instances are required');
     }
 
     const savedAccount = await getUserSavedAccount({ account, user });
