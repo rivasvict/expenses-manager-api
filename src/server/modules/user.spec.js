@@ -1,4 +1,3 @@
-const rewire = require('rewire');
 const assert = require('assert');
 const sinon = require('sinon');
 const { expect } = require('chai');
@@ -6,21 +5,10 @@ const { expect } = require('chai');
 const { getSaltHash } = require('../lib/util.js');
 const constants = require('../constants.js');
 
-const userModule = rewire('./user.js');
-
-const signUp = userModule.__get__('signUp');
-const User = userModule.__get__(constants.MODEL_NAMES.USER);
-const authenticateUser = userModule.__get__('authenticateUser');
+const UserModule = require('./user.js');
 
 describe('User module', function () {
   describe('Implementation: Sign regular user up', function () {
-    beforeEach('Stub User model', function () {
-      this.User = User.prototype;
-      this.setStub = this.setStub || function (stub) {
-        this.stub = stub;
-      };
-    });
-
     it('Should create new user when it is formed with correct data', async function () {
       const userToTest = {
         firstName: 'ahisuhd',
@@ -28,14 +16,18 @@ describe('User module', function () {
         lastName: 'Rivas',
         password: 'hola'
       };
-      this.setStub(sinon.stub(this.User, 'create')
-        .returns(Promise.resolve(userToTest)));
-      const user = await signUp(userToTest);
+      const MockedUserModel = function () {
+        return {
+          create: sinon.fake.returns(Promise.resolve(userToTest))
+        };
+      };
+      const userModule = UserModule(MockedUserModel);
+      const user = await userModule.signUp(userToTest);
 
       expect(user).to.deep.equal(userToTest);
     });
 
-    it('Should throw error when missing data', async function () {
+    it.only('Should throw error when missing data', async function () {
       const userToTest = {
         email: 'ahfushaa@gmail.com',
         lastName: 'Rivas',
@@ -83,9 +75,6 @@ describe('User module', function () {
       assert.equal(user, duplicationUserError);
     });
 
-    afterEach('Restore stubs', function () {
-      this.stub.restore();
-    });
   });
 
   describe('Integration: Authenticate user', function () {

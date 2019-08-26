@@ -1,9 +1,8 @@
 const _ = require('lodash');
 
-const User = require('../models/user.js');
 const { comparePassword } = require('../db/schemas/user/utils.js');
 
-const signUp = async (userToCreate) => {
+const signUp = User => async (userToCreate) => {
   try {
     const user = new User(userToCreate);
     return await user.create();
@@ -11,6 +10,15 @@ const signUp = async (userToCreate) => {
     throw error;
   }
 };
+
+/*const signUp = async (userToCreate) => {
+  try {
+    const user = new User(userToCreate);
+    return await user.create();
+  } catch (error) {
+    throw error;
+  }
+};*/
 
 const authenticateUser = async ({ email, password }) => {
   try {
@@ -31,4 +39,9 @@ const authenticateUser = async ({ email, password }) => {
   }
 };
 
-module.exports = { signUp, authenticateUser };
+// module.exports = { signUp, authenticateUser };
+module.exports = User => {
+  return {
+    signUp: signUp(User)
+  };
+};
