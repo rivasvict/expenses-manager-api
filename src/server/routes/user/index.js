@@ -1,9 +1,6 @@
 const wrap = require('express-async-wrapper');
 
-const authentication = require('../../modules/authentication.js');
-const userModule = require('../../modules/user.js');
-
-const loginRouteHandler = async (req, res) => {
+const loginRouteHandler = authentication => async (req, res) => {
   try {
     const { email } = req.body.user;
     const { password } = req.body.user;
@@ -19,7 +16,7 @@ const loginRouteHandler = async (req, res) => {
   }
 };
 
-const signUpRouteHandler = async (req, res) => {
+const signUpRouteHandler = userModule => async (req, res) => {
   try {
     const user = await userModule.signUp(req.body.user);
     res.status(200).json(user);
@@ -34,7 +31,7 @@ const signUpRouteHandler = async (req, res) => {
   }
 };
 
-const logOutHandler = async (req, res) => {
+const logOutHandler = authentication => async (req, res) => {
   try {
     const bearer = req.headers.authorization;
     if (bearer) {
@@ -49,13 +46,13 @@ const logOutHandler = async (req, res) => {
   }
 };
 
-const mountUserRoutes = ({ router, baseUrl }) => {
+const mountUserRoutes = ({ authentication, userModule }) => ({ router, baseUrl }) => {
   // /api/user/login
-  router.post(`${baseUrl}/login`, wrap(loginRouteHandler));
+  router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authentication)));
   // /api/user/sign-up
-  router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler));
+  router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler(userModule)));
   // /api/user/log-out
-  router.post(`${baseUrl}/log-out`, wrap(logOutHandler));
+  router.post(`${baseUrl}/log-out`, wrap(logOutHandler(authentication)));
 };
 
 module.exports = mountUserRoutes;

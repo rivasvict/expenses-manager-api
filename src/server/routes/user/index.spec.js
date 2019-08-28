@@ -3,20 +3,21 @@ const rewire = require('rewire');
 const sinon = require('sinon');
 const mock = require('mock-require');
 
-const cacheMock = {};
-mock('../../modules/cache.js', cacheMock);
-mock.reRequire('../../modules/cache.js');
-mock.reRequire('../../modules/authentication.js');
-const config = require('../../../../config.js');
+// const cacheMock = {};
+// mock('../../modules/cache.js', cacheMock);
+// mock.reRequire('../../modules/cache.js');
+// mock.reRequire('../../modules/authentication.js');
+// const config = require('../../../../config.js');
 const loginRouter = rewire('./index.js');
-const userModule = rewire('../../modules/user.js');
-const loginRouteHandler = loginRouter.__get__('loginRouteHandler');
-const signUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
-const logOutHandler = loginRouter.__get__('logOutHandler');
-const authenticationModule = require('../../modules/authentication.js');
-const constants = require('../../constants');
+// const userModule = rewire('../../modules/user.js');
+const rawLoginRouteHandler = loginRouter.__get__('loginRouteHandler');
+const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication)
+// const signUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+// const logOutHandler = loginRouter.__get__('logOutHandler');
+// const authenticationModule = require('../../modules/authentication.js');
+// const constants = require('../../constants');
 
-const User = userModule.__get__(constants.MODEL_NAMES.USER);
+// const User = userModule.__get__(constants.MODEL_NAMES.USER);
 
 describe('Authentication routes', function () {
   beforeEach('Initialize spies for authentication', function () {
@@ -35,34 +36,37 @@ describe('Authentication routes', function () {
         email: 'victor@gmail.com',
         password: 'password'
       };
-      this.rec = {
+      this.req = {
         body: {
           user: this.userToAuthenticate
         }
       };
+      this.getAuthenticationModule = userTokenToReturn => {
+        return {
+          verifyAuthenticUser: sinon.fake.returns(Promise.resolve(userTokenToReturn))
+        }
+      }
     });
 
     it('loginRouteHandler: Should successfully respond to client when correct credentials passed on body', async function () {
-      const userToken = authenticationModule.getToken({ payload: this.userToAuthenticate });
-      const verifyUserStub = sinon.stub(authenticationModule, 'verifyAuthenticUser').returns(Promise.resolve(userToken));
-      await loginRouteHandler(this.rec, this.res);
+      const userToken = 'the user token test';
+      const authenticationModule = this.getAuthenticationModule(userToken);
+      const loginRouteHandler = getLoginRouterHandler(authenticationModule);
+      await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
       expect(this.res.json.calledWith({ userToken })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
-
-      verifyUserStub.restore();
     });
 
     it('loginRouteHandler: Should respond with error to client when correct credentials passed on body', async function () {
-      const verifyUserStub = sinon.stub(authenticationModule, 'verifyAuthenticUser').returns(Promise.resolve(null));
-      await loginRouteHandler(this.rec, this.res);
+      const authenticationModule = this.getAuthenticationModule(null);
+      const loginRouteHandler = getLoginRouterHandler(authenticationModule);
+      await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(403)).to.be.equal(true);
       expect(this.res.json.calledWith({ message: 'Invalid credentials' })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
-
-      verifyUserStub.restore();
     });
   });
 
@@ -74,7 +78,7 @@ describe('Authentication routes', function () {
         email: 'victor@gmail.com',
         password: 'password'
       };
-      this.rec = {
+      this.req = {
         body: {
           user: this.userToSignUp
         }
@@ -87,7 +91,7 @@ describe('Authentication routes', function () {
     it('signUpRouteHandler: Should successfully respond to client with 200 status when successfully created user', async function () {
       this.setStub(sinon.stub(User.prototype, 'create')
         .returns(Promise.resolve(this.userToSignUp)));
-      await signUpRouteHandler(this.rec, this.res);
+      await signUpRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
       expect(this.res.json.calledWith(this.userToSignUp)).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
@@ -102,7 +106,7 @@ describe('Authentication routes', function () {
       this.setStub(sinon.stub(User.prototype, 'create')
         .throws(validationError));
       try {
-        await signUpRouteHandler(this.rec, this.res);
+        await signUpRouteHandler(this.req, this.res);
       } catch (error) {
         expect(this.res.status.calledWith(400)).to.be.equal(true);
         expect(this.res.json.calledWith(validationError)).to.be.equal(true);
@@ -118,7 +122,7 @@ describe('Authentication routes', function () {
       this.setStub(sinon.stub(User.prototype, 'create')
         .throws(duplicationError));
       try {
-        await signUpRouteHandler(this.rec, this.res);
+        await signUpRouteHandler(this.req, this.res);
       } catch (error) {
         expect(this.res.status.calledWith(409)).to.be.equal(true);
         expect(this.res.json.calledWith(duplicationError)).to.be.equal(true);
@@ -134,7 +138,7 @@ describe('Authentication routes', function () {
       this.setStub(sinon.stub(User.prototype, 'create')
         .throws(genericError));
       try {
-        await signUpRouteHandler(this.rec, this.res);
+        await signUpRouteHandler(this.req, this.res);
       } catch (error) {
         expect(this.res.status.calledWith(500)).to.be.equal(true);
         expect(this.res.json.calledWith(genericError)).to.be.equal(true);

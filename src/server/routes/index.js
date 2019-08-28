@@ -2,9 +2,14 @@ const express = require('express');
 const wrap = require('express-async-wrapper');
 
 const router = express.Router();
-const mountUserRoutes = require('./user/');
+const userRoutes = require('./user/');
+const authentication = require('../modules/authentication');
+const UserModule = require('../modules/user');
+const User = require('../models/user');
+const userModule = UserModule(User);
+const mountUserRoutes = userRoutes({ authentication, userModule });
 const RoutesHandler = require('./routesHandler.js');
-const passportHandlers = require('../modules/passportHandlers.js');
+const passportHandlers = require('../modules/passportHandlers');
 
 const baseApiUrl = '/api';
 const routesHandler = new RoutesHandler({
