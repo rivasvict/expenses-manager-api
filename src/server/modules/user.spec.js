@@ -9,6 +9,14 @@ const UserModule = require('./user.js');
 
 describe('User module', function () {
   describe('Implementation: Sign regular user up', function () {
+    beforeEach('Prepare mocked user model', function () {
+      this.getMockedUserModel = userToTest => function () {
+        return {
+          create: sinon.fake.returns(Promise.resolve(userToTest))
+        };
+      };
+    });
+
     it('Should create new user when it is formed with correct data', async function () {
       const userToTest = {
         firstName: 'ahisuhd',
@@ -16,27 +24,21 @@ describe('User module', function () {
         lastName: 'Rivas',
         password: 'hola'
       };
-      const MockedUserModel = function () {
-        return {
-          create: sinon.fake.returns(Promise.resolve(userToTest))
-        };
-      };
-      const userModule = UserModule(MockedUserModel);
+      const userModule = UserModule(this.getMockedUserModel(userToTest));
       const user = await userModule.signUp(userToTest);
 
       expect(user).to.deep.equal(userToTest);
     });
 
-    it.only('Should throw error when missing data', async function () {
+    it('Should throw error when missing data', async function () {
       const userToTest = {
         email: 'ahfushaa@gmail.com',
         lastName: 'Rivas',
         password: 'hola'
       };
-      this.setStub(sinon.stub(this.User, 'create')
-        .throws());
+      const userModule = UserModule(this.getMockedUserModel(userToTest));
       try {
-        await signUp(userToTest);
+        await userModule.signUp(userToTest);
       } catch (error) {
         expect(error.message).to.be.equal('Validation failed: firstName: Path `firstName` is required.');
         expect(error.name).to.be.equal('ValidationError');
@@ -44,17 +46,15 @@ describe('User module', function () {
     });
 
     it('Should throw an error when an uncorrectly formated email inserted', async function () {
-      this.setStub(sinon.stub(this.User, 'create')
-        .throws());
       const user = {
         firstName: 'Victor',
         email: 'ahfushaa@gmailcom',
         lastName: 'Rivas',
         password: 'hola'
       };
+      const userModule = UserModule(this.getMockedUserModel(user));
       try {
-        const userToTest = await signUp(user);
-        await signUp(userToTest);
+        const userToTest = await userModule.signUp(user);
       } catch (error) {
         expect(error.message).to.be.equal(`Validation failed: email: Provided email: ${user.email} has no valid format`);
         expect(error.name).to.be.equal('ValidationError');
@@ -63,9 +63,8 @@ describe('User module', function () {
 
     it('Should throw error when alrady used email', async function () {
       const duplicationUserError = new Error('Duplicated user');
-      this.setStub(sinon.stub(this.User, 'create')
-        .returns(Promise.resolve(duplicationUserError)));
-      const user = await signUp({
+      const userModule = UserModule(this.getMockedUserModel(duplicationUserError));
+      const user = await userModule.signUp({
         firstName: 'Victor',
         email: 'ahfushaa@gmail.com',
         lastName: 'Rivas',
@@ -74,7 +73,6 @@ describe('User module', function () {
 
       assert.equal(user, duplicationUserError);
     });
-
   });
 
   describe('Integration: Authenticate user', function () {
@@ -87,8 +85,8 @@ describe('User module', function () {
         password: hashedPassword,
         get: userProperty => this.mockedUser[userProperty]
       };
-      this.setStub = (stub) => {
-        this.stub = stub;
+      this.getMockedUserModel = userToTest => {
+        return { getByEmail: sinon.fake.returns(Promise.resolve(userToTest))  };
       };
     });
 
@@ -98,26 +96,20 @@ describe('User module', function () {
         password: 'myPassword'
       };
 
-      this.setStub(sinon.stub(User, 'getByEmail')
-        .returns(Promise.resolve(this.mockedUser)));
-      const signedUser = await authenticateUser(user);
+      const userModule = UserModule(this.getMockedUserModel(this.mockedUser));
+      const signedUser = await userModule.authenticateUser(user);
       expect(signedUser.email).to.be.equal(user.email);
     });
 
     it('Should return null when failed to authenticate user', async function () {
-      this.setStub(sinon.stub(User, 'getByEmail')
-        .returns(Promise.resolve(this.mockedUser)));
       const user = {
         email: 'test@extracker.com',
         password: 'myPass'
       };
 
-      const signedUser = await authenticateUser(user);
+      const userModule = UserModule(this.getMockedUserModel(this.mockedUser));
+      const signedUser = await userModule.authenticateUser(user);
       expect(signedUser).to.deep.equal(null);
-    });
-
-    afterEach('Restore user authentication stubs', function () {
-      this.stub.restore();
     });
   });
 });

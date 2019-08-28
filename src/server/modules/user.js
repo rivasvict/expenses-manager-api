@@ -11,16 +11,7 @@ const signUp = User => async (userToCreate) => {
   }
 };
 
-/*const signUp = async (userToCreate) => {
-  try {
-    const user = new User(userToCreate);
-    return await user.create();
-  } catch (error) {
-    throw error;
-  }
-};*/
-
-const authenticateUser = async ({ email, password }) => {
+const authenticateUser = User => async ({ email, password }) => {
   try {
     const user = await User.getByEmail({ email });
     if (user && user.get('email') === email) {
@@ -39,9 +30,9 @@ const authenticateUser = async ({ email, password }) => {
   }
 };
 
-// module.exports = { signUp, authenticateUser };
 module.exports = User => {
   return {
-    signUp: signUp(User)
+    signUp: signUp(User),
+    authenticateUser: authenticateUser(User)
   };
 };
