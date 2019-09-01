@@ -1,8 +1,6 @@
-const _ = require('lodash');
-
 const { comparePassword } = require('../db/schemas/user/utils.js');
 
-const signUp = User => async (userToCreate) => {
+const signUp = ({ User }) => async (userToCreate) => {
   try {
     const user = new User(userToCreate);
     return await user.create();
@@ -11,7 +9,7 @@ const signUp = User => async (userToCreate) => {
   }
 };
 
-const authenticateUser = User => async ({ email, password }) => {
+const authenticateUser = ({ User, _ }) => async ({ email, password }) => {
   try {
     const user = await User.getByEmail({ email });
     if (user && user.get('email') === email) {
@@ -30,9 +28,9 @@ const authenticateUser = User => async ({ email, password }) => {
   }
 };
 
-module.exports = User => {
+module.exports = ({ User, _ }) => {
   return {
-    signUp: signUp(User),
-    authenticateUser: authenticateUser(User)
+    signUp: signUp({ User }),
+    authenticateUser: authenticateUser({ User, _ })
   };
 };

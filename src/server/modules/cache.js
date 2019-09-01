@@ -1,18 +1,23 @@
-const Redis = require('ioredis');
+/*
+  * TODO: Remove this after its call is configure somewere else
+  *
+    const cacheClient = new Redis({
+      port: parseInt(config.REDIS_PORT),
+      host: config.REDIS_SERVER
+    });
+*/
 
-const config = require('./../../../config.js');
+const addToSet = ({ cacheClient }) => ({ setName, members }) => cacheClient.sadd(setName, members);
 
-const cacheClient = new Redis({
-  port: parseInt(config.REDIS_PORT),
-  host: config.REDIS_SERVER
-});
+const isMemberOfSet = ({ cacheClient }) => ({ setName, member }) => cacheClient.sismember(setName, member);
 
-const addToSet = ({ setName, members }) => cacheClient.sadd(setName, members);
+const removeMembersFromSet = ({ cacheClient }) => ({ setName, members }) => cacheClient.srem(setName, members);
 
-const isMemberOfSet = ({ setName, member }) => cacheClient.sismember(setName, member);
+const getAllMembersOfSet = ({ cacheClient }) => setName => cacheClient.smembers(setName);
 
-const removeMembersFromSet = ({ setName, members }) => cacheClient.srem(setName, members);
-
-const getAllMembersOfSet = setName => cacheClient.smembers(setName);
-
-module.exports = { addToSet, isMemberOfSet, removeMembersFromSet, getAllMembersOfSet };
+module.exports = ({ cacheClient, config, Redis }) => {
+  addToSet: addToSet({ cacheClient }),
+  isMemberOfSet: isMemberOfSet({ cacheClient }),
+  removeMembersFromSet: removeMembersFromSet({ cacheClient }),
+  getAllMembersOfSet: removeMembersFromSet({ cacheClient })
+};

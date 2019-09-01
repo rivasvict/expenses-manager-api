@@ -1,33 +1,36 @@
-const passport = require('passport');
-const JwtStrategy = require('passport-jwt').Strategy;
-const { ExtractJwt } = require('passport-jwt');
+const initPassportStrategy = ({ passport, ExtractJwt, config, JwtStrategy, authenticationModule }) => {
+  const jwtOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: config.SECRET
+  };
 
-const config = require('../../../config.js');
-const authenticationModule = require('./authentication.js');
+  passport.use(new JwtStrategy(jwtOptions, authenticationModule.passportVerify));
+}
 
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: config.SECRET
+const jwtAuthenticate = ({ req, res, next, passport }) => {
+  passport.authenticate('jwt', {
+    session: false
+  })(req, res, next);
 };
 
-passport.use(new JwtStrategy(jwtOptions, authenticationModule.passportVerify));
-
-const isAuthorized = async (req, res, next) => {
+const isAuthorized = ({ passport, authenticationModule, constants }) => async (req, res, next) => {
   try {
     const bearer = req.headers.authorization;
     const isTokenInBlackList = await authenticationModule.isTokenInvalidated(bearer);
     if (isTokenInBlackList) {
-      res.status(403).json({ message: 'Session expired' });
+      res.status(constants.RESPONSE.STATUSES.UNAUTHORIZED).json({ message: constants.RESPONSE.MESSAGES.SESSION_EXPIRED });
     } else {
-      passportHandlers.passport.authenticate('jwt', {
-        session: false
-      })(req, res, next);
+      jwtAuthenticate({ req, res, next, passport });
     }
   } catch (error) {
     throw error;
   }
 };
 
-const passportHandlers = { passport, isAuthorized };
+module.exports = ({ passport, ExtractJwt, config, JwtStrategy, authenticationModule, constants }) => {
+  initPassportStrategy({ passport, ExtractJwt, config, JwtStrategy, authenticationModule });
 
-module.exports = passportHandlers;
+  return {
+    isAuthorized: isAuthorized({ passport, authenticationModule, constants })
+  };
+};

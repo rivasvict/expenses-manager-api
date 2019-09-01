@@ -1,16 +1,9 @@
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
-
-const user = require('./user.js');
-const config = require('../../../config.js');
-const cache = require('./cache.js');
-
-const getToken = ({ payload, tokenGenerationOptions = {} }) => jwt
+const getToken = ({ config, jwt }) => ({ payload, tokenGenerationOptions = {} }) => jwt
   .sign(payload, config.SECRET, tokenGenerationOptions);
 
-const verifyAuthenticUser = async (username, password) => {
+const verifyAuthenticUser = ({ userModule, config, _, getAuthenticationToken }) => async (username, password) => {
   try {
-    const loggedUser = await user.authenticateUser({
+    const loggedUser = await userModule.authenticateUser({
       password,
       email: username
     });
@@ -19,7 +12,7 @@ const verifyAuthenticUser = async (username, password) => {
       return null;
     }
 
-    return getToken({
+    return getAuthenticationToken({
       payload: _.omit(loggedUser.toJSON(), ['password']),
       tokenGenerationOptions: {
         expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
@@ -30,7 +23,7 @@ const verifyAuthenticUser = async (username, password) => {
   }
 };
 
-const verifyToken = payload => {
+const verifyToken = ({ jwt, config }) => payload => {
   try {
     return jwt.verify(payload, config.SECRET);
   } catch (error) {
@@ -42,7 +35,7 @@ const verifyToken = payload => {
   }
 };
 
-const passportVerify = (jwtPayload, done) => {
+const passportVerify = () => (jwtPayload, done) => {
   try {
     if (jwtPayload) {
       return done(null, jwtPayload);
@@ -56,10 +49,10 @@ const passportVerify = (jwtPayload, done) => {
 
 const getTokenOutOfBearer = bearer => bearer.split(' ')[1];
 
-const isTokenInvalidated = async (bearer) => {
+const isTokenInvalidated = ({ cacheModule, config }) => async (bearer) => {
   try {
     const token = getTokenOutOfBearer(bearer);
-    const isTokenInBlacklist = await cache.isMemberOfSet({
+    const isTokenInBlacklist = await cacheModule.isMemberOfSet({
       setName: config.sets.INVALID_USER_TOKEN_SET, member: token
     });
     const tokenIsInBlacklist = isTokenInBlacklist === 1;
@@ -69,28 +62,28 @@ const isTokenInvalidated = async (bearer) => {
   }
 };
 
-const getInvalidTokensFromBlackList = async () => {
+const getInvalidTokensFromBlackList = ({ cacheModule, config }) => async () => {
   try {
-    const allTokensInBlackList = await cache.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
-    return allTokensInBlackList.filter(tokenInBlackList => verifyToken(tokenInBlackList) === null);
+    const allTokensInBlackList = await cacheModule.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
+    return allTokensInBlackList.filter(tokenInBlackList => authenticationModule.verifyToken(tokenInBlackList) === null);
   } catch (error) {
     throw error;
   }
 };
 
-const removeInvalidTokensFromBlackList = async () => {
+const removeInvalidTokensFromBlackList = ({ cacheModule }) => async () => {
   try {
     const invalidTokensFromBlackList = await getInvalidTokensFromBlackList();
-    await cache.removeMembersFromSet(invalidTokensFromBlackList);
+    await cacheModule.removeMembersFromSet(invalidTokensFromBlackList);
   } catch (error) {
     throw error;
   }
 };
 
-const invalidateToken = async bearer => {
+const invalidateToken = ({ cacheModule, config }) => async bearer => {
   try {
     const userToken = getTokenOutOfBearer(bearer);
-    await cache.addToSet({
+    await cacheModule.addToSet({
       setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
     });
   } catch (error) {
@@ -98,14 +91,18 @@ const invalidateToken = async bearer => {
   }
 };
 
-const authenticationModule = {
-  verifyAuthenticUser,
-  getToken,
-  verifyToken,
-  passportVerify,
-  isTokenInvalidated,
-  removeInvalidTokensFromBlackList,
-  invalidateToken
+const authenticationModule = ({ config, cacheModule, userModule, _, jwt }) => {
+  const getAuthenticationToken = getToken({ config, jwt });
+
+  return {
+    verifyAuthenticUser: verifyAuthenticUser({ getAuthenticationToken, userModule, config, _ }),
+    getToken: getAuthenticationToken({ config, jwt }),
+    verifyToken: verifyToken({ jwt, config }),
+    passportVerify: passportVerify(),
+    isTokenInvalidated: isTokenInvalidated({ cacheModule, config }),
+    removeInvalidTokensFromBlackList: removeInvalidTokensFromBlackList({ cacheModule }),
+    invalidateToken: invalidateToken({ cacheModule, config })
+  };
 };
 
 module.exports = authenticationModule;
