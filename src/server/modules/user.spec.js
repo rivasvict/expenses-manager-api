@@ -1,4 +1,5 @@
 const assert = require('assert');
+const _ = require('lodash');
 const sinon = require('sinon');
 const { expect } = require('chai');
 
@@ -24,7 +25,7 @@ describe('User module', function () {
         lastName: 'Rivas',
         password: 'hola'
       };
-      const userModule = UserModule(this.getMockedUserModel(userToTest));
+      const userModule = UserModule({ _, User: this.getMockedUserModel(userToTest) });
       const user = await userModule.signUp(userToTest);
 
       expect(user).to.deep.equal(userToTest);
@@ -36,7 +37,7 @@ describe('User module', function () {
         lastName: 'Rivas',
         password: 'hola'
       };
-      const userModule = UserModule(this.getMockedUserModel(userToTest));
+      const userModule = UserModule({ User: this.getMockedUserModel(userToTest) });
       try {
         await userModule.signUp(userToTest);
       } catch (error) {
@@ -52,7 +53,7 @@ describe('User module', function () {
         lastName: 'Rivas',
         password: 'hola'
       };
-      const userModule = UserModule(this.getMockedUserModel(user));
+      const userModule = UserModule({ User: this.getMockedUserModel(user) });
       try {
         const userToTest = await userModule.signUp(user);
       } catch (error) {
@@ -63,7 +64,7 @@ describe('User module', function () {
 
     it('Should throw error when alrady used email', async function () {
       const duplicationUserError = new Error('Duplicated user');
-      const userModule = UserModule(this.getMockedUserModel(duplicationUserError));
+      const userModule = UserModule({ User: this.getMockedUserModel(duplicationUserError) });
       const user = await userModule.signUp({
         firstName: 'Victor',
         email: 'ahfushaa@gmail.com',
@@ -96,7 +97,7 @@ describe('User module', function () {
         password: 'myPassword'
       };
 
-      const userModule = UserModule(this.getMockedUserModel(this.mockedUser));
+      const userModule = UserModule({ _, User: this.getMockedUserModel(this.mockedUser) });
       const signedUser = await userModule.authenticateUser(user);
       expect(signedUser.email).to.be.equal(user.email);
     });
@@ -107,7 +108,7 @@ describe('User module', function () {
         password: 'myPass'
       };
 
-      const userModule = UserModule(this.getMockedUserModel(this.mockedUser));
+      const userModule = UserModule({ User: this.getMockedUserModel(this.mockedUser) });
       const signedUser = await userModule.authenticateUser(user);
       expect(signedUser).to.deep.equal(null);
     });
