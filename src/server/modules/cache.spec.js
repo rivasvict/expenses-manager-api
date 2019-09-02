@@ -1,6 +1,7 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
-const mock = require('mock-require');
+
+const Cache = require('./cache');
 
 describe('Cache CRD operations', function () {
 
@@ -9,18 +10,19 @@ describe('Cache CRD operations', function () {
     this.itIsMemberCodeNumber = 1;
     this.removedMembersOfSetCodeNumber = 1;
     this.allMembersOfSet = ['3', '435', 54];
-    function CacheClientStubClass() {}
-    CacheClientStubClass.prototype.sadd = () => Promise.resolve(this.membersToSet.length);
-    CacheClientStubClass.prototype.sismember = () => Promise.resolve(this.itIsMemberCodeNumber);
-    CacheClientStubClass.prototype.srem = () => Promise.resolve(this.removedMembersOfSetCodeNumber);
-    CacheClientStubClass.prototype.smembers = () => Promise.resolve(this.allMembersOfSet);
 
-    this.saddStub = sinon.spy(CacheClientStubClass.prototype, 'sadd');
-    this.sismemberStub = sinon.spy(CacheClientStubClass.prototype, 'sismember');
-    this.sremStub = sinon.spy(CacheClientStubClass.prototype, 'srem');
-    this.smembersStub = sinon.spy(CacheClientStubClass.prototype, 'smembers');
-    mock('ioredis', CacheClientStubClass);
-    this.cache = require('./cache.js');
+    this.saddStub = sinon.fake.returns(Promise.resolve(this.membersToSet.length));
+    this.sismemberStub = sinon.fake.returns(Promise.resolve(this.itIsMemberCodeNumber));
+    this.sremStub = sinon.fake.returns(Promise.resolve(this.removedMembersOfSetCodeNumber));
+    this.smembersStub = sinon.fake.returns(Promise.resolve(this.allMembersOfSet));
+    this.cache = Cache({
+      cacheClient: {
+        sadd: this.saddStub,
+        sismember: this.sismemberStub,
+        srem: this.sremStub,
+        smembers: this.smembersStub
+      }
+    });
   });
 
   it('It should persist into set successfully', async function () {
@@ -82,6 +84,6 @@ describe('Cache CRD operations', function () {
   });
 
   afterEach('Restore Cache', function () {
-    mock.stop('ioredis');
+    sinon.restore();
   });
 });

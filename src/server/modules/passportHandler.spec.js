@@ -2,7 +2,6 @@ const mock = require('mock-require');
 const sinon = require('sinon');
 const { expect } = require('chai');
 
-mock('./cache.js', {isMemberOfSet: () => {console.log('other')}});
 const authenticationModule = require('./authentication.js');
 const passportHandlers = require('./passportHandlers.js');
 const config = require('../../../config.js');

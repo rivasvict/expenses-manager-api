@@ -1,11 +1,11 @@
 /*
-  * TODO: Remove this after its call is configure somewere else
-  *
+ * TODO: Remove this after its call is configure somewere else
+ *
     const cacheClient = new Redis({
       port: parseInt(config.REDIS_PORT),
       host: config.REDIS_SERVER
     });
-*/
+    */
 
 const addToSet = ({ cacheClient }) => ({ setName, members }) => cacheClient.sadd(setName, members);
 
@@ -15,9 +15,11 @@ const removeMembersFromSet = ({ cacheClient }) => ({ setName, members }) => cach
 
 const getAllMembersOfSet = ({ cacheClient }) => setName => cacheClient.smembers(setName);
 
-module.exports = ({ cacheClient, config, Redis }) => {
-  addToSet: addToSet({ cacheClient }),
-  isMemberOfSet: isMemberOfSet({ cacheClient }),
-  removeMembersFromSet: removeMembersFromSet({ cacheClient }),
-  getAllMembersOfSet: removeMembersFromSet({ cacheClient })
+module.exports = ({ cacheClient }) => {
+  return {
+    addToSet: addToSet({ cacheClient }),
+    isMemberOfSet: isMemberOfSet({ cacheClient }),
+    removeMembersFromSet: removeMembersFromSet({ cacheClient }),
+    getAllMembersOfSet: getAllMembersOfSet({ cacheClient })
+  };
 };
