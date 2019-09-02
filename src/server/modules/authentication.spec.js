@@ -1,35 +1,15 @@
+const jwt = require('jsonwebtoken');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const _ = require('lodash');
-const mock = require('mock-require');
 
 const config = require('../../../config.js');
 
-const ioredisMock = function () {};
-ioredisMock.prototype.sismember = () => {};
-ioredisMock.prototype.sadd = () => {};
-ioredisMock.prototype.srem = () => {};
-mock('ioredis', ioredisMock);
-
-const cacheMock = {
-  isMemberOfSet: () => {},
-  addToSet: () => {},
-  removeMembersFromSet: () => {},
-  getAllMembersOfSet: () => {}
-};
-mock('./cache.js', cacheMock);
-mock.reRequire('./cache.js');
-mock.reRequire('./authentication.js');
-
-const userModule = require('./user.js');
-const authentication = require('./authentication.js');
+const authenticationModule = require('./authentication.js');
 
 describe('Authentication module', function () {
   describe('Authenticate regular user', function () {
     beforeEach('Prepare stubs', function () {
-      this.setStub = this.setStub || function (stub) {
-        this.stub = stub;
-      };
       this.username = 'test@test.com';
       this.password = 'password';
       this.userToAuthenticate = {
@@ -38,11 +18,19 @@ describe('Authentication module', function () {
         lastname: 'test',
         toJSON: () => _.omit(this.userToAuthenticate, ['toJSON'])
       };
+      this.getAuthenticationModule = ({ userModuleMock }) => authenticationModule({
+        config,
+        _,
+        jwt,
+        userModule: userModuleMock
+      });
     });
 
     it('Should return user valid user token when correct credentials', async function () {
-      this.setStub(sinon.stub(userModule, 'authenticateUser')
-        .returns(Promise.resolve(this.userToAuthenticate)));
+      const userModuleMock = {
+        authenticateUser: sinon.fake.returns(Promise.resolve(this.userToAuthenticate))
+      };
+      const authentication = this.getAuthenticationModule({ userModuleMock });
       const verifiedUserToken = await authentication
         .verifyAuthenticUser(this.username, this.password);
       const decodedUserToken = authentication.verifyToken(verifiedUserToken);
@@ -56,28 +44,35 @@ describe('Authentication module', function () {
     });
 
     it('Should return null when non authentic user', async function () {
-      this.setStub(sinon.stub(userModule, 'authenticateUser')
-        .returns(Promise.resolve(null)));
+      const userModuleMock = {
+        authenticateUser: sinon.fake.returns(Promise.resolve(null))
+      };
+      const authentication = this.getAuthenticationModule({ userModuleMock });
       const verifiedUserToken = await authentication
         .verifyAuthenticUser(this.username, this.password);
       expect(verifiedUserToken).to.deep.equal(null);
     });
 
     afterEach('Restore stubs', function () {
-      if (this.stub && this.stub.restore) {
-        this.stub.restore();
-      }
+      sinon.restore();
     });
   });
 
   describe('Token usage', function () {
+    beforeEach('Get authentication module ready for test', function () {
+      this.authentication = authenticationModule({
+        config,
+        jwt
+      });
+    });
+
     it('Should authentication.getToken', function () {
       const loggedUser = {
         firstname: 'test',
         email: 'test@test.com',
         lastname: 'test'
       };
-      const token = authentication.getToken({ payload: loggedUser, tokenGenerationOptions: { expiresIn: '1s' } });
+      const token = this.authentication.getToken({ payload: loggedUser, tokenGenerationOptions: { expiresIn: '1s' } });
       expect(token).to.not.equal(undefined);
     });
 
@@ -88,7 +83,6 @@ describe('Authentication module', function () {
           email: 'test@test.com',
           lastname: 'test'
         };
-        sinon.spy(authentication, 'verifyToken');
       });
 
       afterEach('Restore spy', function () {
@@ -96,44 +90,44 @@ describe('Authentication module', function () {
       });
 
       it('Should verify correct token with no expiration time', function () {
-        const token = authentication.getToken({ payload: this.loggedUser });
-        const decodedToken = authentication.verifyToken(token);
+        const token = this.authentication.getToken({ payload: this.loggedUser });
+        const decodedToken = this.authentication.verifyToken(token);
         expect(decodedToken).to.have.property('firstname');
         expect(decodedToken).to.have.property('lastname');
         expect(decodedToken).to.have.property('email');
       });
 
       it('Should throw error when token is invalid', function () {
-        const token = `${authentication.getToken({ payload: this.loggedUser })}123`;
+        const token = `${this.authentication.getToken({ payload: this.loggedUser })}123`;
         try {
-          authentication.verifyToken(token);
+          this.authentication.verifyToken(token);
         } catch (error) {
           expect(error.message).to.be.equal('invalid signature');
         }
       });
 
       it('Should should verify token under expiration time', function () {
-        const token = authentication.getToken({
+        const token = this.authentication.getToken({
           payload: this.loggedUser,
           tokenGenerationOptions: {
             expiresIn: '4s'
           }
         });
-        const decodedToken = authentication.verifyToken(token);
+        const decodedToken = this.authentication.verifyToken(token);
         expect(decodedToken).to.have.property('firstname');
         expect(decodedToken).to.have.property('lastname');
         expect(decodedToken).to.have.property('email');
       });
 
       it('Should should throw an error when verify token is out of expiration time', function () {
-        const token = authentication.getToken({
+        const token = this.authentication.getToken({
           payload: this.loggedUser,
           tokenGenerationOptions: {
             expiresIn: '-1s'
           }
         });
 
-        const decodedToken = authentication.verifyToken(token);
+        const decodedToken = this.authentication.verifyToken(token);
         expect(decodedToken).to.be.equal(null);
       });
     });
@@ -141,9 +135,6 @@ describe('Authentication module', function () {
 
   describe('passportVerify: Verify user for passportJs strategy', function () {
     beforeEach('Prepare stubs', function () {
-      this.setStub = this.setStub || function (stub) {
-        this.stub = stub;
-      };
       this.username = 'test@test.com';
       this.password = 'password';
       this.userToAuthenticate = {
@@ -151,6 +142,7 @@ describe('Authentication module', function () {
         email: this.username,
         lastname: 'test'
       };
+      this.authentication = authenticationModule({});
     });
 
     it('Should successfully verify the user', async function () {
@@ -159,22 +151,20 @@ describe('Authentication module', function () {
         username: this.username,
         password: this.password
       };
-      await authentication.passportVerify(jwtPayload, done);
+      await this.authentication.passportVerify(jwtPayload, done);
       expect(done.callCount).to.be.equal(1);
       expect(done.calledOnceWith(null, jwtPayload)).to.be.equal(true);
     });
 
     it('Should call done with false when non authentic user', async function () {
       const done = sinon.fake();
-      await authentication.passportVerify(null, done);
+      await this.authentication.passportVerify(null, done);
       expect(done.callCount).to.be.equal(1);
       expect(done.calledOnceWith(null, false)).to.be.equal(true);
     });
 
     afterEach('Restore stubs', function () {
-      if (this.stub && this.stub.restore) {
-        this.stub.restore();
-      }
+      sinon.restore();
     });
   });
 
@@ -182,37 +172,58 @@ describe('Authentication module', function () {
     beforeEach('Preconfigure tests', function () {
       this.invalidToken = 'Bearer invalidToken';
       this.rawToken = 'invalidToken';
+      this.getAuthenticationModule = ({ cacheModule }) => authenticationModule({
+        cacheModule,
+        config,
+        jwt
+      });
     });
 
     after('Stop mock', function () {
-      mock.stopAll();
+      sinon.restore();
     });
 
     it('Should return true when token is blacklisted', async function () {
-      const isMemberOfSetStub = sinon.stub(cacheMock, 'isMemberOfSet').returns(Promise.resolve(1));
+      const isMemberOfSetFake = sinon.fake.returns(Promise.resolve(1));
+      const authentication = this.getAuthenticationModule({
+        cacheModule: {
+          isMemberOfSet: isMemberOfSetFake
+        }
+      });
       const isTokenInvalidated = await authentication
         .isTokenInvalidated(this.invalidToken);
       expect(isTokenInvalidated).to.be.equal(true);
-      expect(isMemberOfSetStub.calledOnce).to.be.equal(true);
-      expect(isMemberOfSetStub.calledWith({
+      expect(isMemberOfSetFake.calledOnce).to.be.equal(true);
+      expect(isMemberOfSetFake.calledWith({
         setName: config.sets.INVALID_USER_TOKEN_SET, member: this.rawToken
       })).to.be.equal(true);
-      isMemberOfSetStub.restore();
     });
 
     it('Should return false when token is NOT blacklisted', async function () {
-      const isMemberOfSetStub = sinon.stub(cacheMock, 'isMemberOfSet').returns(Promise.resolve(0));
+      const isMemberOfSetFake = sinon.fake.returns(Promise.resolve(0));
+      const authentication = this.getAuthenticationModule({
+        cacheModule: {
+          isMemberOfSet: isMemberOfSetFake
+        }
+      });
       const isTokenInvalidated = await authentication
         .isTokenInvalidated('Bearer invalidToken');
       expect(isTokenInvalidated).to.be.equal(false);
-      expect(isMemberOfSetStub.calledOnce).to.be.equal(true);
-      expect(isMemberOfSetStub.calledWith({
+      expect(isMemberOfSetFake.calledOnce).to.be.equal(true);
+      expect(isMemberOfSetFake.calledWith({
         setName: config.sets.INVALID_USER_TOKEN_SET, member: this.rawToken
       })).to.be.equal(true);
-      isMemberOfSetStub.restore();
     });
 
     it('Should remove all invalid tokens from black list', async function () {
+      const removeMembersFromSetFake = sinon.fake.returns(Promise.resolve(2));
+      const authenticationModuleDependencies = {
+        cacheModule: {
+          removeMembersFromSet: removeMembersFromSetFake,
+          getAllMembersOfSet: () => {}
+        }
+      };
+      const authentication = this.getAuthenticationModule(authenticationModuleDependencies);
       const expiredTokens = [
         authentication.getToken({
           payload: { user: 'test1' },
@@ -234,32 +245,33 @@ describe('Authentication module', function () {
 
       try {
         const blacklistedTokens = [...expiredTokens, ...validTokens];
-        const removeMembersFromSetStub = sinon.stub(cacheMock, 'removeMembersFromSet')
-          .returns(Promise.resolve(2));
-        const getAllMembersOfSetStub = sinon.stub(cacheMock, 'getAllMembersOfSet')
+        const getAllMembersOfSetFake = sinon.stub(authenticationModuleDependencies.cacheModule, 'getAllMembersOfSet')
           .returns(Promise.resolve(blacklistedTokens));
         await authentication
           .removeInvalidTokensFromBlackList();
-        expect(removeMembersFromSetStub.calledOnce).to.be.equal(true);
-        expect(removeMembersFromSetStub.calledWith(expiredTokens)).to.be.equal(true);
-        removeMembersFromSetStub.restore();
-        getAllMembersOfSetStub.restore();
+        expect(removeMembersFromSetFake.calledOnce).to.be.equal(true);
+        expect(removeMembersFromSetFake.calledWith(expiredTokens)).to.be.equal(true);
+        getAllMembersOfSetFake.restore();
       } catch (error) {
         throw error;
       }
     });
 
     it('invalidateToken should call add to set on cache with token to invalidate', async function () {
-      const addToSetStub = sinon.stub(cacheMock, 'addToSet').returns(Promise.resolve(1));
+      const addToSetFake = sinon.fake.returns(Promise.resolve(1));
+      const authentication = this.getAuthenticationModule({
+        cacheModule: {
+          addToSet: addToSetFake
+        }
+      });
       const tokenToInvalidate = 'thisIsAnInvalidToken';
       const bearer = `Bearer ${tokenToInvalidate}`;
       await authentication
         .invalidateToken(bearer);
-      expect(addToSetStub.calledOnce).to.be.equal(true);
-      expect(addToSetStub.calledWith({
+      expect(addToSetFake.calledOnce).to.be.equal(true);
+      expect(addToSetFake.calledWith({
         setName: config.sets.INVALID_USER_TOKEN_SET, members: [tokenToInvalidate]
       })).to.be.equal(true);
-      addToSetStub.restore();
     });
   });
 });

@@ -62,18 +62,23 @@ const isTokenInvalidated = ({ cacheModule, config }) => async (bearer) => {
   }
 };
 
-const getInvalidTokensFromBlackList = ({ cacheModule, config }) => async () => {
+const getInvalidTokensFromBlackList = async ({ cacheModule, config, verifyAuthenticationToken }) => {
   try {
     const allTokensInBlackList = await cacheModule.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
-    return allTokensInBlackList.filter(tokenInBlackList => authenticationModule.verifyToken(tokenInBlackList) === null);
+    return allTokensInBlackList.filter(tokenInBlackList => verifyAuthenticationToken(tokenInBlackList) === null);
   } catch (error) {
     throw error;
   }
 };
 
-const removeInvalidTokensFromBlackList = ({ cacheModule }) => async () => {
+const removeInvalidTokensFromBlackList = ({ cacheModule, config, verifyAuthenticationToken }) => async () => {
   try {
-    const invalidTokensFromBlackList = await getInvalidTokensFromBlackList();
+    const invalidTokensFromBlackList = await getInvalidTokensFromBlackList({
+      cacheModule,
+      config,
+      verifyAuthenticationToken
+    });
+
     await cacheModule.removeMembersFromSet(invalidTokensFromBlackList);
   } catch (error) {
     throw error;
@@ -93,14 +98,17 @@ const invalidateToken = ({ cacheModule, config }) => async bearer => {
 
 const authenticationModule = ({ config, cacheModule, userModule, _, jwt }) => {
   const getAuthenticationToken = getToken({ config, jwt });
+  const verifyAuthenticationToken = verifyToken({ jwt, config });
 
   return {
     verifyAuthenticUser: verifyAuthenticUser({ getAuthenticationToken, userModule, config, _ }),
-    getToken: getAuthenticationToken({ config, jwt }),
-    verifyToken: verifyToken({ jwt, config }),
+    getToken: getAuthenticationToken,
+    verifyToken: verifyAuthenticationToken,
     passportVerify: passportVerify(),
     isTokenInvalidated: isTokenInvalidated({ cacheModule, config }),
-    removeInvalidTokensFromBlackList: removeInvalidTokensFromBlackList({ cacheModule }),
+    removeInvalidTokensFromBlackList: removeInvalidTokensFromBlackList({
+      cacheModule, config, verifyAuthenticationToken
+    }),
     invalidateToken: invalidateToken({ cacheModule, config })
   };
 };
