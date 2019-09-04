@@ -1,23 +1,10 @@
 const { expect } = require('chai');
 const rewire = require('rewire');
 const sinon = require('sinon');
-const mock = require('mock-require');
 
-// const cacheMock = {};
-// mock('../../modules/cache.js', cacheMock);
-// mock.reRequire('../../modules/cache.js');
-// mock.reRequire('../../modules/authentication.js');
-// const config = require('../../../../config.js');
 const loginRouter = rewire('./index.js');
-// const userModule = rewire('../../modules/user.js');
 const rawLoginRouteHandler = loginRouter.__get__('loginRouteHandler');
 const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication)
-// const signUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
-// const logOutHandler = loginRouter.__get__('logOutHandler');
-// const authenticationModule = require('../../modules/authentication.js');
-// const constants = require('../../constants');
-
-// const User = userModule.__get__(constants.MODEL_NAMES.USER);
 
 describe('Authentication routes', function () {
   beforeEach('Initialize spies for authentication', function () {
@@ -170,10 +157,6 @@ describe('Authentication routes', function () {
 
     afterEach('Restore logOutHandlerTest', function () {
       delete cacheMock.addToSet;
-    });
-
-    after('Stop mocks on require', function () {
-      mock.stopAll();
     });
 
     it('Should call cache.addToSet with set and token to invalidate when there is a token', async function () {
