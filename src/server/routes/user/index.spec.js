@@ -4,7 +4,7 @@ const sinon = require('sinon');
 
 const loginRouter = rewire('./index.js');
 const rawLoginRouteHandler = loginRouter.__get__('loginRouteHandler');
-const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication)
+const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication);
 
 describe('Authentication routes', function () {
   beforeEach('Initialize spies for authentication', function () {
@@ -76,8 +76,12 @@ describe('Authentication routes', function () {
     });
 
     it('signUpRouteHandler: Should successfully respond to client with 200 status when successfully created user', async function () {
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .returns(Promise.resolve(this.userToSignUp)));
+      const mockedUserModule = {
+        signUp: () => Promise.resolve(this.userToSignUp)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       await signUpRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
       expect(this.res.json.calledWith(this.userToSignUp)).to.be.equal(true);
@@ -90,8 +94,12 @@ describe('Authentication routes', function () {
         message: 'Validation failed: firstName: Path `firstName` is required.',
         name: 'ValidationError'
       };
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .throws(validationError));
+      const mockedUserModule = {
+        signUp: () => new Error(validationError)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
         await signUpRouteHandler(this.req, this.res);
       } catch (error) {
@@ -106,8 +114,12 @@ describe('Authentication routes', function () {
       const duplicationError = {
         message: 'Duplicated user'
       };
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .throws(duplicationError));
+      const mockedUserModule = {
+        signUp: () => new Error(duplicationError)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
         await signUpRouteHandler(this.req, this.res);
       } catch (error) {
@@ -122,8 +134,12 @@ describe('Authentication routes', function () {
       const genericError = {
         message: 'Internal server error'
       };
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .throws(genericError));
+      const mockedUserModule = {
+        signUp: () => new Error(genericError)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
         await signUpRouteHandler(this.req, this.res);
       } catch (error) {
@@ -132,10 +148,6 @@ describe('Authentication routes', function () {
         expect(this.res.status.callCount).to.be.equal(1);
         expect(this.res.json.callCount).to.be.equal(1);
       }
-    });
-
-    afterEach('Restore stubs for signUpRouteHandler', function () {
-      this.stub.restore();
     });
   });
 
@@ -155,28 +167,23 @@ describe('Authentication routes', function () {
       };
     });
 
-    afterEach('Restore logOutHandlerTest', function () {
-      delete cacheMock.addToSet;
-    });
-
-    it('Should call cache.addToSet with set and token to invalidate when there is a token', async function () {
-      const addToSeFake = sinon.fake.returns(Promise.resolve(1));
-      cacheMock.addToSet = addToSeFake;
+    it('Should call status with success code', async function () {
+      const LogOutHandler = loginRouter.__get__('logOutHandler');
+      const logOutHandler = LogOutHandler({
+        invalidateToken: () => Promise.resolve()
+      });
       await logOutHandler(this.req, this.res);
-      expect(addToSeFake.callCount).to.be.equal(1);
-      expect(addToSeFake.calledWith({
-        setName: config.sets.INVALID_USER_TOKEN_SET, members: [this.token]
-      })).to.be.equal(true);
       expect(this.statusFake.callCount).to.be.equal(1);
       expect(this.statusFake.calledWith(200)).to.be.equal(true);
     });
 
     it('Should NOT call cache.addToSet and call response with 400 status when there is NO token', async function () {
-      const addToSeFake = sinon.fake(() => {});
-      cacheMock.addToSet = addToSeFake;
+      const LogOutHandler = loginRouter.__get__('logOutHandler');
+      const logOutHandler = LogOutHandler({
+        invalidateToken: () => Promise.reject(new Error({ message: 'Bearer is missing' }))
+      });
       delete this.req.headers.authorization;
       await logOutHandler(this.req, this.res);
-      expect(addToSeFake.callCount).to.be.equal(0);
       expect(this.statusFake.callCount).to.be.equal(1);
       expect(this.statusFake.calledWith(400)).to.be.equal(true);
       expect(this.jsonFake.callCount).to.be.equal(1);
