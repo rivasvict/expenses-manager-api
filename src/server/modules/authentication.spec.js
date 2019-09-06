@@ -98,9 +98,9 @@ describe('Authentication module', function () {
       });
 
       it('Should throw error when token is invalid', function () {
-        const token = `${this.authentication.getToken({ payload: this.loggedUser })}123`;
+        const invalidToken = `${this.authentication.getToken({ payload: this.loggedUser })}123`;
         try {
-          this.authentication.verifyToken(token);
+          this.authentication.verifyToken(invalidToken);
         } catch (error) {
           expect(error.message).to.be.equal('invalid signature');
         }
@@ -120,14 +120,14 @@ describe('Authentication module', function () {
       });
 
       it('Should should throw an error when verify token is out of expiration time', function () {
-        const token = this.authentication.getToken({
+        const expiredToken = this.authentication.getToken({
           payload: this.loggedUser,
           tokenGenerationOptions: {
             expiresIn: '-1s'
           }
         });
 
-        const decodedToken = this.authentication.verifyToken(token);
+        const decodedToken = this.authentication.verifyToken(expiredToken);
         expect(decodedToken).to.be.equal(null);
       });
     });
