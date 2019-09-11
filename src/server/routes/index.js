@@ -3,12 +3,11 @@ const wrap = require('express-async-wrapper');
 
 const router = express.Router();
 const userRoutes = require('./user/');
-const authentication = require('../modules/authentication');
-const UserModule = require('../modules/user');
-const User = require('../models/user');
-const userModule = UserModule(User);
-const mountUserRoutes = userRoutes({ authentication, userModule });
-const RoutesHandler = require('./routesHandler.js');
+
+const { userModule, authenticationModule } = require('../modules');
+
+const mountUserRoutes = userRoutes({ authenticationModule, userModule });
+const RoutesHandler = require('./routesHandler');
 const passportHandlers = require('../modules/passportHandlers');
 
 const baseApiUrl = '/api';
