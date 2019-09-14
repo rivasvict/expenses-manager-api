@@ -14,7 +14,7 @@ const AuthenticationModule = require('./authentication');
 const UserModule = require('./user');
 const PassportHandlerModule = require('./passportHandlers');
 
-const User = require('../modules/user');
+const User = require('../models/user');
 
 const cacheClient = new Redis({
   port: parseInt(config.REDIS_PORT),
