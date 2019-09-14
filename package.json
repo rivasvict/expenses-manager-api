@@ -6,6 +6,8 @@
   "scripts": {
     "test": "DEBUG=true mocha ./src/server/**/*.spec.js ./src/server/**/**/*.spec.js",
     "test-debug": "npm run test -- --inspect=0.0.0.0 --watch",
+    "integration-test" : "DEBUG=true mocha ./test/integration/**/*.spec.js ./test/integration/**/**/*.spec.js",
+    "integration-test-debug" : "npm tun integration-test -- --inspect=0.0.0.0 --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon --inspect=0.0.0.0 --exec babel-node ./bin/www"
