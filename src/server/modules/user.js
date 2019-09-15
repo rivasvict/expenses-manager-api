@@ -1,4 +1,4 @@
-const { comparePassword } = require('../db/schemas/user/utils.js');
+const { comparePassword } = require('../db/schemas/user/utils');
 
 const signUp = ({ User }) => async (userToCreate) => {
   try {

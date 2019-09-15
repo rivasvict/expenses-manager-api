@@ -16,9 +16,11 @@ const DbUser = getDbModel({
 class User extends DbUser {
   constructor(user) {
     super(user);
-    const validationError = this.validateSync();
-    if (validationError) {
-      throw validationError;
+    if (user) {
+      const validationError = this.validateSync();
+      if (validationError) {
+        throw validationError;
+      }
     }
   }
 
