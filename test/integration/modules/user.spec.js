@@ -1,9 +1,10 @@
 const { expect } = require('chai');
+const mongoose = require('mongoose');
 
 require('../../../app.js');
 const { userModule } = require('../../../src/server/modules/');
 const UserModel = require('../../../src/server/models/user');
-const mongoose = require('mongoose');
+
 const db = mongoose.connection;
 
 describe('User module', function () {
