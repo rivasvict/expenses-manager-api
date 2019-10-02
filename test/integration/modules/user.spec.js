@@ -25,7 +25,7 @@ describe('User module', function () {
     expect(insertedUser.id).be.deep.equal(userFromDb.id);
   });
 
-  it('signUp: should retrieve user when authenticated', async function () {
+  it('authenticateUser: should retrieve user when authenticated', async function () {
     const user = {
       password: 'myPassword',
       lastName: 'myLastName',
