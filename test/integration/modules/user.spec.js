@@ -12,6 +12,10 @@ describe('User module', function () {
     await db.dropCollection('users');
   });
 
+  after('Close db connection', async function () {
+    await db.close();
+  });
+
   it('signUp: should create the new user', async function () {
     const user = {
       password: 'myPassword',

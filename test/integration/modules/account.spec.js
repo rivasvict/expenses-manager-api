@@ -28,6 +28,10 @@ describe('Account module', function () {
     await db.dropCollection('users');
   });
 
+  after('Close db connection', async function () {
+    await db.close();
+  });
+
   it('Should create a new account to the db associated to the user given', async function () {
     await accountModule.create({ account: this.account, user: this.user });
     const savedUser = await User.findOne({ email: this.user.email }).populate('accounts');
