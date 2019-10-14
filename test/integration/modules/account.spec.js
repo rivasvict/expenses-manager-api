@@ -5,7 +5,8 @@ require('../../../app');
 
 const { accountModule, userModule } = require('../../../src/server/modules/');
 const Account = require('../../../src/server/models/account');
-const User =  require('../../../src/server/models/user');
+const User = require('../../../src/server/models/user');
+
 const db = mongoose.connection;
 
 describe('Account module', function () {
@@ -26,10 +27,6 @@ describe('Account module', function () {
   afterEach('Clean db collections', async function () {
     await db.dropCollection('accounts');
     await db.dropCollection('users');
-  });
-
-  after('Close db connection', async function () {
-    await db.close();
   });
 
   it('Should create a new account to the db associated to the user given', async function () {
