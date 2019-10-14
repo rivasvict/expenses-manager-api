@@ -8,9 +8,8 @@
     "test-debug": "npm run test -- --inspect=0.0.0.0 --watch",
     "start-environment" : "docker-compose up -d",
     "stop-environment" : "docker-compose down",
-    "no-exit-integration-test" : "INTEGRATION_TEST=true DEBUG=true mocha ./test/integration/**/*.spec.js ./test/integration/**/**/*.spec.js",
-    "integration-test" : "INTEGRATION_TEST=true DEBUG=true mocha exit-test.js ./test/integration/**/*.spec.js ./test/integration/**/**/*.spec.js",
-    "integration-test-debug" : "npm run no-exit-integration-test -- --inspect=0.0.0.0:9228 --watch",
+    "integration-test" : "bash bin/scripts/run-integration-test.sh exit-test.js",
+    "integration-test-debug" : "bash bin/scripts/run-integration-test.sh --inspect=0.0.0.0:9228 --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon --inspect=0.0.0.0 --exec babel-node ./bin/www"
