@@ -2,6 +2,7 @@ const { comparePassword } = require('../db/schemas/user/utils');
 
 const signUp = ({ User }) => async (userToCreate) => {
   try {
+    console.log(userToCreate)
     const user = new User(userToCreate);
     return await user.create();
   } catch (error) {

@@ -20,7 +20,7 @@ const loginRouteHandler = authentication => async (req, res) => {
 const signUpRouteHandler = userModule => async (req, res) => {
   try {
     const user = await userModule.signUp(req.body.user);
-    res.status(200).json(user);
+    res.status(201).json(user);
   } catch (error) {
     if ((error.name === 'ValidationError') || (error.message === 'Duplicated user')) {
       res.status(error.name === 'ValidationError' ? 400 : 409)

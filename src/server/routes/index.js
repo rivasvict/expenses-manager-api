@@ -9,6 +9,7 @@ const { userModule, authenticationModule } = require('../modules');
 const mountUserRoutes = userRoutes({ authenticationModule, userModule });
 const RoutesHandler = require('./routesHandler');
 const passportHandlers = require('../modules/passportHandlers');
+const cors = require('cors');
 
 const baseApiUrl = '/api';
 const routesHandler = new RoutesHandler({
@@ -17,8 +18,9 @@ const routesHandler = new RoutesHandler({
 });
 
 const jwtStrategy = passportHandlers.isAuthorized;
+// TODO: Configure development CORS policies
 
-router.use(`${baseApiUrl}/*`, wrap(RoutesHandler.mountMiddlewaresUnless(
+router.use(`${baseApiUrl}/*`, cors(), wrap(RoutesHandler.mountMiddlewaresUnless(
   [
     jwtStrategy
   ],

@@ -6,10 +6,10 @@
   "scripts": {
     "test": "DEBUG=true mocha ./src/server/**/*.spec.js ./src/server/**/**/*.spec.js",
     "test-debug": "npm run test -- --inspect=0.0.0.0 --watch",
-    "start-environment" : "docker-compose up -d",
-    "stop-environment" : "docker-compose down",
-    "integration-test" : "bash bin/scripts/run-integration-test.sh exit-test.js",
-    "integration-test-debug" : "bash bin/scripts/run-integration-test.sh --inspect=0.0.0.0:9228 --watch",
+    "start-environment": "docker-compose up -d",
+    "stop-environment": "docker-compose down",
+    "integration-test": "bash bin/scripts/run-integration-test.sh exit-test.js",
+    "integration-test-debug": "bash bin/scripts/run-integration-test.sh --inspect=0.0.0.0:9228 --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon --inspect=0.0.0.0 --exec babel-node ./bin/www"
@@ -23,6 +23,7 @@
     "bcrypt": "^3.0.4",
     "chai": "^4.2.0",
     "cookie-parser": "~1.4.3",
+    "cors": "^2.8.5",
     "cron": "^1.7.1",
     "debug": "~2.6.9",
     "dotenv": "^6.2.0",
