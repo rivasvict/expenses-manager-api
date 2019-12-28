@@ -142,13 +142,14 @@ describe('Authentication routes', function () {
         message: 'Internal server error'
       };
       const mockedUserModule = {
-        signUp: () => new Error(genericError)
+        signUp: () => Promise.reject(genericError)
       };
 
       const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
       const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
         await signUpRouteHandler(this.req, this.res);
+        expect(this.res.status.calledWith(200)).to.be.equals(false);
       } catch (error) {
         expect(this.res.status.calledWith(500)).to.be.equal(true);
         expect(this.res.json.calledWith(genericError)).to.be.equal(true);
