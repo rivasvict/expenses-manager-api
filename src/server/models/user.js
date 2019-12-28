@@ -28,7 +28,7 @@ class User extends DbUser {
     try {
       const isEmailDuplicated = await this.getIsEmailDuplicated();
       if (isEmailDuplicated) {
-        throw new Error('Duplicated user');
+        throw { name: 'duplicationError', message: 'Duplicated user' };
       } else {
         const newUser = await this.save();
         return newUser;

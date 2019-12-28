@@ -91,9 +91,10 @@ describe('Authentication routes', function () {
     });
 
     it('signUpRouteHandler: Should return validation error when bad data error is thrown from create function', async function () {
+      const validationPathName = 'firstName';
       const validationError = {
-        message: 'Validation failed: firstName: Path `firstName` is required.',
-        name: 'ValidationError'
+        validation: [{ message: 'Validation failed: firstName: Path `firstName` is required.', path: validationPathName }],
+        name: 'ValidationError',
       };
       const mockedUserModule = {
         signUp: () => Promise.reject(validationError)
@@ -102,23 +103,26 @@ describe('Authentication routes', function () {
       const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
       const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       const copiedReq = _.cloneDeep(this.req);
-      const invalidUser = _.omit(copiedReq.body.user, 'firstName');
+      const invalidUser = _.omit(copiedReq.body.user, validationPathName);
       copiedReq.body.user = invalidUser;
       
       try {
         await signUpRouteHandler(copiedReq, this.res);
-        expect(this.res.status.calledWith(200)).to.be.equals(false);
+        if (!this.res.status.calledWith(200)) {
+          expect(this.res.status.calledWith(400)).to.be.equal(true);
+          expect(this.res.json.calledWith(validationError)).to.be.equal(true);
+          expect(this.res.status.callCount).to.be.equal(1);
+          expect(this.res.json.callCount).to.be.equal(1);
+        }
       } catch (error) {
-        expect(this.res.status.calledWith(400)).to.be.equal(true);
-        expect(this.res.json.calledWith(validationError)).to.be.equal(true);
-        expect(this.res.status.callCount).to.be.equal(1);
-        expect(this.res.json.callCount).to.be.equal(1);
+        throw error;
       }
     });
 
     it('signUpRouteHandler: Should return duplication error when duplication error is returned from creation function', async function () {
       const duplicationError = {
-        message: 'Duplicated user'
+        message: 'Duplicated user',
+        name: 'duplicationError'
       };
       const mockedUserModule = {
         signUp: () => Promise.reject(duplicationError)
@@ -128,12 +132,14 @@ describe('Authentication routes', function () {
       const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
         await signUpRouteHandler(this.req, this.res);
-        expect(this.res.status.calledWith(200)).to.be.equals(false);
+        if (!this.res.status.calledWith(200)) {
+          expect(this.res.status.calledWith(409)).to.be.equal(true);
+          expect(this.res.json.calledWith(duplicationError)).to.be.equal(true);
+          expect(this.res.status.callCount).to.be.equal(1);
+          expect(this.res.json.callCount).to.be.equal(1);
+        }
       } catch (error) {
-        expect(this.res.status.calledWith(409)).to.be.equal(true);
-        expect(this.res.json.calledWith(duplicationError)).to.be.equal(true);
-        expect(this.res.status.callCount).to.be.equal(1);
-        expect(this.res.json.callCount).to.be.equal(1);
+        throw error;
       }
     });
 

@@ -1,11 +1,23 @@
 const { comparePassword } = require('../db/schemas/user/utils');
 
-const signUp = ({ User }) => async (userToCreate) => {
+// TODO: This needs to be moved into a helper
+const GetError = _ => error => {
+  if ((error.name === 'ValidationError') && (error.errors)) {
+    const validationErrorContent = _.values(error.errors).map(singleError => _.pick(singleError, ['message', 'path']));
+    const validationError = { ..._.omit(error, 'errors'), validation: validationErrorContent, message: 'Invalid data' };
+
+    return validationError;
+  }
+
+  return error;
+};
+
+const signUp = ({ User, getError }) => async (userToCreate) => {
   try {
     const user = new User(userToCreate);
     return await user.create();
   } catch (error) {
-    throw error;
+    throw getError(error);
   }
 };
 
@@ -29,8 +41,11 @@ const authenticateUser = ({ User, _ }) => async ({ email, password }) => {
 };
 
 module.exports = ({ User, _ }) => {
+  // TODO: This should be loaded form a helper
+  const getError = GetError(_);
+
   return {
-    signUp: signUp({ User }),
+    signUp: signUp({ User, getError }),
     authenticateUser: authenticateUser({ User, _ })
   };
 };

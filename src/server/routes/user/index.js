@@ -17,16 +17,22 @@ const loginRouteHandler = authentication => async (req, res) => {
   }
 };
 
+// TODO: Move executeError into an error helper
+const executeError = ({ res, error }) => {
+  switch (error.name) {
+    case 'ValidationError': return res.status(400).json(error);
+    case 'duplicationError': return res.status(409).json(error);
+    default: res.status(500).json({ message: 'Internal server error' }); return true;
+  }
+}
+
 const signUpRouteHandler = userModule => async (req, res) => {
   try {
     const user = await userModule.signUp(req.body.user);
     res.status(200).json(user);
   } catch (error) {
-    if ((error.name === 'ValidationError') || (error.message === 'Duplicated user')) {
-      res.status(error.name === 'ValidationError' ? 400 : 409)
-        .json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Internal server error' });
+    const serverError = executeError({ res, error });
+    if (serverError === true) {
       throw error;
     }
   }

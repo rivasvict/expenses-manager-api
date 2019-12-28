@@ -4,7 +4,6 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 
 const { getSaltHash } = require('../lib/util.js');
-const constants = require('../constants.js');
 
 const UserModule = require('./user.js');
 
@@ -37,12 +36,35 @@ describe('User module', function () {
         lastName: 'Rivas',
         password: 'hola'
       };
-      const userModule = UserModule({ User: this.getMockedUserModel(userToTest) });
+      const validationPathName = 'firstName';
+      const validationMessage = 'Validation failed: firstName: Path `firstName` is required.';
+      const validationTypeName = 'ValidationError';
+      const validationContent = [{ message: validationMessage, path: validationPathName }];
+      const validationError = {
+        validation: validationContent,
+        name: validationTypeName,
+        message: 'Invalid data'
+      };
+
+      const dbValidationError = {
+        name: validationTypeName,
+        message: validationMessage,
+        errors: {
+          [validationPathName]: validationContent[0]
+        }
+      }
+
+      const userModule = UserModule({ User: function() {
+        return {
+          create: sinon.fake.returns(Promise.reject(dbValidationError))
+        }
+      }, _ });
+
       try {
-        await userModule.signUp(userToTest);
+        const createdUser = await userModule.signUp(userToTest);
+        expect(createdUser).to.be.equal(undefined)
       } catch (error) {
-        expect(error.message).to.be.equal('Validation failed: firstName: Path `firstName` is required.');
-        expect(error.name).to.be.equal('ValidationError');
+        expect(error).to.be.deep.equal(validationError);
       }
     });
 
