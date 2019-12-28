@@ -121,13 +121,14 @@ describe('Authentication routes', function () {
         message: 'Duplicated user'
       };
       const mockedUserModule = {
-        signUp: () => new Error(duplicationError)
+        signUp: () => Promise.reject(duplicationError)
       };
 
       const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
       const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
         await signUpRouteHandler(this.req, this.res);
+        expect(this.res.status.calledWith(200)).to.be.equals(false);
       } catch (error) {
         expect(this.res.status.calledWith(409)).to.be.equal(true);
         expect(this.res.json.calledWith(duplicationError)).to.be.equal(true);
