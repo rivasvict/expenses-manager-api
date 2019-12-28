@@ -1,18 +1,27 @@
-const _ = require('lodash');
+const { comparePassword } = require('../db/schemas/user/utils');
 
-const User = require('../models/user.js');
-const { comparePassword } = require('../db/schemas/user/utils.js');
+// TODO: This needs to be moved into a helper
+const GetError = _ => error => {
+  if ((error.name === 'ValidationError') && (error.errors)) {
+    const validationErrorContent = _.values(error.errors).map(singleError => _.pick(singleError, ['message', 'path']));
+    const validationError = { ..._.omit(error, 'errors'), validation: validationErrorContent, message: 'Invalid data' };
 
-const signUp = async (userToCreate) => {
+    return validationError;
+  }
+
+  return error;
+};
+
+const signUp = ({ User, getError }) => async (userToCreate) => {
   try {
     const user = new User(userToCreate);
     return await user.create();
   } catch (error) {
-    throw error;
+    throw getError(error);
   }
 };
 
-const authenticateUser = async ({ email, password }) => {
+const authenticateUser = ({ User, _ }) => async ({ email, password }) => {
   try {
     const user = await User.getByEmail({ email });
     if (user && user.get('email') === email) {
@@ -31,4 +40,12 @@ const authenticateUser = async ({ email, password }) => {
   }
 };
 
-module.exports = { signUp, authenticateUser };
+module.exports = ({ User, _ }) => {
+  // TODO: This should be loaded form a helper
+  const getError = GetError(_);
+
+  return {
+    signUp: signUp({ User, getError }),
+    authenticateUser: authenticateUser({ User, _ })
+  };
+};

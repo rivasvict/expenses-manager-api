@@ -1,22 +1,11 @@
 const { expect } = require('chai');
 const rewire = require('rewire');
 const sinon = require('sinon');
-const mock = require('mock-require');
+const _ = require('lodash');
 
-const cacheMock = {};
-mock('../../modules/cache.js', cacheMock);
-mock.reRequire('../../modules/cache.js');
-mock.reRequire('../../modules/authentication.js');
-const config = require('../../../../config.js');
 const loginRouter = rewire('./index.js');
-const userModule = rewire('../../modules/user.js');
-const loginRouteHandler = loginRouter.__get__('loginRouteHandler');
-const signUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
-const logOutHandler = loginRouter.__get__('logOutHandler');
-const authenticationModule = require('../../modules/authentication.js');
-const constants = require('../../constants');
-
-const User = userModule.__get__(constants.MODEL_NAMES.USER);
+const rawLoginRouteHandler = loginRouter.__get__('loginRouteHandler');
+const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication);
 
 describe('Authentication routes', function () {
   beforeEach('Initialize spies for authentication', function () {
@@ -35,34 +24,37 @@ describe('Authentication routes', function () {
         email: 'victor@gmail.com',
         password: 'password'
       };
-      this.rec = {
+      this.req = {
         body: {
           user: this.userToAuthenticate
         }
       };
+      this.getAuthenticationModule = userTokenToReturn => {
+        return {
+          verifyAuthenticUser: sinon.fake.returns(Promise.resolve(userTokenToReturn))
+        }
+      }
     });
 
     it('loginRouteHandler: Should successfully respond to client when correct credentials passed on body', async function () {
-      const userToken = authenticationModule.getToken({ payload: this.userToAuthenticate });
-      const verifyUserStub = sinon.stub(authenticationModule, 'verifyAuthenticUser').returns(Promise.resolve(userToken));
-      await loginRouteHandler(this.rec, this.res);
+      const userToken = 'the user token test';
+      const authenticationModule = this.getAuthenticationModule(userToken);
+      const loginRouteHandler = getLoginRouterHandler(authenticationModule);
+      await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
       expect(this.res.json.calledWith({ userToken })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
-
-      verifyUserStub.restore();
     });
 
     it('loginRouteHandler: Should respond with error to client when correct credentials passed on body', async function () {
-      const verifyUserStub = sinon.stub(authenticationModule, 'verifyAuthenticUser').returns(Promise.resolve(null));
-      await loginRouteHandler(this.rec, this.res);
+      const authenticationModule = this.getAuthenticationModule(null);
+      const loginRouteHandler = getLoginRouterHandler(authenticationModule);
+      await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(403)).to.be.equal(true);
       expect(this.res.json.calledWith({ message: 'Invalid credentials' })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
-
-      verifyUserStub.restore();
     });
   });
 
@@ -74,7 +66,7 @@ describe('Authentication routes', function () {
         email: 'victor@gmail.com',
         password: 'password'
       };
-      this.rec = {
+      this.req = {
         body: {
           user: this.userToSignUp
         }
@@ -85,9 +77,13 @@ describe('Authentication routes', function () {
     });
 
     it('signUpRouteHandler: Should successfully respond to client with 200 status when successfully created user', async function () {
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .returns(Promise.resolve(this.userToSignUp)));
-      await signUpRouteHandler(this.rec, this.res);
+      const mockedUserModule = {
+        signUp: () => Promise.resolve(this.userToSignUp)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
+      await signUpRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
       expect(this.res.json.calledWith(this.userToSignUp)).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
@@ -95,35 +91,55 @@ describe('Authentication routes', function () {
     });
 
     it('signUpRouteHandler: Should return validation error when bad data error is thrown from create function', async function () {
+      const validationPathName = 'firstName';
       const validationError = {
-        message: 'Validation failed: firstName: Path `firstName` is required.',
-        name: 'ValidationError'
+        validation: [{ message: 'Validation failed: firstName: Path `firstName` is required.', path: validationPathName }],
+        name: 'ValidationError',
       };
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .throws(validationError));
+      const mockedUserModule = {
+        signUp: () => Promise.reject(validationError)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
+      const copiedReq = _.cloneDeep(this.req);
+      const invalidUser = _.omit(copiedReq.body.user, validationPathName);
+      copiedReq.body.user = invalidUser;
+      
       try {
-        await signUpRouteHandler(this.rec, this.res);
+        await signUpRouteHandler(copiedReq, this.res);
+        if (!this.res.status.calledWith(200)) {
+          expect(this.res.status.calledWith(400)).to.be.equal(true);
+          expect(this.res.json.calledWith(validationError)).to.be.equal(true);
+          expect(this.res.status.callCount).to.be.equal(1);
+          expect(this.res.json.callCount).to.be.equal(1);
+        }
       } catch (error) {
-        expect(this.res.status.calledWith(400)).to.be.equal(true);
-        expect(this.res.json.calledWith(validationError)).to.be.equal(true);
-        expect(this.res.status.callCount).to.be.equal(1);
-        expect(this.res.json.callCount).to.be.equal(1);
+        throw error;
       }
     });
 
     it('signUpRouteHandler: Should return duplication error when duplication error is returned from creation function', async function () {
       const duplicationError = {
-        message: 'Duplicated user'
+        message: 'Duplicated user',
+        name: 'duplicationError'
       };
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .throws(duplicationError));
+      const mockedUserModule = {
+        signUp: () => Promise.reject(duplicationError)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
-        await signUpRouteHandler(this.rec, this.res);
+        await signUpRouteHandler(this.req, this.res);
+        if (!this.res.status.calledWith(200)) {
+          expect(this.res.status.calledWith(409)).to.be.equal(true);
+          expect(this.res.json.calledWith(duplicationError)).to.be.equal(true);
+          expect(this.res.status.callCount).to.be.equal(1);
+          expect(this.res.json.callCount).to.be.equal(1);
+        }
       } catch (error) {
-        expect(this.res.status.calledWith(409)).to.be.equal(true);
-        expect(this.res.json.calledWith(duplicationError)).to.be.equal(true);
-        expect(this.res.status.callCount).to.be.equal(1);
-        expect(this.res.json.callCount).to.be.equal(1);
+        throw error;
       }
     });
 
@@ -131,20 +147,21 @@ describe('Authentication routes', function () {
       const genericError = {
         message: 'Internal server error'
       };
-      this.setStub(sinon.stub(User.prototype, 'create')
-        .throws(genericError));
+      const mockedUserModule = {
+        signUp: () => Promise.reject(genericError)
+      };
+
+      const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
+      const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
       try {
-        await signUpRouteHandler(this.rec, this.res);
+        await signUpRouteHandler(this.req, this.res);
+        expect(this.res.status.calledWith(200)).to.be.equals(false);
       } catch (error) {
         expect(this.res.status.calledWith(500)).to.be.equal(true);
         expect(this.res.json.calledWith(genericError)).to.be.equal(true);
         expect(this.res.status.callCount).to.be.equal(1);
         expect(this.res.json.callCount).to.be.equal(1);
       }
-    });
-
-    afterEach('Restore stubs for signUpRouteHandler', function () {
-      this.stub.restore();
     });
   });
 
@@ -164,32 +181,23 @@ describe('Authentication routes', function () {
       };
     });
 
-    afterEach('Restore logOutHandlerTest', function () {
-      delete cacheMock.addToSet;
-    });
-
-    after('Stop mocks on require', function () {
-      mock.stopAll();
-    });
-
-    it('Should call cache.addToSet with set and token to invalidate when there is a token', async function () {
-      const addToSeFake = sinon.fake.returns(Promise.resolve(1));
-      cacheMock.addToSet = addToSeFake;
+    it('Should call status with success code', async function () {
+      const LogOutHandler = loginRouter.__get__('logOutHandler');
+      const logOutHandler = LogOutHandler({
+        invalidateToken: () => Promise.resolve()
+      });
       await logOutHandler(this.req, this.res);
-      expect(addToSeFake.callCount).to.be.equal(1);
-      expect(addToSeFake.calledWith({
-        setName: config.sets.INVALID_USER_TOKEN_SET, members: [this.token]
-      })).to.be.equal(true);
       expect(this.statusFake.callCount).to.be.equal(1);
       expect(this.statusFake.calledWith(200)).to.be.equal(true);
     });
 
     it('Should NOT call cache.addToSet and call response with 400 status when there is NO token', async function () {
-      const addToSeFake = sinon.fake(() => {});
-      cacheMock.addToSet = addToSeFake;
+      const LogOutHandler = loginRouter.__get__('logOutHandler');
+      const logOutHandler = LogOutHandler({
+        invalidateToken: () => Promise.reject(new Error({ message: 'Bearer is missing' }))
+      });
       delete this.req.headers.authorization;
       await logOutHandler(this.req, this.res);
-      expect(addToSeFake.callCount).to.be.equal(0);
       expect(this.statusFake.callCount).to.be.equal(1);
       expect(this.statusFake.calledWith(400)).to.be.equal(true);
       expect(this.jsonFake.callCount).to.be.equal(1);

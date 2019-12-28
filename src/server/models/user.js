@@ -16,9 +16,11 @@ const DbUser = getDbModel({
 class User extends DbUser {
   constructor(user) {
     super(user);
-    const validationError = this.validateSync();
-    if (validationError) {
-      throw validationError;
+    if (user) {
+      const validationError = this.validateSync();
+      if (validationError) {
+        throw validationError;
+      }
     }
   }
 
@@ -26,7 +28,7 @@ class User extends DbUser {
     try {
       const isEmailDuplicated = await this.getIsEmailDuplicated();
       if (isEmailDuplicated) {
-        throw new Error('Duplicated user');
+        throw { name: 'duplicationError', message: 'Duplicated user' };
       } else {
         const newUser = await this.save();
         return newUser;

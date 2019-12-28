@@ -1,9 +1,6 @@
 const rewire = require('rewire');
 const sinon = require('sinon');
 const { expect } = require('chai');
-const mock = require('mock-require');
-
-mock('../modules/cache.js', {});
 
 const cronJobs = rewire('./cronjobs.js');
 
@@ -19,10 +16,6 @@ describe('Cron jobs test', function () {
       this.startFake = sinon.fake(() => {});
       this.restoreStart = cronJobs.__set__('start', this.startFake);
       cronJobs.initialize();
-    });
-
-    after('Stop all mocks on require', function () {
-      mock.stopAll();
     });
 
     it('Should have called all cron instances constructor', function () {

@@ -1,9 +1,7 @@
+// TODO: Inject wrap dependency
 const wrap = require('express-async-wrapper');
 
-const authentication = require('../../modules/authentication.js');
-const userModule = require('../../modules/user.js');
-
-const loginRouteHandler = async (req, res) => {
+const loginRouteHandler = authentication => async (req, res) => {
   try {
     const { email } = req.body.user;
     const { password } = req.body.user;
@@ -19,22 +17,28 @@ const loginRouteHandler = async (req, res) => {
   }
 };
 
-const signUpRouteHandler = async (req, res) => {
+// TODO: Move executeError into an error helper
+const executeError = ({ res, error }) => {
+  switch (error.name) {
+    case 'ValidationError': return res.status(400).json(error);
+    case 'duplicationError': return res.status(409).json(error);
+    default: res.status(500).json({ message: 'Internal server error' }); return true;
+  }
+}
+
+const signUpRouteHandler = userModule => async (req, res) => {
   try {
     const user = await userModule.signUp(req.body.user);
     res.status(200).json(user);
   } catch (error) {
-    if ((error.name === 'ValidationError') || (error.message === 'Duplicated user')) {
-      res.status(error.name === 'ValidationError' ? 400 : 409)
-        .json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Internal server error' });
+    const serverError = executeError({ res, error });
+    if (serverError === true) {
       throw error;
     }
   }
 };
 
-const logOutHandler = async (req, res) => {
+const logOutHandler = authentication => async (req, res) => {
   try {
     const bearer = req.headers.authorization;
     if (bearer) {
@@ -49,13 +53,13 @@ const logOutHandler = async (req, res) => {
   }
 };
 
-const mountUserRoutes = ({ router, baseUrl }) => {
+const mountUserRoutes = ({ authenticationModule, userModule }) => ({ router, baseUrl }) => {
   // /api/user/login
-  router.post(`${baseUrl}/login`, wrap(loginRouteHandler));
+  router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authenticationModule)));
   // /api/user/sign-up
-  router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler));
+  router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler(userModule)));
   // /api/user/log-out
-  router.post(`${baseUrl}/log-out`, wrap(logOutHandler));
+  router.post(`${baseUrl}/log-out`, wrap(logOutHandler(authenticationModule)));
 };
 
 module.exports = mountUserRoutes;
