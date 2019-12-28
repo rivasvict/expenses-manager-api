@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const rewire = require('rewire');
 const sinon = require('sinon');
+const _ = require('lodash');
 
 const loginRouter = rewire('./index.js');
 const rawLoginRouteHandler = loginRouter.__get__('loginRouteHandler');
@@ -95,13 +96,18 @@ describe('Authentication routes', function () {
         name: 'ValidationError'
       };
       const mockedUserModule = {
-        signUp: () => new Error(validationError)
+        signUp: () => Promise.reject(validationError)
       };
 
       const SignUpRouteHandler = loginRouter.__get__('signUpRouteHandler');
       const signUpRouteHandler = SignUpRouteHandler(mockedUserModule);
+      const copiedReq = _.cloneDeep(this.req);
+      const invalidUser = _.omit(copiedReq.body.user, 'firstName');
+      copiedReq.body.user = invalidUser;
+      
       try {
-        await signUpRouteHandler(this.req, this.res);
+        await signUpRouteHandler(copiedReq, this.res);
+        expect(this.res.status.calledWith(200)).to.be.equals(false);
       } catch (error) {
         expect(this.res.status.calledWith(400)).to.be.equal(true);
         expect(this.res.json.calledWith(validationError)).to.be.equal(true);
