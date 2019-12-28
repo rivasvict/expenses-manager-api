@@ -28,7 +28,7 @@ describe('Category module', function () {
 
           this.getCategoryInstance(categoryInvalidNameType);
         } catch (error) {
-          expect(error.message).to.be.equal('Validation failed: name: Path `name` is required.');
+          expect(error.message).to.be.equal('Validation failed: name: Cast to String failed for value "[]" at path "name"');
         }
       });
 
@@ -44,7 +44,7 @@ describe('Category module', function () {
 
             this.getCategoryInstance(cathegoryInvalidTypeDataType);
           } catch (error) {
-            expect(error.message).to.be.equal('Validation failed: type: Path `type` is required.');
+            expect(error.message).to.be.equal('Validation failed: type: Cast to String failed for value "[]" at path "type"');
           }
         });
 
