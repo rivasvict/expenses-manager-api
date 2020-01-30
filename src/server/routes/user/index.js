@@ -3,9 +3,9 @@ const wrap = require('express-async-wrapper');
 
 const loginRouteHandler = authentication => async (req, res) => {
   try {
-    const { email } = req.body.user;
+    const { username } = req.body.user;
     const { password } = req.body.user;
-    const userToken = await authentication.verifyAuthenticUser(email, password);
+    const userToken = await authentication.verifyAuthenticUser(username, password);
     if (userToken) {
       res.status(200).json({ userToken });
     } else {
