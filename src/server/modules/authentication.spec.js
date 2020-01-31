@@ -26,22 +26,32 @@ describe('Authentication module', function () {
       });
     });
 
-    it('Should return user valid user token when correct credentials', async function () {
-      const userModuleMock = {
-        authenticateUser: sinon.fake.returns(Promise.resolve(this.userToAuthenticate))
-      };
-      const authentication = this.getAuthenticationModule({ userModuleMock });
-      const verifiedUserToken = await authentication
-        .verifyAuthenticUser(this.username, this.password);
-      const decodedUserToken = authentication.verifyToken(verifiedUserToken);
-      expect(decodedUserToken).to.have.property('firstname');
-      expect(decodedUserToken).to.have.property('lastname');
-      expect(decodedUserToken).to.have.property('email');
-      expect(decodedUserToken).to.have.property('exp');
-      expect(decodedUserToken).to.have.property('iat');
-      const expirationTimeLength = decodedUserToken.exp - decodedUserToken.iat;
-      expect(expirationTimeLength).to.be.equal(7200);
-    });
+    describe('Valid user cases', function () {
+      beforeEach('Prepare valid user authentication simulation', async function () {
+        const userModuleMock = {
+          authenticateUser: sinon.fake.returns(Promise.resolve(this.userToAuthenticate))
+        };
+        this.authentication = this.getAuthenticationModule({ userModuleMock });
+        this.authenticatedUserData = await this.authentication
+          .verifyAuthenticUser(this.username, this.password);
+      })
+
+      it('Should return user valid user token when correct credentials', async function () {
+        const decodedUserToken = this.authentication.verifyToken(this.authenticatedUserData.token);
+        expect(decodedUserToken).to.have.property('firstname');
+        expect(decodedUserToken).to.have.property('lastname');
+        expect(decodedUserToken).to.have.property('email');
+        expect(decodedUserToken).to.have.property('exp');
+        expect(decodedUserToken).to.have.property('iat');
+        const expirationTimeLength = decodedUserToken.exp - decodedUserToken.iat;
+        expect(expirationTimeLength).to.be.equal(7200);
+      });
+
+      it('Should return user related data', function () {
+        const { user } = this.authenticatedUserData;
+        expect(user).to.be.deep.equal(this.userToAuthenticate);
+      })
+    })
 
     it('Should return null when non authentic user', async function () {
       const userModuleMock = {
