@@ -30,7 +30,7 @@ const authenticateUser = ({ User, _ }) => async ({ email, password }) => {
         password, hashedPassword: user.get('password')
       });
       if (areCredentialsCorrect) {
-        const userWithoutPassword = _.omit(user, ['password']);
+        const userWithoutPassword = _.omit(user.toJSON(), 'password');
         return userWithoutPassword;
       }
     }

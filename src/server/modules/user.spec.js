@@ -118,7 +118,9 @@ describe('User module', function () {
         get: userProperty => this.mockedUser[userProperty]
       };
       this.getMockedUserModel = userToTest => {
-        return { getByEmail: sinon.fake.returns(Promise.resolve(userToTest))  };
+        return {
+          getByEmail: sinon.fake.returns(Promise.resolve({ ...userToTest, toJSON: () => userToTest }))
+        };
       };
     });
 
@@ -130,7 +132,7 @@ describe('User module', function () {
 
       const userModule = UserModule({ _, User: this.getMockedUserModel(this.mockedUser) });
       const signedUser = await userModule.authenticateUser(user);
-      expect(signedUser.email).to.be.equal(user.email);
+      expect(signedUser).to.be.deep.equal(_.omit(this.mockedUser, 'password'));
     });
 
     it('Should return null when failed to authenticate user', async function () {
