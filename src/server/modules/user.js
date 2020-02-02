@@ -16,7 +16,7 @@ const signUp = ({ User, getError, _ }) => async (userToCreate) => {
   try {
     const user = new User(userToCreate);
     const userOnDb = await user.create();
-    return _.omit(userOnDb, 'password');
+    return _.omit(userOnDb.toJSON(), 'password');
   } catch (error) {
     throw getError(error);
   }

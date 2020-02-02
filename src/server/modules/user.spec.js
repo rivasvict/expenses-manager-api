@@ -12,7 +12,7 @@ describe('User module', function () {
     beforeEach('Prepare mocked user model', function () {
       this.getMockedUserModel = userToTest => function () {
         return {
-          create: sinon.fake.returns(Promise.resolve(userToTest))
+          create: sinon.fake.returns(Promise.resolve({ ...userToTest, toJSON: () => userToTest })),
         };
       };
 
