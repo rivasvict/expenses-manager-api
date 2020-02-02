@@ -5,9 +5,9 @@ const loginRouteHandler = authentication => async (req, res) => {
   try {
     const { username } = req.body.user;
     const { password } = req.body.user;
-    const userToken = await authentication.verifyAuthenticUser(username, password);
-    if (userToken) {
-      res.status(200).json({ userToken });
+    const user = await authentication.verifyAuthenticUser(username, password);
+    if (user) {
+      res.status(200).json({ user });
     } else {
       res.status(403).json({ message: 'Invalid credentials' });
     }
