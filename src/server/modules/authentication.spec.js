@@ -49,7 +49,7 @@ describe('Authentication module', function () {
 
       it('Should return user related data', function () {
         const { user } = this.authenticatedUserData;
-        expect(user).to.be.deep.equal(this.userToAuthenticate);
+        expect(user).to.be.deep.equal(this.userToAuthenticate.toJSON());
       })
     })
 

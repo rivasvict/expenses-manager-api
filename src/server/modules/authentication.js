@@ -19,7 +19,7 @@ const verifyAuthenticUser = ({ userModule, config, _, getAuthenticationToken }) 
           expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
         }
       }),
-      user: loggedUser
+      user: _.omit(loggedUser.toJSON(), 'password')
     };
 
     return authenticUser;

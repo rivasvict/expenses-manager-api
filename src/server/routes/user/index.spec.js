@@ -52,7 +52,7 @@ describe('Authentication routes', function () {
       const loginRouteHandler = getLoginRouterHandler(authenticationModule);
       await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
-      expect(this.res.json.calledWith({ user: { token: userToken, user: _.omit(this.userToAuthenticate, 'password') } })).to.be.equal(true);
+      expect(this.res.json.calledWith({ token: userToken, user: _.omit(this.userToAuthenticate, 'password') })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
     });
@@ -61,7 +61,7 @@ describe('Authentication routes', function () {
       const authenticationModule = this.getAuthenticationModule({});
       const loginRouteHandler = getLoginRouterHandler(authenticationModule);
       await loginRouteHandler(this.req, this.res);
-      expect(this.res.status.calledWith(403)).to.be.equal(true);
+      expect(this.res.status.calledWith(401)).to.be.equal(true);
       expect(this.res.json.calledWith({ message: 'Invalid credentials' })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
