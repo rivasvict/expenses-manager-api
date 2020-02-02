@@ -29,26 +29,36 @@ describe('Authentication routes', function () {
           user: this.userToAuthenticate
         }
       };
-      this.getAuthenticationModule = userTokenToReturn => {
+      this.getAuthenticationModule = ({ token, user }) => {
+        if (user) {
+          const response = {
+            user: _.omit(user, 'password'),
+            token
+          };
+          return {
+            verifyAuthenticUser: sinon.fake.returns(Promise.resolve(response))
+          }
+        }
+
         return {
-          verifyAuthenticUser: sinon.fake.returns(Promise.resolve(userTokenToReturn))
+           verifyAuthenticUser: sinon.fake.returns(Promise.resolve(null))
         }
       }
     });
 
     it('loginRouteHandler: Should successfully respond to client when correct credentials passed on body', async function () {
       const userToken = 'the user token test';
-      const authenticationModule = this.getAuthenticationModule(userToken);
+      const authenticationModule = this.getAuthenticationModule({ token: userToken, user: this.userToAuthenticate });
       const loginRouteHandler = getLoginRouterHandler(authenticationModule);
       await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
-      expect(this.res.json.calledWith({ userToken })).to.be.equal(true);
+      expect(this.res.json.calledWith({ user: { token: userToken, user: _.omit(this.userToAuthenticate, 'password') } })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
     });
 
-    it('loginRouteHandler: Should respond with error to client when correct credentials passed on body', async function () {
-      const authenticationModule = this.getAuthenticationModule(null);
+    it('loginRouteHandler: Should respond with error to client when incorrect credentials passed on body', async function () {
+      const authenticationModule = this.getAuthenticationModule({});
       const loginRouteHandler = getLoginRouterHandler(authenticationModule);
       await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(403)).to.be.equal(true);

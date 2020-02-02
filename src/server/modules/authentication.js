@@ -12,12 +12,17 @@ const verifyAuthenticUser = ({ userModule, config, _, getAuthenticationToken }) 
       return null;
     }
 
-    return getAuthenticationToken({
-      payload: _.omit(loggedUser.toJSON(), ['password']),
-      tokenGenerationOptions: {
-        expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
-      }
-    });
+    const authenticUser = {
+      token: getAuthenticationToken({
+        payload: _.omit(loggedUser.toJSON(), 'password'),
+        tokenGenerationOptions: {
+          expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
+        }
+      }),
+      user: loggedUser
+    };
+
+    return authenticUser;
   } catch (error) {
     throw error;
   }
