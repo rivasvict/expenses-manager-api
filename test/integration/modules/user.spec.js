@@ -22,7 +22,7 @@ describe('User module', function () {
 
     const insertedUser = await userModule.signUp(user);
     const userFromDb = await UserModel.findOne({ email: user.email });
-    expect(insertedUser.id).be.deep.equal(userFromDb.id);
+    expect(insertedUser._id).be.deep.equal(userFromDb._id);
   });
 
   it('authenticateUser: should retrieve user when authenticated', async function () {
@@ -38,6 +38,6 @@ describe('User module', function () {
       email: user.email,
       password: user.password
     });
-    expect(insertedUser.id).be.deep.equal(authenticatedUser.id);
+    expect(insertedUser._id).be.deep.equal(authenticatedUser._id);
   });
 });
