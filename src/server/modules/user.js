@@ -12,10 +12,11 @@ const GetError = _ => error => {
   return error;
 };
 
-const signUp = ({ User, getError }) => async (userToCreate) => {
+const signUp = ({ User, getError, _ }) => async (userToCreate) => {
   try {
     const user = new User(userToCreate);
-    return await user.create();
+    const userOnDb = await user.create();
+    return _.omit(userOnDb, 'password');
   } catch (error) {
     throw getError(error);
   }
@@ -45,7 +46,7 @@ module.exports = ({ User, _ }) => {
   const getError = GetError(_);
 
   return {
-    signUp: signUp({ User, getError }),
+    signUp: signUp({ User, getError, _ }),
     authenticateUser: authenticateUser({ User, _ })
   };
 };

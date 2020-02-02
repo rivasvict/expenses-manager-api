@@ -15,6 +15,12 @@ describe('User module', function () {
           create: sinon.fake.returns(Promise.resolve(userToTest))
         };
       };
+
+      this.getMockedUserModelWithError = errorToThrow => function () {
+        return {
+          create: sinon.fake.throws(errorToThrow)
+        };
+      }
     });
 
     it('Should create new user when it is formed with correct data', async function () {
@@ -27,7 +33,7 @@ describe('User module', function () {
       const userModule = UserModule({ _, User: this.getMockedUserModel(userToTest) });
       const user = await userModule.signUp(userToTest);
 
-      expect(user).to.deep.equal(userToTest);
+      expect(user).to.deep.equal(_.omit(userToTest, 'password'));
     });
 
     it('Should throw error when missing data', async function () {
@@ -75,7 +81,7 @@ describe('User module', function () {
         lastName: 'Rivas',
         password: 'hola'
       };
-      const userModule = UserModule({ User: this.getMockedUserModel(user) });
+      const userModule = UserModule({ User: this.getMockedUserModel(user), _ });
       try {
         const userToTest = await userModule.signUp(user);
       } catch (error) {
@@ -86,15 +92,18 @@ describe('User module', function () {
 
     it('Should throw error when alrady used email', async function () {
       const duplicationUserError = new Error('Duplicated user');
-      const userModule = UserModule({ User: this.getMockedUserModel(duplicationUserError) });
-      const user = await userModule.signUp({
-        firstName: 'Victor',
-        email: 'ahfushaa@gmail.com',
-        lastName: 'Rivas',
-        password: 'hola'
-      });
 
-      assert.equal(user, duplicationUserError);
+      try {
+        const userModule = UserModule({ User: this.getMockedUserModelWithError(duplicationUserError), _ });
+        const user = await userModule.signUp({
+          firstName: 'Victor',
+          email: 'ahfushaa@gmail.com',
+          lastName: 'Rivas',
+          password: 'hola'
+        });
+      } catch (error) {
+        expect(error).to.be.deep.equal(duplicationUserError);
+      }
     });
   });
 

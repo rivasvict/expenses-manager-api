@@ -14,7 +14,7 @@ const verifyAuthenticUser = ({ userModule, config, _, getAuthenticationToken }) 
 
     const authenticUser = {
       token: getAuthenticationToken({
-        payload: _.omit(loggedUser.toJSON(), ['password']),
+        payload: _.omit(loggedUser.toJSON(), 'password'),
         tokenGenerationOptions: {
           expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
         }
