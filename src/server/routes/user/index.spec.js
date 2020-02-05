@@ -5,7 +5,7 @@ const _ = require('lodash');
 
 const loginRouter = rewire('./index.js');
 const rawLoginRouteHandler = loginRouter.__get__('loginRouteHandler');
-const rawSendLoginSuccessResponseToClient = loginRouter.__get__('sendLoginSuccessResponseToClient:');
+const rawSendLoginSuccessResponseToClient = loginRouter.__get__('sendLoginSuccessResponseToClient');
 const getSendLoginSuccessResponseToClient = () => rawSendLoginSuccessResponseToClient();
 const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication);
 
@@ -49,13 +49,13 @@ describe('Authentication routes', function () {
       }
     });
 
-    it.only('loginRouteHandler: Should call next handler when successful authentication took place', async function () {
+    it('loginRouteHandler: Should call next handler when successful authentication took place', async function () {
       const userToken = 'the user token test';
       const simulatedLoginResponse = { token: userToken, user: this.userToAuthenticate };
       const authenticationModule = this.getAuthenticationModule(simulatedLoginResponse);
       const loginRouteHandler = getLoginRouterHandler(authenticationModule);
       await loginRouteHandler(this.req, this.res, this.next);
-      expect(this.next.calledWith({ ...simulatedLoginResponse, user: _.omit(simulatedLoginResponse.user, 'password') })).to.be.equal(true);
+      expect(this.req.body.authenticationDetails).to.be.deep.equal({ ...simulatedLoginResponse, user: _.omit(simulatedLoginResponse.user, 'password') });
       expect(this.next.callCount).to.be.equal(1);
     });
 
@@ -69,11 +69,15 @@ describe('Authentication routes', function () {
       expect(this.res.json.callCount).to.be.equal(1);
     });
 
+    // TODO: send only the user to the frontend directly and then also send the HTTPOnly cookie
     it.only('sendLoginSuccessResponseToClient: Should successfully respond to client when correct credentials passed on body', async function () {
+      const userToken = 'the user token test';
       const sendLoginSuccessResponseToClient = getSendLoginSuccessResponseToClient();
-      await sendLoginSuccessResponseToClient(this.req, this.res);
+      const simulatedLoginResponse = { token: userToken, user: _.omit(this.userToAuthenticate, 'password') };
+      const req = { ...this.req, body: { ...this.req.body, authenticationDetails: simulatedLoginResponse } };
+      await sendLoginSuccessResponseToClient(req, this.res);
       expect(this.res.status.calledWith(200)).to.be.equal(true);
-      expect(this.res.json.calledWith({ token: userToken, user: _.omit(this.userToAuthenticate, 'password') })).to.be.equal(true);
+      expect(this.res.json.calledWith(simulatedLoginResponse)).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
     });
