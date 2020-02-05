@@ -6,7 +6,7 @@ const userRoutes = require('./user/');
 
 const { userModule, authenticationModule } = require('../modules');
 
-const mountUserRoutes = userRoutes({ authenticationModule, userModule });
+const mountUserRoutes = userRoutes({ authenticationModule, userModule, wrap });
 const RoutesHandler = require('./routesHandler');
 const passportHandlers = require('../modules/passportHandlers');
 const cors = require('cors');

@@ -5,6 +5,8 @@ const _ = require('lodash');
 
 const loginRouter = rewire('./index.js');
 const rawLoginRouteHandler = loginRouter.__get__('loginRouteHandler');
+const rawSendLoginSuccessResponseToClient = loginRouter.__get__('sendLoginSuccessResponseToClient:');
+const getSendLoginSuccessResponseToClient = () => rawSendLoginSuccessResponseToClient();
 const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication);
 
 describe('Authentication routes', function () {
@@ -13,6 +15,7 @@ describe('Authentication routes', function () {
       status: () => this.res,
       json: sinon.spy()
     };
+    this.next = sinon.fake();
     sinon.spy(this.res, 'status');
   });
 
@@ -46,15 +49,14 @@ describe('Authentication routes', function () {
       }
     });
 
-    it('loginRouteHandler: Should successfully respond to client when correct credentials passed on body', async function () {
+    it.only('loginRouteHandler: Should call next handler when successful authentication took place', async function () {
       const userToken = 'the user token test';
-      const authenticationModule = this.getAuthenticationModule({ token: userToken, user: this.userToAuthenticate });
+      const simulatedLoginResponse = { token: userToken, user: this.userToAuthenticate };
+      const authenticationModule = this.getAuthenticationModule(simulatedLoginResponse);
       const loginRouteHandler = getLoginRouterHandler(authenticationModule);
-      await loginRouteHandler(this.req, this.res);
-      expect(this.res.status.calledWith(200)).to.be.equal(true);
-      expect(this.res.json.calledWith({ token: userToken, user: _.omit(this.userToAuthenticate, 'password') })).to.be.equal(true);
-      expect(this.res.status.callCount).to.be.equal(1);
-      expect(this.res.json.callCount).to.be.equal(1);
+      await loginRouteHandler(this.req, this.res, this.next);
+      expect(this.next.calledWith({ ...simulatedLoginResponse, user: _.omit(simulatedLoginResponse.user, 'password') })).to.be.equal(true);
+      expect(this.next.callCount).to.be.equal(1);
     });
 
     it('loginRouteHandler: Should respond with error to client when incorrect credentials passed on body', async function () {
@@ -63,6 +65,15 @@ describe('Authentication routes', function () {
       await loginRouteHandler(this.req, this.res);
       expect(this.res.status.calledWith(401)).to.be.equal(true);
       expect(this.res.json.calledWith({ message: 'Invalid credentials' })).to.be.equal(true);
+      expect(this.res.status.callCount).to.be.equal(1);
+      expect(this.res.json.callCount).to.be.equal(1);
+    });
+
+    it.only('sendLoginSuccessResponseToClient: Should successfully respond to client when correct credentials passed on body', async function () {
+      const sendLoginSuccessResponseToClient = getSendLoginSuccessResponseToClient();
+      await sendLoginSuccessResponseToClient(this.req, this.res);
+      expect(this.res.status.calledWith(200)).to.be.equal(true);
+      expect(this.res.json.calledWith({ token: userToken, user: _.omit(this.userToAuthenticate, 'password') })).to.be.equal(true);
       expect(this.res.status.callCount).to.be.equal(1);
       expect(this.res.json.callCount).to.be.equal(1);
     });

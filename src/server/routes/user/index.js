@@ -1,6 +1,3 @@
-// TODO: Inject wrap dependency
-const wrap = require('express-async-wrapper');
-
 const loginRouteHandler = authentication => async (req, res) => {
   try {
     const { username } = req.body.user;
@@ -53,7 +50,7 @@ const logOutHandler = authentication => async (req, res) => {
   }
 };
 
-const mountUserRoutes = ({ authenticationModule, userModule }) => ({ router, baseUrl }) => {
+const mountUserRoutes = ({ authenticationModule, userModule, wrap }) => ({ router, baseUrl }) => {
   // /api/user/login
   router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authenticationModule)));
   // /api/user/sign-up
