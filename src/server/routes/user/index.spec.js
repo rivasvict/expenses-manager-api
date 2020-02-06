@@ -13,7 +13,8 @@ describe('Authentication routes', function () {
   beforeEach('Initialize spies for authentication', function () {
     this.res = {
       status: () => this.res,
-      json: sinon.spy()
+      json: sinon.spy(),
+      cookie: sinon.spy()
     };
     this.next = sinon.fake();
     sinon.spy(this.res, 'status');
@@ -70,16 +71,45 @@ describe('Authentication routes', function () {
     });
 
     // TODO: send only the user to the frontend directly and then also send the HTTPOnly cookie
-    it.only('sendLoginSuccessResponseToClient: Should successfully respond to client when correct credentials passed on body', async function () {
+    describe.only('sendLoginSuccessResponseToClient', function () {
+      let req;
+      let simulatedLoginResponse;
+      let sendLoginSuccessResponseToClient;
       const userToken = 'the user token test';
-      const sendLoginSuccessResponseToClient = getSendLoginSuccessResponseToClient();
-      const simulatedLoginResponse = { token: userToken, user: _.omit(this.userToAuthenticate, 'password') };
-      const req = { ...this.req, body: { ...this.req.body, authenticationDetails: simulatedLoginResponse } };
-      await sendLoginSuccessResponseToClient(req, this.res);
-      expect(this.res.status.calledWith(200)).to.be.equal(true);
-      expect(this.res.json.calledWith(simulatedLoginResponse)).to.be.equal(true);
-      expect(this.res.status.callCount).to.be.equal(1);
-      expect(this.res.json.callCount).to.be.equal(1);
+      const cookieOptions = {
+        httpOnly: true
+      };
+
+      beforeEach('Prepare sendLoginSuccessResponseToClient call', async function () {
+        sendLoginSuccessResponseToClient = getSendLoginSuccessResponseToClient();
+        simulatedLoginResponse = { token: userToken, user: _.omit(this.userToAuthenticate, 'password') };
+        req = { ...this.req, body: { ...this.req.body, authenticationDetails: simulatedLoginResponse } };
+        await sendLoginSuccessResponseToClient(req, this.res);
+      });
+
+      it('sendLoginSuccessResponseToClient: Should respond to the frontend with 200 http code', function () {
+        expect(this.res.status.calledWith(200)).to.be.equal(true);
+      });
+
+      it('sendLoginSuccessResponseToClient: Should return the authenticated user to the frontend (call to res.json)', function () {
+        expect(this.res.json.calledWith(simulatedLoginResponse.user)).to.be.equal(true);
+      });
+
+      it('sendLoginSuccessResponseToClient: Should have only called status function just once', function () {
+        expect(this.res.status.callCount).to.be.equal(1);
+      });
+
+      it('sendLoginSuccessResponseToClient: Should have only called json function just once', function () {
+        expect(this.res.json.callCount).to.be.equal(1);
+      });
+
+      it('sendLoginSuccessResponseToClient: Should have called HTTPOnly cookie with the token and correct secure data', function () {
+        expect(this.res.cookie.calledWith('token', userToken, cookieOptions)).to.be.equal(true);
+      })
+
+      it('sendLoginSuccessResponseToClient: Should have called cookie function just once', function () {
+        expect(this.res.cookie.callCount).to.be.equal(1);
+      })
     });
   });
 
