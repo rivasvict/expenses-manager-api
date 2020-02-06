@@ -70,8 +70,7 @@ describe('Authentication routes', function () {
       expect(this.res.json.callCount).to.be.equal(1);
     });
 
-    // TODO: send only the user to the frontend directly and then also send the HTTPOnly cookie
-    describe.only('sendLoginSuccessResponseToClient', function () {
+    describe('sendLoginSuccessResponseToClient', function () {
       let req;
       let simulatedLoginResponse;
       let sendLoginSuccessResponseToClient;

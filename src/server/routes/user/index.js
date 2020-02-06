@@ -1,6 +1,11 @@
 const sendLoginSuccessResponseToClient = () => (req, res) => {
   const { user, token } = req.body.authenticationDetails;
-  res.status(200).json(user);
+  if (token) {
+    res.cookie('token', token, {
+      httpOnly: true
+    })
+    res.status(200).json(user);
+  }
 };
 
 const loginRouteHandler = authentication => async (req, res, next) => {
