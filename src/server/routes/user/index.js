@@ -63,7 +63,7 @@ const logOutHandler = authentication => async (req, res) => {
 
 const mountUserRoutes = ({ authenticationModule, userModule, wrap }) => ({ router, baseUrl }) => {
   // /api/user/login
-  router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authenticationModule), sendLoginSuccessResponseToClient));
+  router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authenticationModule)), sendLoginSuccessResponseToClient());
   // /api/user/sign-up
   router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler(userModule)));
   // /api/user/log-out
