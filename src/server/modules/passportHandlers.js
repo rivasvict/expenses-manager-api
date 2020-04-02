@@ -15,7 +15,7 @@ const jwtAuthenticate = ({ req, res, next, passport }) => {
 
 const isAuthorized = ({ passport, authenticationModule, constants }) => async (req, res, next) => {
   try {
-    const bearer = req.headers.authorization;
+    const bearer = req.cookies && req.cookies.token || '';
     const isTokenInBlackList = await authenticationModule.isTokenInvalidated(bearer);
     if (isTokenInBlackList) {
       res.status(constants.RESPONSE.STATUSES.UNAUTHORIZED).json({ message: constants.RESPONSE.MESSAGES.SESSION_EXPIRED });

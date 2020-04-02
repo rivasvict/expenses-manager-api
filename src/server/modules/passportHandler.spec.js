@@ -27,8 +27,8 @@ describe('Authorization function', function () {
     this.bearer = `bearer ${this.token}`;
     this.httpRequest = {
       req: {
-        headers: {
-          authorization: this.bearer
+        cookies: {
+          token: this.bearer
         }
       },
       res: {},
