@@ -61,6 +61,10 @@ const logOutHandler = authentication => async (req, res) => {
   }
 };
 
+const getUserHandler = user => async (req, res, next) => {
+  // TODO: Get user from user module
+};
+
 const mountUserRoutes = ({ authenticationModule, userModule, wrap }) => ({ router, baseUrl }) => {
   // /api/user/login
   router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authenticationModule)), sendLoginSuccessResponseToClient());
@@ -68,6 +72,8 @@ const mountUserRoutes = ({ authenticationModule, userModule, wrap }) => ({ route
   router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler(userModule)));
   // /api/user/log-out
   router.post(`${baseUrl}/log-out`, wrap(logOutHandler(authenticationModule)));
+  // /api/user/get-user
+  router.get(`${baseUrl}/get-user`, wrap(getUserHandler(userModule)))
 };
 
 module.exports = mountUserRoutes;

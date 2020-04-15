@@ -41,12 +41,17 @@ const authenticateUser = ({ User, _ }) => async ({ email, password }) => {
   }
 };
 
+const getUser = ({ User }) => (email) => {
+
+};
+
 module.exports = ({ User, _ }) => {
   // TODO: This should be loaded form a helper
   const getError = GetError(_);
 
   return {
     signUp: signUp({ User, getError, _ }),
-    authenticateUser: authenticateUser({ User, _ })
+    authenticateUser: authenticateUser({ User, _ }),
+    getUser: getUser({ User })
   };
 };

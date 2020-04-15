@@ -1,4 +1,3 @@
-const assert = require('assert');
 const _ = require('lodash');
 const sinon = require('sinon');
 const { expect } = require('chai');
@@ -23,88 +22,120 @@ describe('User module', function () {
       }
     });
 
-    it('Should create new user when it is formed with correct data', async function () {
-      const userToTest = {
-        firstName: 'ahisuhd',
-        email: 'ahfushaa@gmail.com',
-        lastName: 'Rivas',
-        password: 'hola'
-      };
-      const userModule = UserModule({ _, User: this.getMockedUserModel(userToTest) });
-      const user = await userModule.signUp(userToTest);
-
-      expect(user).to.deep.equal(_.omit(userToTest, 'password'));
-    });
-
-    it('Should throw error when missing data', async function () {
-      const userToTest = {
-        email: 'ahfushaa@gmail.com',
-        lastName: 'Rivas',
-        password: 'hola'
-      };
-      const validationPathName = 'firstName';
-      const validationMessage = 'Validation failed: firstName: Path `firstName` is required.';
-      const validationTypeName = 'ValidationError';
-      const validationContent = [{ message: validationMessage, path: validationPathName }];
-      const validationError = {
-        validation: validationContent,
-        name: validationTypeName,
-        message: 'Invalid data'
-      };
-
-      const dbValidationError = {
-        name: validationTypeName,
-        message: validationMessage,
-        errors: {
-          [validationPathName]: validationContent[0]
-        }
-      }
-
-      const userModule = UserModule({ User: function() {
-        return {
-          create: sinon.fake.returns(Promise.reject(dbValidationError))
-        }
-      }, _ });
-
-      try {
-        const createdUser = await userModule.signUp(userToTest);
-        expect(createdUser).to.be.equal(undefined)
-      } catch (error) {
-        expect(error).to.be.deep.equal(validationError);
-      }
-    });
-
-    it('Should throw an error when an uncorrectly formated email inserted', async function () {
-      const user = {
-        firstName: 'Victor',
-        email: 'ahfushaa@gmailcom',
-        lastName: 'Rivas',
-        password: 'hola'
-      };
-      const userModule = UserModule({ User: this.getMockedUserModel(user), _ });
-      try {
-        const userToTest = await userModule.signUp(user);
-      } catch (error) {
-        expect(error.message).to.be.equal(`Validation failed: email: Provided email: ${user.email} has no valid format`);
-        expect(error.name).to.be.equal('ValidationError');
-      }
-    });
-
-    it('Should throw error when alrady used email', async function () {
-      const duplicationUserError = new Error('Duplicated user');
-
-      try {
-        const userModule = UserModule({ User: this.getMockedUserModelWithError(duplicationUserError), _ });
-        const user = await userModule.signUp({
-          firstName: 'Victor',
+    describe('signUp: Test for user creation', function () {
+      it('Should create new user when it is formed with correct data', async function () {
+        const userToTest = {
+          firstName: 'ahisuhd',
           email: 'ahfushaa@gmail.com',
           lastName: 'Rivas',
           password: 'hola'
+        };
+        const userModule = UserModule({ _, User: this.getMockedUserModel(userToTest) });
+        const user = await userModule.signUp(userToTest);
+
+        expect(user).to.deep.equal(_.omit(userToTest, 'password'));
+      });
+
+      it('Should throw error when missing data', async function () {
+        const userToTest = {
+          email: 'ahfushaa@gmail.com',
+          lastName: 'Rivas',
+          password: 'hola'
+        };
+        const validationPathName = 'firstName';
+        const validationMessage = 'Validation failed: firstName: Path `firstName` is required.';
+        const validationTypeName = 'ValidationError';
+        const validationContent = [{ message: validationMessage, path: validationPathName }];
+        const validationError = {
+          validation: validationContent,
+          name: validationTypeName,
+          message: 'Invalid data'
+        };
+
+        const dbValidationError = {
+          name: validationTypeName,
+          message: validationMessage,
+          errors: {
+            [validationPathName]: validationContent[0]
+          }
+        }
+
+        const userModule = UserModule({
+          User: function () {
+            return {
+              create: sinon.fake.returns(Promise.reject(dbValidationError))
+            }
+          }, _
         });
-      } catch (error) {
-        expect(error).to.be.deep.equal(duplicationUserError);
-      }
+
+        try {
+          const createdUser = await userModule.signUp(userToTest);
+          expect(createdUser).to.be.equal(undefined)
+        } catch (error) {
+          expect(error).to.be.deep.equal(validationError);
+        }
+      });
+
+      it('Should throw an error when an uncorrectly formated email inserted', async function () {
+        const user = {
+          firstName: 'Victor',
+          email: 'ahfushaa@gmailcom',
+          lastName: 'Rivas',
+          password: 'hola'
+        };
+        const userModule = UserModule({ User: this.getMockedUserModel(user), _ });
+        try {
+          const userToTest = await userModule.signUp(user);
+        } catch (error) {
+          expect(error.message).to.be.equal(`Validation failed: email: Provided email: ${user.email} has no valid format`);
+          expect(error.name).to.be.equal('ValidationError');
+        }
+      });
+
+      it('Should throw error when alrady used email', async function () {
+        const duplicationUserError = new Error('Duplicated user');
+
+        try {
+          const userModule = UserModule({ User: this.getMockedUserModelWithError(duplicationUserError), _ });
+          const user = await userModule.signUp({
+            firstName: 'Victor',
+            email: 'ahfushaa@gmail.com',
+            lastName: 'Rivas',
+            password: 'hola'
+          });
+        } catch (error) {
+          expect(error).to.be.deep.equal(duplicationUserError);
+        }
+      });
+
     });
+
+    describe.only('getUser: Test for getting an user from the db', function () {
+      let getMockedUserModule = getUserResponse => {
+        class UserModel {
+          constructor() {
+            this.getByEmail =  sinon.fake.returns(getUserResponse);
+          }
+        };
+
+        return UserModule({ User: UserModel, _: {}})
+      };
+
+      beforeEach('Prepare getUser function', function () {
+      });
+
+      it('Should get the user when it exists', function() {
+        const userModule = getMockedUserModule({});
+        const existingEmailUser = 'test@test.test'
+        const emailUserFromDb = userModule.getUser(existingEmailUser);
+
+        expect(emailUserFromDb).to.be.equal(existingEmailUser)
+      });
+
+      it.skip('Should return a not found error when the user does not exist', function () {
+
+      });
+    })
   });
 
   describe('Integration: Authenticate user', function () {

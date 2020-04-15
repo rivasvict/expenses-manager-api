@@ -59,8 +59,7 @@ describe('Authorization function', function () {
         json: this.jsonFake
       })
     };
-    const authenticationMiddlewareWrapper = await this.passportHandlers
-      .isAuthorized(this.httpRequest.req, this.httpRequest.res);
+    await this.passportHandlers.isAuthorized(this.httpRequest.req, this.httpRequest.res);
     expect(this.httpRequest.res.status.calledWith(403)).to.be.equal(true);
     expect(this.jsonFake.calledWith({ message: 'Session expired' })).to.be.equal(true);
     expect(this.httpRequest.res.status.calledOnce).to.be.equal(true);

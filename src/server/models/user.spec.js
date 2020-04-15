@@ -69,6 +69,34 @@ describe('User class', function () {
       });
 
       afterEach('Restore stubs', function () {
+        this.user.model(constants.MODEL_NAMES.USER).find.restore();
+        this.findStub.restore();
+      });
+    });
+
+    describe.only('user.getByEmail', function () {
+      beforeEach('Prepare test for getByEmail', function () {
+        this.findMock = {
+          exec: () => Promise.resolve([this.user])
+        };
+
+        this.findStub = sinon
+          .stub(this.user.model(constants.MODEL_NAMES.USER), 'find').returns(this.findMock);
+      });
+
+      it('Should return the same user email when found', async function () {
+        try {
+          const foundUser = await User.getByEmail({ email: this.user.email });
+          expect(foundUser.email).to.be.deep.equal(this.user.email);
+        } catch (error) {
+          throw error;
+        }
+      });
+
+      it.skip('Should return a not found error when not fownd', function () { })
+
+      afterEach('Restore stubs', function () {
+        this.user.model(constants.MODEL_NAMES.USER).find.restore();
         this.findStub.restore();
       });
     });
