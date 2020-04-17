@@ -110,29 +110,30 @@ describe('User module', function () {
 
     });
 
-    describe.only('getUser: Test for getting an user from the db', function () {
+    describe('getUser: Test for getting an user from the db', function () {
       let getMockedUserModule = getUserResponse => {
         class UserModel {
-          constructor() {
-            this.getByEmail =  sinon.fake.returns(getUserResponse);
+          static getByEmail() {
+            return sinon.fake.returns(getUserResponse)();
           }
         };
 
         return UserModule({ User: UserModel, _: {}})
       };
 
-      beforeEach('Prepare getUser function', function () {
-      });
+      it('Should get the user when it exists', async function() {
+        const existingEmailUser = 'test@test.test';
+        const existingUser = {
+          email: existingEmailUser
+        };
+        const userModule = getMockedUserModule(existingUser);
+        try {
+          const emailUserFromDb = await userModule.getUser(existingEmailUser);
 
-      it('Should get the user when it exists', function() {
-        const userModule = getMockedUserModule({});
-        const existingEmailUser = 'test@test.test'
-        const emailUserFromDb = userModule.getUser(existingEmailUser);
-
-        expect(emailUserFromDb).to.be.equal(existingEmailUser)
-      });
-
-      it.skip('Should return a not found error when the user does not exist', function () {
+          expect(emailUserFromDb).to.be.deep.equal(existingUser);
+        } catch (error) {
+          throw error;
+        }
 
       });
     })

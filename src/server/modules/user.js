@@ -41,8 +41,13 @@ const authenticateUser = ({ User, _ }) => async ({ email, password }) => {
   }
 };
 
-const getUser = ({ User }) => (email) => {
-
+const getUser = ({ User }) => async (email) => {
+  try {
+    const foundUser = await User.getByEmail({ email });
+    return foundUser;
+  } catch (error) {
+    throw error;
+  }
 };
 
 module.exports = ({ User, _ }) => {
