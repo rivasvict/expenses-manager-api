@@ -74,7 +74,7 @@ describe('User class', function () {
       });
     });
 
-    describe.only('user.getByEmail', function () {
+    describe('user.getByEmail', function () {
       beforeEach('Prepare test for getByEmail', function () {
         this.findMock = {
           exec: () => Promise.resolve([this.user])
@@ -93,7 +93,15 @@ describe('User class', function () {
         }
       });
 
-      it.skip('Should return a not found error when not fownd', function () { })
+      it('Should return undefined when not fown user', async function () {
+        const wrongEmail = 'non@existing.email';
+        try {
+          const foundUser = await User.getByEmail({ email: wrongEmail });
+          expect(foundUser).to.be.equal(undefined);
+        } catch (error) {
+          throw error;
+        }
+      })
 
       afterEach('Restore stubs', function () {
         this.user.model(constants.MODEL_NAMES.USER).find.restore();
