@@ -9,7 +9,7 @@ const rawSendLoginSuccessResponseToClient = loginRouter.__get__('sendLoginSucces
 const rawGetUserHandler = loginRouter.__get__('getUserHandler');
 const getSendLoginSuccessResponseToClient = () => rawSendLoginSuccessResponseToClient();
 const getLoginRouterHandler = authentication => rawLoginRouteHandler(authentication);
-const getRawUserHandler = () => rawGetUserHandler();
+const getRawUserHandler = userModule => rawGetUserHandler(userModule);
 
 describe('User routes handlers', function () {
   describe('Authentication', function () {
@@ -262,7 +262,7 @@ describe('User routes handlers', function () {
       });
     });
 
-    describe.skip('getUserHandler test', function () {
+    describe('getUserHandler test', function () {
 
       const userOnDb = {
         firstName: 'firstName',
@@ -287,21 +287,32 @@ describe('User routes handlers', function () {
 
       const next = sinon.fake.returns(() => {});
 
-      beforeEach('Prepare getUserHandler', function () {
-
-      });
-
       describe('User found', function () {
+        it('Should return queried user from the system and 200 success http code', async function () {
+          const mockedUserModule = {
+            getUser: sinon.fake.returns(userOnDb)
+          };
 
-        it('Should return queried user from the system', async function () {
-          const getUserHandler = getRawUserHandler();
-          const userResponse = getUserHandler(req, res, next);
-          expect(userResponse).to.be.deep.equal(userOnDb);
+          const getUserHandler = getRawUserHandler(mockedUserModule);
+          await getUserHandler(req, res, next);
+
+          expect(jsonFake.calledWith(userOnDb)).to.be.equal(true);
+          expect(statusFake.calledWith(200)).to.be.equal(true);
         });
       });
 
-      describe.skip('User not found', function () {
-        it('Should return 404 error code when no queried user founfd')
+      describe('User not found', function () {
+        it('Should return 404 error code when no queried user founfd', async function () {
+          const mockedUserModule = {
+            getUser: sinon.fake.returns(null)
+          };
+
+          const getUserHandler = getRawUserHandler(mockedUserModule);
+          await getUserHandler(req, res, next);
+
+          expect(jsonFake.calledWith({ message: 'User not found' })).to.be.equal(true);
+          expect(statusFake.calledWith(404)).to.be.equal(true);
+        });
       });
     });
 
