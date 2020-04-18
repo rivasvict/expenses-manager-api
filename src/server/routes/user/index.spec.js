@@ -263,12 +263,10 @@ describe('User routes handlers', function () {
     });
 
     describe('getUserHandler test', function () {
-
       const userOnDb = {
         firstName: 'firstName',
         lastName: 'lastName',
-        email: 'victor@gmail.com',
-        password: 'password'         
+        email: 'victor@gmail.com'
       };
 
       const req = {
@@ -278,7 +276,7 @@ describe('User routes handlers', function () {
       };
 
 
-      const jsonFake = sinon.fake.returns(() => {});
+      const jsonFake = sinon.fake.returns(null);
       const statusFake = sinon.fake.returns({ json: jsonFake });
 
       const res = {

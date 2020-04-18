@@ -26,7 +26,7 @@ const signUp = ({ User, getError, removePassword }) => async (userToCreate) => {
 
 const authenticateUser = ({ User, removePassword }) => async ({ email, password }) => {
   try {
-    const user = await User.getByEmail({ email });
+    const user = await User.getByEmailWithPassword({ email });
     if (user && user.get('email') === email) {
       const areCredentialsCorrect = await comparePassword({
         password, hashedPassword: user.get('password')

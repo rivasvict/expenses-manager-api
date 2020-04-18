@@ -87,7 +87,7 @@ const mountUserRoutes = ({ authenticationModule, userModule, wrap }) => ({ route
   router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler(userModule)));
   // /api/user/log-out
   router.post(`${baseUrl}/log-out`, wrap(logOutHandler(authenticationModule)));
-  // /api/user/get-user
+  // /api/user/get
   router.get(`${baseUrl}/get/:email`, wrap(getUserHandler(userModule)))
 };
 

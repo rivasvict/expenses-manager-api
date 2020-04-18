@@ -150,7 +150,7 @@ describe('User module', function () {
       };
       this.getMockedUserModel = userToTest => {
         return {
-          getByEmail: sinon.fake.returns(Promise.resolve(userToTest))
+          getByEmailWithPassword: sinon.fake.returns(Promise.resolve(userToTest))
         };
       };
     });

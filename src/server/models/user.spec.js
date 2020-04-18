@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const _ = require('lodash');
 
 const constants = require('../constants');
 const User = require('./user');
@@ -74,8 +75,8 @@ describe('User class', function () {
       });
     });
 
-    describe('user.getByEmail', function () {
-      beforeEach('Prepare test for getByEmail', function () {
+    describe('Get user functions', function () {
+      beforeEach('Prepare test for get user functions', function () {
         this.findMock = {
           exec: () => Promise.resolve([this.user])
         };
@@ -84,24 +85,36 @@ describe('User class', function () {
           .stub(this.user.model(constants.MODEL_NAMES.USER), 'find').returns(this.findMock);
       });
 
-      it('Should return the same user email when found', async function () {
-        try {
+      describe('user.getByEmail', function () {
+        it('Should return the same user email when found', async function () {
           const foundUser = await User.getByEmail({ email: this.user.email });
-          expect(foundUser.email).to.be.deep.equal(this.user.email);
-        } catch (error) {
-          throw error;
-        }
+          expect(foundUser.toJSON()).to.be.deep.equal(this.user.toJSON());
+        });
+
+        it('Should return undefined when not fown user', async function () {
+          const wrongEmail = 'non@existing.email';
+          try {
+            const foundUser = await User.getByEmail({ email: wrongEmail });
+            expect(foundUser).to.be.equal(undefined);
+          } catch (error) {
+            throw error;
+          }
+        });
+
+        it('Should have called find function "password" field restriction ("-password")', async function () {
+          const email = this.user.email;
+          await User.getByEmail({ email });
+          expect(this.findStub.calledWith({ email }, '-password')).to.be.equal(true);
+        });
       });
 
-      it('Should return undefined when not fown user', async function () {
-        const wrongEmail = 'non@existing.email';
-        try {
-          const foundUser = await User.getByEmail({ email: wrongEmail });
-          expect(foundUser).to.be.equal(undefined);
-        } catch (error) {
-          throw error;
-        }
-      })
+      describe('user.getByEmailWithPassword', function () {
+        it('Should have called find function without restricting "password" field ("-password")', async function () {
+          const email = this.user.email;
+          await User.getByEmailWithPassword({ email });
+          expect(this.findStub.calledWith({ email }, '')).to.be.equal(true);
+        });
+      });
 
       afterEach('Restore stubs', function () {
         this.user.model(constants.MODEL_NAMES.USER).find.restore();
