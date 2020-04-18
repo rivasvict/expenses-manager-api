@@ -118,7 +118,7 @@ describe('User module', function () {
           }
         };
 
-        return UserModule({ User: UserModel, _: {}})
+        return UserModule({ User: UserModel, _ })
       };
 
       it('Should get the user when it exists', async function() {
@@ -126,15 +126,14 @@ describe('User module', function () {
         const existingUser = {
           email: existingEmailUser
         };
-        const userModule = getMockedUserModule(existingUser);
+        const userModule = getMockedUserModule({ ...existingUser, password: 'password' });
         try {
           const emailUserFromDb = await userModule.getUser(existingEmailUser);
 
-          expect(emailUserFromDb).to.be.deep.equal(existingUser);
+          expect(emailUserFromDb).to.be.deep.equal(_.omit(existingUser, 'password'));
         } catch (error) {
           throw error;
         }
-
       });
     })
   });
