@@ -287,32 +287,40 @@ describe('User routes handlers', function () {
 
       const next = sinon.fake.returns(() => {});
 
-      describe('User found', function () {
-        it('Should return queried user from the system and 200 success http code', async function () {
-          const mockedUserModule = {
-            getUser: sinon.fake.returns(userOnDb)
-          };
+      it('Should return queried user from the system and 200 success http code', async function () {
+        const mockedUserModule = {
+          getUser: sinon.fake.returns(userOnDb)
+        };
 
-          const getUserHandler = getRawUserHandler(mockedUserModule);
-          await getUserHandler(req, res, next);
+        const getUserHandler = getRawUserHandler(mockedUserModule);
+        await getUserHandler(req, res, next);
 
-          expect(jsonFake.calledWith(userOnDb)).to.be.equal(true);
-          expect(statusFake.calledWith(200)).to.be.equal(true);
-        });
+        expect(jsonFake.calledWith(userOnDb)).to.be.equal(true);
+        expect(statusFake.calledWith(200)).to.be.equal(true);
       });
 
-      describe('User not found', function () {
-        it('Should return 404 error code when no queried user founfd', async function () {
-          const mockedUserModule = {
-            getUser: sinon.fake.returns(null)
-          };
+      it('Should return 404 error code when no queried user founfd', async function () {
+        const mockedUserModule = {
+          getUser: sinon.fake.returns(null)
+        };
 
-          const getUserHandler = getRawUserHandler(mockedUserModule);
-          await getUserHandler(req, res, next);
+        const getUserHandler = getRawUserHandler(mockedUserModule);
+        await getUserHandler(req, res, next);
 
-          expect(jsonFake.calledWith({ message: 'User not found' })).to.be.equal(true);
-          expect(statusFake.calledWith(404)).to.be.equal(true);
-        });
+        expect(jsonFake.calledWith({ message: 'User not found' })).to.be.equal(true);
+        expect(statusFake.calledWith(404)).to.be.equal(true);
+      });
+      
+      it('Should return 404 bad request http error code when the required data is not provided for the handler', async function () {
+        const mockedUserModule = {
+          getUser: sinon.fake.returns(null)
+        };
+
+        const getUserHandler = getRawUserHandler(mockedUserModule);
+        await getUserHandler({ body: {} }, res, next);
+
+        expect(jsonFake.calledWith({ message: 'Missing user object' })).to.be.equal(true);
+        expect(statusFake.calledWith(400)).to.be.equal(true);
       });
     });
 
@@ -320,4 +328,4 @@ describe('User routes handlers', function () {
       sinon.restore();
     });
   });
-})
+});
