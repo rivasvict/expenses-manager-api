@@ -272,8 +272,8 @@ describe('User routes handlers', function () {
       };
 
       const req = {
-        body: {
-          user: userOnDb.email
+        params: {
+          email: userOnDb.email
         }
       };
 
@@ -317,7 +317,7 @@ describe('User routes handlers', function () {
         };
 
         const getUserHandler = getRawUserHandler(mockedUserModule);
-        await getUserHandler({ body: {} }, res, next);
+        await getUserHandler({ params: {} }, res, next);
 
         expect(jsonFake.calledWith({ message: 'Missing user object' })).to.be.equal(true);
         expect(statusFake.calledWith(400)).to.be.equal(true);

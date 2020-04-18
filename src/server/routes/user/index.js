@@ -63,8 +63,8 @@ const logOutHandler = authentication => async (req, res) => {
 
 const getUserHandler = user => async (req, res) => {
   try {
-    if (req.body.user) {
-      const { email } = req.body.user;
+    if (req.params.email) {
+      const { email } = req.params;
       const userFromDb = await user.getUser(email);
 
       if (userFromDb) {
@@ -88,7 +88,7 @@ const mountUserRoutes = ({ authenticationModule, userModule, wrap }) => ({ route
   // /api/user/log-out
   router.post(`${baseUrl}/log-out`, wrap(logOutHandler(authenticationModule)));
   // /api/user/get-user
-  router.get(`${baseUrl}/get-user`, wrap(getUserHandler(userModule)))
+  router.get(`${baseUrl}/get/:email`, wrap(getUserHandler(userModule)))
 };
 
 module.exports = mountUserRoutes;
