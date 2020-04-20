@@ -4,11 +4,10 @@ const wrap = require('express-async-wrapper');
 const router = express.Router();
 const userRoutes = require('./user/');
 
-const { userModule, authenticationModule } = require('../modules');
+const { userModule, authenticationModule, passportHandlerModule } = require('../modules');
 
 const mountUserRoutes = userRoutes({ authenticationModule, userModule, wrap });
 const RoutesHandler = require('./routesHandler');
-const passportHandlers = require('../modules/passportHandlers');
 const cors = require('cors');
 
 const baseApiUrl = '/api';
@@ -17,17 +16,21 @@ const routesHandler = new RoutesHandler({
   baseApiUrl
 });
 
-const jwtStrategy = passportHandlers.isAuthorized;
+const jwtStrategy = passportHandlerModule.isAuthorized;
 // TODO: Configure development CORS policies
 
-router.use(`${baseApiUrl}/*`, cors(), wrap(RoutesHandler.mountMiddlewaresUnless(
+const whiteListedRoutesGenericHandler = RoutesHandler.mountMiddlewaresUnless(
+  // Mount to whatever it is in this array to all existing routes
   [
     jwtStrategy
   ],
+  // Except from these routes
   '/api/user/login',
   '/api/user/sign-up',
   '/api/user/log-out'
-)));
+);
+
+router.use(`${baseApiUrl}*`, cors(), wrap(whiteListedRoutesGenericHandler));
 
 /*
  * TODO: Make an additional manual test (besides automated) on authenticated routes

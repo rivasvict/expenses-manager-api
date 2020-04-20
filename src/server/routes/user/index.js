@@ -61,7 +61,7 @@ const logOutHandler = authentication => async (req, res) => {
   }
 };
 
-const getUserHandler = user => async (req, res) => {
+const getUserHandler = user => async (req, res, next) => {
   try {
     if (req.params.email) {
       const { email } = req.params;
