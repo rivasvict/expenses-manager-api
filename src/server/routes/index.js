@@ -30,7 +30,15 @@ const whiteListedRoutesGenericHandler = RoutesHandler.mountMiddlewaresUnless(
   '/api/user/log-out'
 );
 
-router.use(`${baseApiUrl}*`, cors(), wrap(whiteListedRoutesGenericHandler));
+router.use(`${baseApiUrl}*`, cors({
+  origin: [
+    // TODO: Make sure you make these values dependent on the environment variables
+    'http://192.168.0.218:3000',
+    'http://localdev:3000',
+    'localhost:3000'
+  ],
+  credentials: true
+}), wrap(whiteListedRoutesGenericHandler));
 
 /*
  * TODO: Make an additional manual test (besides automated) on authenticated routes
