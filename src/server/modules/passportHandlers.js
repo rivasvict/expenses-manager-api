@@ -1,6 +1,7 @@
+
 const initPassportStrategy = ({ passport, ExtractJwt, config, JwtStrategy, authenticationModule }) => {
   const jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: ExtractJwt,
     secretOrKey: config.SECRET
   };
 
@@ -15,7 +16,6 @@ const jwtAuthenticate = ({ req, res, next, passport }) => {
 
 const isAuthorized = ({ passport, authenticationModule, constants }) => async (req, res, next) => {
   try {
-    console.log(req.cookies)
     const bearer = req.cookies && req.cookies.token || '';
     const isTokenInBlackList = await authenticationModule.isTokenInvalidated(bearer);
     if (isTokenInBlackList) {
@@ -28,7 +28,9 @@ const isAuthorized = ({ passport, authenticationModule, constants }) => async (r
   }
 };
 
-module.exports = ({ passport, ExtractJwt, config, JwtStrategy, authenticationModule, constants }) => {
+module.exports = ({ passport, config, JwtStrategy, authenticationModule, constants }) => {
+  const ExtractJwt = req => req && req.cookies ? req.cookies['token'] : null; 
+
   initPassportStrategy({ passport, ExtractJwt, config, JwtStrategy, authenticationModule });
 
   return {
