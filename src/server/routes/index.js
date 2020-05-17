@@ -35,7 +35,7 @@ router.use(`${baseApiUrl}*`, cors({
     // TODO: Make sure you make these values dependent on the environment variables
     'http://192.168.0.218:3000',
     'http://localdev:3000',
-    'localhost:3000'
+    'http://localhost:3000'
   ],
   credentials: true
 }), wrap(whiteListedRoutesGenericHandler));

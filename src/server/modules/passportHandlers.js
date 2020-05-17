@@ -15,6 +15,7 @@ const jwtAuthenticate = ({ req, res, next, passport }) => {
 
 const isAuthorized = ({ passport, authenticationModule, constants }) => async (req, res, next) => {
   try {
+    console.log(req.cookies)
     const bearer = req.cookies && req.cookies.token || '';
     const isTokenInBlackList = await authenticationModule.isTokenInvalidated(bearer);
     if (isTokenInBlackList) {
