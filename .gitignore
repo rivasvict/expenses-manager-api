@@ -4,3 +4,5 @@
 node_modules
 
 .env
+# The container directory for the Mongo and Redis data
+data
