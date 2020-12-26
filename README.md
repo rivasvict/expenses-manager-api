@@ -33,7 +33,9 @@ or domain
 
 `docker-compose up --build`
 
-4. Run the db configuration script (Only run this once, no needed for future builds)
+4. While the previous command is running, in another terminal,
+please run the db configuration script (Only run this once, no
+needed for future builds)
 
 `bash docker-config/bin/mongo/addUsers.sh`
 
