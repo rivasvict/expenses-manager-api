@@ -39,6 +39,9 @@ needed for future builds)
 
 `bash docker-config/bin/mongo/addUsers.sh`
 
+5. Stop the `docker-compose` running instance and start them again
+with docker-compose up
+
 Run the project (docker)
 -------
 
