@@ -15,11 +15,19 @@ Setup (docker)
 
 2. Fill all values on `.env` file.
 
-**Note:** `DB_SERVER` and `DB_SERVER_TEST` are set to
-`mongo` by default (to match `docker-compose` service 
-name), if you happen not to use `docker-compose` setup,
+**Note:** The following variables on the `.env` files have a
+default value (to match `docker-compose` service 
+name):
+
+```
+DB_SERVER=mongo
+DB_TEST_SERVER=mongo
+REDIS_SERVER=redis
+```
+
+If you happen not to use `docker-compose` setup,
 make sure to change this to match the correct db server ip
-or domain.
+or domain
 
 3. Build the docker containers
 
