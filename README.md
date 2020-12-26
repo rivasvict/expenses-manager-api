@@ -47,5 +47,10 @@ Run the project (docker)
 
 Simply run
 
-`docker-compose up --build`
+`docker-compose up`
+
+# TODO
+
+- [ ] Create a script to always check if the db is fully configured and if not, run  `bash docker-config/bin/mongo/addUsers.sh` (To set up the db user), if so, IGNORE it
+- [ ] Add to this README.md file how to run the project from the bash scripts that will start and stop docker-compose
 
