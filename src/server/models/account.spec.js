@@ -39,7 +39,7 @@ describe('Account module', function () {
         try {
           this.getAccountInstance(this.accountWithInvalidNameType);
         } catch (error) {
-          expect(error.message).to.be.equal('Validation failed: name: Cast to String failed for value "[]" at path "name"');
+          expect(error.message).to.be.equal('Validation failed: name: Cast to string failed for value "[]" at path "name"');
         }
       });
 
@@ -62,7 +62,7 @@ describe('Account module', function () {
           try {
             this.getAccountInstance(this.accountWithInvalidCurrencyType);
           } catch (error) {
-            expect(error.message).to.be.equal('Validation failed: currency: Cast to String failed for value "[]" at path "currency"');
+            expect(error.message).to.be.equal('Validation failed: currency: Cast to string failed for value "[]" at path "currency"');
           }
         });
 
@@ -80,7 +80,7 @@ describe('Account module', function () {
         try {
           this.getAccountInstance(this.accountWithInvalidDescriptionType);
         } catch (error) {
-          expect(error.message).to.be.equal('Validation failed: description: Cast to String failed for value "[]" at path "description"');
+          expect(error.message).to.be.equal('Validation failed: description: Cast to string failed for value "[]" at path "description"');
         }
       });
     });
