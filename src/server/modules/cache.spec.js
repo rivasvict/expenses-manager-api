@@ -4,7 +4,6 @@ const { expect } = require('chai');
 const Cache = require('./cache');
 
 describe('Cache CRD operations', function () {
-
   before('Prepare mock for Cache', function () {
     this.membersToSet = ['memner1'];
     this.itIsMemberCodeNumber = 1;

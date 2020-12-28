@@ -28,15 +28,14 @@ const verifyAuthenticUser = ({ userModule, config, _, getAuthenticationToken }) 
   }
 };
 
-const verifyToken = ({ jwt, config }) => payload => {
+const verifyToken = ({ jwt, config }) => (payload) => {
   try {
     return jwt.verify(payload, config.SECRET);
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       return null;
-    } else {
-      throw error;
     }
+    throw error;
   }
 };
 
@@ -90,7 +89,7 @@ const removeInvalidTokensFromBlackList = ({ cacheModule, config, verifyAuthentic
   }
 };
 
-const invalidateToken = ({ cacheModule, config }) => async bearer => {
+const invalidateToken = ({ cacheModule, config }) => async (bearer) => {
   try {
     const userToken = getTokenOutOfBearer(bearer);
     await cacheModule.addToSet({

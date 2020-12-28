@@ -57,7 +57,7 @@ class User extends DbUser {
   }
 
   static getByEmailWithPassword({ email }) {
-     return User.getByEmail({ email }, '');
+    return User.getByEmail({ email }, '');
   }
 
   async updateRecord(selector, update) {

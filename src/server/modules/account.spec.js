@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const Account = require('../models/account');
 const User = require('../models/user');
 const AccountModule = require('./account');
+
 const accountModule = AccountModule();
 
 describe('account module', function () {

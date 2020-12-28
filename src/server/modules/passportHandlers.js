@@ -6,7 +6,7 @@ const initPassportStrategy = ({ passport, ExtractJwt, config, JwtStrategy, authe
   };
 
   passport.use(new JwtStrategy(jwtOptions, authenticationModule.passportVerify));
-}
+};
 
 const jwtAuthenticate = ({ req, res, next, passport }) => {
   passport.authenticate('jwt', {
@@ -29,7 +29,7 @@ const isAuthorized = ({ passport, authenticationModule, constants }) => async (r
 };
 
 module.exports = ({ passport, config, JwtStrategy, authenticationModule, constants }) => {
-  const ExtractJwt = req => req && req.cookies ? req.cookies['token'] : null; 
+  const ExtractJwt = req => (req && req.cookies ? req.cookies.token : null);
 
   initPassportStrategy({ passport, ExtractJwt, config, JwtStrategy, authenticationModule });
 

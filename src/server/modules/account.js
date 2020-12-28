@@ -25,6 +25,4 @@ const createAccountRelatedToUser = async ({ account, user }) => {
   }
 };
 
-module.exports = () => {
-  return { create }
-};
+module.exports = () => ({ create });

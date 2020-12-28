@@ -102,7 +102,7 @@ describe('User class', function () {
         });
 
         it('Should have called find function "password" field restriction ("-password")', async function () {
-          const email = this.user.email;
+          const { email } = this.user;
           await User.getByEmail({ email });
           expect(this.findStub.calledWith({ email }, '-password')).to.be.equal(true);
         });
@@ -110,7 +110,7 @@ describe('User class', function () {
 
       describe('user.getByEmailWithPassword', function () {
         it('Should have called find function without restricting "password" field ("-password")', async function () {
-          const email = this.user.email;
+          const { email } = this.user;
           await User.getByEmailWithPassword({ email });
           expect(this.findStub.calledWith({ email }, '')).to.be.equal(true);
         });

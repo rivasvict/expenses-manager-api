@@ -11,7 +11,7 @@ describe('User module', function () {
     beforeEach('Prepare mocked user model', function () {
       this.getMockedUserModel = userToTest => function () {
         return {
-          create: sinon.fake.returns(Promise.resolve({ ...userToTest, toJSON: () => userToTest })),
+          create: sinon.fake.returns(Promise.resolve({ ...userToTest, toJSON: () => userToTest }))
         };
       };
 
@@ -19,7 +19,7 @@ describe('User module', function () {
         return {
           create: sinon.fake.throws(errorToThrow)
         };
-      }
+      };
     });
 
     describe('signUp: Test for user creation', function () {
@@ -36,7 +36,7 @@ describe('User module', function () {
         expect(user).to.deep.equal(_.omit(userToTest, 'password'));
       });
 
-      it('Should throw error when missing data', async function () {
+      it.only('Should throw error when missing data', async function () {
         const userToTest = {
           email: 'ahfushaa@gmail.com',
           lastName: 'Rivas',
@@ -58,19 +58,20 @@ describe('User module', function () {
           errors: {
             [validationPathName]: validationContent[0]
           }
-        }
+        };
 
         const userModule = UserModule({
-          User: function () {
+          User() {
             return {
               create: sinon.fake.returns(Promise.reject(dbValidationError))
-            }
-          }, _
+            };
+          },
+          _
         });
 
         try {
           const createdUser = await userModule.signUp(userToTest);
-          expect(createdUser).to.be.equal(undefined)
+          expect(createdUser).to.be.equal(undefined);
         } catch (error) {
           expect(error).to.be.deep.equal(validationError);
         }
@@ -107,21 +108,20 @@ describe('User module', function () {
           expect(error).to.be.deep.equal(duplicationUserError);
         }
       });
-
     });
 
     describe('getUser: Test for getting an user from the db', function () {
-      let getMockedUserModule = getUserResponse => {
+      const getMockedUserModule = (getUserResponse) => {
         class UserModel {
           static getByEmail() {
             return sinon.fake.returns(getUserResponse)();
           }
-        };
+        }
 
-        return UserModule({ User: UserModel, _ })
+        return UserModule({ User: UserModel, _ });
       };
 
-      it('Should get the user when it exists', async function() {
+      it('Should get the user when it exists', async function () {
         const existingEmailUser = 'test@test.test';
         const existingUser = {
           email: existingEmailUser
@@ -135,7 +135,7 @@ describe('User module', function () {
           throw error;
         }
       });
-    })
+    });
   });
 
   describe('Integration: Authenticate user', function () {
@@ -148,11 +148,9 @@ describe('User module', function () {
         password: hashedPassword,
         get: userProperty => this.mockedUser[userProperty]
       };
-      this.getMockedUserModel = userToTest => {
-        return {
-          getByEmailWithPassword: sinon.fake.returns(Promise.resolve(userToTest))
-        };
-      };
+      this.getMockedUserModel = userToTest => ({
+        getByEmailWithPassword: sinon.fake.returns(Promise.resolve(userToTest))
+      });
     });
 
     it('Should return user when authentication success', async function () {

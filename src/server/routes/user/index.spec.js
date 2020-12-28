@@ -44,13 +44,13 @@ describe('User routes handlers', function () {
             };
             return {
               verifyAuthenticUser: sinon.fake.returns(Promise.resolve(response))
-            }
+            };
           }
 
           return {
             verifyAuthenticUser: sinon.fake.returns(Promise.resolve(null))
-          }
-        }
+          };
+        };
       });
 
       it('loginRouteHandler: Should call next handler when successful authentication took place', async function () {
@@ -108,11 +108,11 @@ describe('User routes handlers', function () {
 
         it('sendLoginSuccessResponseToClient: Should have called HTTPOnly cookie with the token and correct secure data', function () {
           expect(this.res.cookie.calledWith('token', userToken, cookieOptions)).to.be.equal(true);
-        })
+        });
 
         it('sendLoginSuccessResponseToClient: Should have called cookie function just once', function () {
           expect(this.res.cookie.callCount).to.be.equal(1);
-        })
+        });
       });
     });
 
@@ -152,7 +152,7 @@ describe('User routes handlers', function () {
         const validationPathName = 'firstName';
         const validationError = {
           validation: [{ message: 'Validation failed: firstName: Path `firstName` is required.', path: validationPathName }],
-          name: 'ValidationError',
+          name: 'ValidationError'
         };
         const mockedUserModule = {
           signUp: () => Promise.reject(validationError)
@@ -309,7 +309,7 @@ describe('User routes handlers', function () {
         expect(jsonFake.calledWith({ message: 'User not found' })).to.be.equal(true);
         expect(statusFake.calledWith(404)).to.be.equal(true);
       });
-      
+
       it('Should return 404 bad request http error code when the required data is not provided for the handler', async function () {
         const mockedUserModule = {
           getUser: sinon.fake.returns(null)

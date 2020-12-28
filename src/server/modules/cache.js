@@ -15,11 +15,9 @@ const removeMembersFromSet = ({ cacheClient }) => ({ setName, members }) => cach
 
 const getAllMembersOfSet = ({ cacheClient }) => setName => cacheClient.smembers(setName);
 
-module.exports = ({ cacheClient }) => {
-  return {
-    addToSet: addToSet({ cacheClient }),
-    isMemberOfSet: isMemberOfSet({ cacheClient }),
-    removeMembersFromSet: removeMembersFromSet({ cacheClient }),
-    getAllMembersOfSet: getAllMembersOfSet({ cacheClient })
-  };
-};
+module.exports = ({ cacheClient }) => ({
+  addToSet: addToSet({ cacheClient }),
+  isMemberOfSet: isMemberOfSet({ cacheClient }),
+  removeMembersFromSet: removeMembersFromSet({ cacheClient }),
+  getAllMembersOfSet: getAllMembersOfSet({ cacheClient })
+});

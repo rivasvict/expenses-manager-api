@@ -17,12 +17,10 @@ const addPasswordEncryptionPreSaveHook = ({ schema, fieldToHash }) => {
   });
 };
 
-const comparePassword = ({ password, hashedPassword }) => {
-  return compareHashed({
-    plainString: password,
-    hashedString: hashedPassword
-  });
-};
+const comparePassword = ({ password, hashedPassword }) => compareHashed({
+  plainString: password,
+  hashedString: hashedPassword
+});
 
 module.exports = {
   addPasswordEncryptionPreSaveHook,

@@ -34,7 +34,7 @@ describe('Authentication module', function () {
         this.authentication = this.getAuthenticationModule({ userModuleMock });
         this.authenticatedUserData = await this.authentication
           .verifyAuthenticUser(this.username, this.password);
-      })
+      });
 
       it('Should return user valid user token when correct credentials', async function () {
         const decodedUserToken = this.authentication.verifyToken(this.authenticatedUserData.token);
@@ -50,8 +50,8 @@ describe('Authentication module', function () {
       it('Should return user related data', function () {
         const { user } = this.authenticatedUserData;
         expect(user).to.be.deep.equal(this.userToAuthenticate.toJSON());
-      })
-    })
+      });
+    });
 
     it('Should return null when non authentic user', async function () {
       const userModuleMock = {
