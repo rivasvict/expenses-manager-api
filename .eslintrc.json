@@ -1,5 +1,6 @@
 {
     "extends": "airbnb-base",
+    "ignorePatterns": ["node_modules/", "data/"],
     "rules" : {"comma-dangle": ["error", "never"], "prefer-arrow-callback": "off", "func-names": "off", "no-underscore-dangle": "off", "object-curly-newline": "off"},
     "plugins": ["jest"],
     "env": {
