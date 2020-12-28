@@ -37,7 +37,7 @@ services:
       - mongo
 
   node:
-    image: node:8.15.0-jessie
+    image: node:14.15.0-alpine
     user: node
     working_dir: /home/node/app
     ports:
