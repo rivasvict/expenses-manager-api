@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.3.3",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "chai": "^4.2.0",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
@@ -33,7 +33,7 @@
     "if-env": "^1.0.4",
     "ioredis": "^4.9.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mocha": "^6.1.4",
     "mongoose": "^5.7.5",
     "mongoose-mpath": "^2.0.14",
