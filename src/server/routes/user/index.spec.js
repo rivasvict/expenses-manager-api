@@ -79,7 +79,8 @@ describe('User routes handlers', function () {
         let sendLoginSuccessResponseToClient;
         const userToken = 'the user token test';
         const cookieOptions = {
-          httpOnly: true
+          httpOnly: true,
+          sameSite: true
         };
 
         beforeEach('Prepare sendLoginSuccessResponseToClient call', async function () {
