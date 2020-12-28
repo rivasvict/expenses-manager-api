@@ -28,7 +28,7 @@ describe('Category module', function () {
 
           this.getCategoryInstance(categoryInvalidNameType);
         } catch (error) {
-          expect(error.message).to.be.equal('Validation failed: name: Cast to String failed for value "[]" at path "name"');
+          expect(error.message).to.be.equal('Validation failed: name: Cast to string failed for value "[]" at path "name"');
         }
       });
 
@@ -44,7 +44,7 @@ describe('Category module', function () {
 
             this.getCategoryInstance(cathegoryInvalidTypeDataType);
           } catch (error) {
-            expect(error.message).to.be.equal('Validation failed: type: Cast to String failed for value "[]" at path "type"');
+            expect(error.message).to.be.equal('Validation failed: type: Cast to string failed for value "[]" at path "type"');
           }
         });
 
@@ -77,7 +77,7 @@ describe('Category module', function () {
           this.getCategoryInstance(categoryInvalidCreationDataType);
         } catch (error) {
           expect(error.message).to.be
-            .equal('Validation failed: creation: Cast to Date failed for value "Just string" at path "creation"');
+            .equal('Validation failed: creation: Cast to date failed for value "Just string" at path "creation"');
         }
       });
     });

@@ -1,13 +1,22 @@
-// TODO: Inject wrap dependency
-const wrap = require('express-async-wrapper');
+const sendLoginSuccessResponseToClient = () => (req, res) => {
+  const { user, token } = req.body.authenticationDetails;
+  if (token) {
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: true
+    })
+    res.status(200).json(user);
+  }
+};
 
-const loginRouteHandler = authentication => async (req, res) => {
+const loginRouteHandler = authentication => async (req, res, next) => {
   try {
     const { username } = req.body.user;
     const { password } = req.body.user;
-    const user = await authentication.verifyAuthenticUser(username, password);
-    if (user) {
-      res.status(200).json(user);
+    const authenticationDetails = await authentication.verifyAuthenticUser(username, password);
+    if (authenticationDetails) {
+      req.body.authenticationDetails = authenticationDetails;
+      next();
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -53,13 +62,34 @@ const logOutHandler = authentication => async (req, res) => {
   }
 };
 
-const mountUserRoutes = ({ authenticationModule, userModule }) => ({ router, baseUrl }) => {
+const getUserHandler = user => async (req, res, next) => {
+  try {
+    if (req.params.email) {
+      const { email } = req.params;
+      const userFromDb = await user.getUser(email);
+
+      if (userFromDb) {
+        res.status(200).json(userFromDb);
+      } else {
+        res.status(404).json({ message: 'User not found' })
+      }
+    } else {
+      res.status(400).json({ message: 'Missing user object' })
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+const mountUserRoutes = ({ authenticationModule, userModule, wrap }) => ({ router, baseUrl }) => {
   // /api/user/login
-  router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authenticationModule)));
+  router.post(`${baseUrl}/login`, wrap(loginRouteHandler(authenticationModule)), sendLoginSuccessResponseToClient());
   // /api/user/sign-up
   router.post(`${baseUrl}/sign-up`, wrap(signUpRouteHandler(userModule)));
   // /api/user/log-out
   router.post(`${baseUrl}/log-out`, wrap(logOutHandler(authenticationModule)));
+  // /api/user/get
+  router.get(`${baseUrl}/get/:email`, wrap(getUserHandler(userModule)))
 };
 
 module.exports = mountUserRoutes;

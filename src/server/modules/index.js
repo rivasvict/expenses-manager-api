@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const Redis = require('ioredis');
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
-const { ExtractJwt } = require('passport-jwt');
 
 const config = require('../../../config');
 const constants = require('../constants');
@@ -27,7 +26,6 @@ const userModule = UserModule({ User, _ });
 const authenticationModule = AuthenticationModule({ config, cacheModule, userModule, _, jwt });
 const passportHandlerModule = PassportHandlerModule({
   passport,
-  ExtractJwt,
   config,
   JwtStrategy,
   authenticationModule,

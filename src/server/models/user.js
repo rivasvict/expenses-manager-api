@@ -47,13 +47,17 @@ class User extends DbUser {
     }
   }
 
-  static async getByEmail({ email }) {
+  static async getByEmail({ email }, projection = '-password') {
     try {
-      const foundUsers = await this.model(constants.MODEL_NAMES.USER).find({ email }).exec();
+      const foundUsers = await this.model(constants.MODEL_NAMES.USER).find({ email }, projection).exec();
       return foundUsers.find(foundUser => foundUser.email === email);
     } catch (error) {
       throw error;
     }
+  }
+
+  static getByEmailWithPassword({ email }) {
+     return User.getByEmail({ email }, '');
   }
 
   async updateRecord(selector, update) {
