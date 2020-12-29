@@ -36,7 +36,7 @@ describe('User module', function () {
         expect(user).to.deep.equal(_.omit(userToTest, 'password'));
       });
 
-      it.only('Should throw error when missing data', async function () {
+      it('Should throw error when missing data', async function () {
         const userToTest = {
           email: 'ahfushaa@gmail.com',
           lastName: 'Rivas',
@@ -61,7 +61,7 @@ describe('User module', function () {
         };
 
         const userModule = UserModule({
-          User() {
+          User: function User() {
             return {
               create: sinon.fake.returns(Promise.reject(dbValidationError))
             };
