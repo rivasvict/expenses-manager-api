@@ -3,7 +3,7 @@ const { comparePassword } = require('../db/schemas/user/utils');
 const RemovePassword = _ => removeFrom => _.omit(removeFrom, 'password');
 
 // TODO: This needs to be moved into a helper
-const GetError = _ => error => {
+const GetError = _ => (error) => {
   if ((error.name === 'ValidationError') && (error.errors)) {
     const validationErrorContent = _.values(error.errors).map(singleError => _.pick(singleError, ['message', 'path']));
     const validationError = { ..._.omit(error, 'errors'), validation: validationErrorContent, message: 'Invalid data' };

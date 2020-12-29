@@ -1,3 +1,16 @@
+const createAccountRelatedToUser = async ({ account, user }) => {
+  try {
+    const savedAccount = await account.create();
+    await user.updateOne({
+      accounts: [savedAccount._id]
+    });
+
+    return savedAccount;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const create = async ({ account, user }) => {
   try {
     if (!account && !user) {
@@ -12,19 +25,4 @@ const create = async ({ account, user }) => {
   }
 };
 
-const createAccountRelatedToUser = async ({ account, user }) => {
-  try {
-    const savedAccount = await account.create();
-    await user.updateOne({
-      accounts: [savedAccount._id]
-    });
-
-    return savedAccount;
-  } catch (error) {
-    throw error;
-  }
-};
-
-module.exports = () => {
-  return { create }
-};
+module.exports = () => ({ create });

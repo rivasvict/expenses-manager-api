@@ -4,7 +4,6 @@ const { expect } = require('chai');
 const Cache = require('./cache');
 
 describe('Cache CRD operations', function () {
-
   before('Prepare mock for Cache', function () {
     this.membersToSet = ['memner1'];
     this.itIsMemberCodeNumber = 1;
@@ -48,7 +47,9 @@ describe('Cache CRD operations', function () {
       };
       const isMemberOfSetResult = await this.cache.isMemberOfSet(isMemberOfSetOptions);
       expect(isMemberOfSetResult).to.be.equal(this.itIsMemberCodeNumber);
-      expect(this.sismemberStub.calledWith(isMemberOfSetOptions.setName, isMemberOfSetOptions.member))
+      const calledWithRightParameters = this.sismemberStub
+        .calledWith(isMemberOfSetOptions.setName, isMemberOfSetOptions.member);
+      expect(calledWithRightParameters)
         .to.be.equal(true);
     } catch (error) {
       throw error;
@@ -61,9 +62,12 @@ describe('Cache CRD operations', function () {
         setName: 'testSet',
         members: ['Member remove from the set', 'second member to remove']
       };
-      const removeMembersOfSetResult = await this.cache.removeMembersFromSet(removeMembersOfSetOptions);
+      const removeMembersOfSetResult = await this.cache
+        .removeMembersFromSet(removeMembersOfSetOptions);
       expect(removeMembersOfSetResult).to.be.equal(this.removedMembersOfSetCodeNumber);
-      expect(this.sremStub.calledWith(removeMembersOfSetOptions.setName, removeMembersOfSetOptions.members))
+      const calledWithRightParameters = this.sremStub
+        .calledWith(removeMembersOfSetOptions.setName, removeMembersOfSetOptions.members);
+      expect(calledWithRightParameters)
         .to.be.equal(true);
     } catch (error) {
       throw error;

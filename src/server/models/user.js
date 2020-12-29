@@ -13,6 +13,14 @@ const DbUser = getDbModel({
   schema: userSchema
 });
 
+class CustomError extends Error {
+  constructor({ name, message }) {
+    super();
+    this.name = name;
+    this.message = message;
+  }
+}
+
 class User extends DbUser {
   constructor(user) {
     super(user);
@@ -28,7 +36,7 @@ class User extends DbUser {
     try {
       const isEmailDuplicated = await this.getIsEmailDuplicated();
       if (isEmailDuplicated) {
-        throw { name: 'duplicationError', message: 'Duplicated user' };
+        throw new CustomError({ name: 'duplicationError', message: 'Duplicated user' });
       } else {
         const newUser = await this.save();
         return newUser;
@@ -49,7 +57,8 @@ class User extends DbUser {
 
   static async getByEmail({ email }, projection = '-password') {
     try {
-      const foundUsers = await this.model(constants.MODEL_NAMES.USER).find({ email }, projection).exec();
+      const foundUsers = await this.model(constants.MODEL_NAMES.USER)
+        .find({ email }, projection).exec();
       return foundUsers.find(foundUser => foundUser.email === email);
     } catch (error) {
       throw error;
@@ -57,7 +66,7 @@ class User extends DbUser {
   }
 
   static getByEmailWithPassword({ email }) {
-     return User.getByEmail({ email }, '');
+    return User.getByEmail({ email }, '');
   }
 
   async updateRecord(selector, update) {
