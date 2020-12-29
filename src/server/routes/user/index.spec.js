@@ -86,7 +86,13 @@ describe('User routes handlers', function () {
         beforeEach('Prepare sendLoginSuccessResponseToClient call', async function () {
           sendLoginSuccessResponseToClient = getSendLoginSuccessResponseToClient();
           simulatedLoginResponse = { token: userToken, user: _.omit(this.userToAuthenticate, 'password') };
-          req = { ...this.req, body: { ...this.req.body, authenticationDetails: simulatedLoginResponse } };
+          req = {
+            ...this.req,
+            body: {
+              ...this.req.body,
+              authenticationDetails: simulatedLoginResponse
+            }
+          };
           await sendLoginSuccessResponseToClient(req, this.res);
         });
 

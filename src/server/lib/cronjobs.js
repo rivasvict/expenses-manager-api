@@ -6,9 +6,9 @@ const cronTab = [{
   task: removeInvalidTokensFromBlackList
 }];
 
-const start = ({ schedule, task }) => {
-  new CronJob(schedule, task);
-};
+const start = ({ schedule, task }) => (
+  new CronJob(schedule, task)
+);
 
 const initialize = () => {
   cronTab.forEach(cronJob => start({ schedule: cronJob.schedule, task: cronJob.task }));

@@ -86,7 +86,7 @@ describe('User module', function () {
         };
         const userModule = UserModule({ User: this.getMockedUserModel(user), _ });
         try {
-          const userToTest = await userModule.signUp(user);
+          await userModule.signUp(user);
         } catch (error) {
           expect(error.message).to.be.equal(`Validation failed: email: Provided email: ${user.email} has no valid format`);
           expect(error.name).to.be.equal('ValidationError');
@@ -97,8 +97,12 @@ describe('User module', function () {
         const duplicationUserError = new Error('Duplicated user');
 
         try {
-          const userModule = UserModule({ User: this.getMockedUserModelWithError(duplicationUserError), _ });
-          const user = await userModule.signUp({
+          const userModule = UserModule({
+            User: this.getMockedUserModelWithError(duplicationUserError),
+            _
+          });
+
+          await userModule.signUp({
             firstName: 'Victor',
             email: 'ahfushaa@gmail.com',
             lastName: 'Rivas',

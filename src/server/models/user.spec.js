@@ -1,6 +1,5 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 const constants = require('../constants');
 const User = require('./user');

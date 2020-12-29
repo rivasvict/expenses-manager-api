@@ -9,9 +9,13 @@
 
 const addToSet = ({ cacheClient }) => ({ setName, members }) => cacheClient.sadd(setName, members);
 
-const isMemberOfSet = ({ cacheClient }) => ({ setName, member }) => cacheClient.sismember(setName, member);
+const isMemberOfSet = ({ cacheClient }) => ({ setName, member }) => (
+  cacheClient.sismember(setName, member)
+);
 
-const removeMembersFromSet = ({ cacheClient }) => ({ setName, members }) => cacheClient.srem(setName, members);
+const removeMembersFromSet = ({ cacheClient }) => ({ setName, members }) => (
+  cacheClient.srem(setName, members)
+);
 
 const getAllMembersOfSet = ({ cacheClient }) => setName => cacheClient.smembers(setName);
 

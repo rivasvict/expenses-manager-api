@@ -1,5 +1,5 @@
-
-const initPassportStrategy = ({ passport, ExtractJwt, config, JwtStrategy, authenticationModule }) => {
+const initPassportStrategy = (options) => {
+  const { passport, ExtractJwt, config, JwtStrategy, authenticationModule } = options;
   const jwtOptions = {
     jwtFromRequest: ExtractJwt,
     secretOrKey: config.SECRET
@@ -16,10 +16,12 @@ const jwtAuthenticate = ({ req, res, next, passport }) => {
 
 const isAuthorized = ({ passport, authenticationModule, constants }) => async (req, res, next) => {
   try {
-    const bearer = req.cookies && req.cookies.token || '';
+    const token = req.cookies && req.cookies.token;
+    const bearer = token || '';
     const isTokenInBlackList = await authenticationModule.isTokenInvalidated(bearer);
     if (isTokenInBlackList) {
-      res.status(constants.RESPONSE.STATUSES.UNAUTHORIZED).json({ message: constants.RESPONSE.MESSAGES.SESSION_EXPIRED });
+      res.status(constants.RESPONSE.STATUSES.UNAUTHORIZED)
+        .json({ message: constants.RESPONSE.MESSAGES.SESSION_EXPIRED });
     } else {
       jwtAuthenticate({ req, res, next, passport });
     }

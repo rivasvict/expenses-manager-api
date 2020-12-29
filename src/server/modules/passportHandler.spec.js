@@ -11,16 +11,21 @@ describe('Authorization function', function () {
   beforeEach('Prepare global variables for test', function () {
     this.setPassportHandlerDependencies = ({ isTokenInvalidatedMockedResult }) => {
       const authenticationModule = {
-        passportVerify: () => {},
+        passportVerify: () => { },
         isTokenInvalidated: sinon.fake.returns(isTokenInvalidatedMockedResult)
       };
-      this.passportAuthenticateCallbackStub = sinon.fake(() => {});
+      this.passportAuthenticateCallbackStub = sinon.fake(() => { });
       this.passportStub = {
         authenticate: sinon.fake.returns(this.passportAuthenticateCallbackStub),
-        use: sinon.fake(() => {})
+        use: sinon.fake(() => { })
       };
       this.passportHandlers = PassportHandlers({
-        ExtractJwt, config, JwtStrategy, authenticationModule, constants, passport: this.passportStub
+        ExtractJwt,
+        config,
+        JwtStrategy,
+        authenticationModule,
+        constants,
+        passport: this.passportStub
       });
     };
     this.token = 'tokenTest';
@@ -32,7 +37,7 @@ describe('Authorization function', function () {
         }
       },
       res: {},
-      next: () => {}
+      next: () => { }
     };
   });
 
@@ -48,7 +53,8 @@ describe('Authorization function', function () {
       session: false
     })).to.be.equal(true);
     expect(this.passportAuthenticateCallbackStub
-      .calledWith(this.httpRequest.req, this.httpRequest.res, this.httpRequest.next)).to.be.equal(true);
+      .calledWith(this.httpRequest.req, this.httpRequest.res, this.httpRequest.next))
+      .to.be.equal(true);
   });
 
   it('isAuthorized:', async function () {

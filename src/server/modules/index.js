@@ -16,7 +16,7 @@ const PassportHandlerModule = require('./passportHandlers');
 const User = require('../models/user');
 
 const cacheClient = new Redis({
-  port: parseInt(config.REDIS_PORT),
+  port: parseInt(config.REDIS_PORT, 10),
   host: config.REDIS_SERVER
 });
 

@@ -1,32 +1,34 @@
 const getToken = ({ config, jwt }) => ({ payload, tokenGenerationOptions = {} }) => jwt
   .sign(payload, config.SECRET, tokenGenerationOptions);
 
-const verifyAuthenticUser = ({ userModule, config, _, getAuthenticationToken }) => async (username, password) => {
-  try {
-    const loggedUser = await userModule.authenticateUser({
-      password,
-      email: username
-    });
+const verifyAuthenticUser = ({ userModule, config, _, getAuthenticationToken }) => (
+  async (username, password) => {
+    try {
+      const loggedUser = await userModule.authenticateUser({
+        password,
+        email: username
+      });
 
-    if (!loggedUser) {
-      return null;
+      if (!loggedUser) {
+        return null;
+      }
+
+      const authenticUser = {
+        token: getAuthenticationToken({
+          payload: _.omit(loggedUser.toJSON(), 'password'),
+          tokenGenerationOptions: {
+            expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
+          }
+        }),
+        user: _.omit(loggedUser.toJSON(), 'password')
+      };
+
+      return authenticUser;
+    } catch (error) {
+      throw error;
     }
-
-    const authenticUser = {
-      token: getAuthenticationToken({
-        payload: _.omit(loggedUser.toJSON(), 'password'),
-        tokenGenerationOptions: {
-          expiresIn: config.EXPIRATION_TIME_FOR_WEB_TOKEN
-        }
-      }),
-      user: _.omit(loggedUser.toJSON(), 'password')
-    };
-
-    return authenticUser;
-  } catch (error) {
-    throw error;
   }
-};
+);
 
 const verifyToken = ({ jwt, config }) => (payload) => {
   try {
@@ -66,28 +68,33 @@ const isTokenInvalidated = ({ cacheModule, config }) => async (bearer) => {
   }
 };
 
-const getInvalidTokensFromBlackList = async ({ cacheModule, config, verifyAuthenticationToken }) => {
+const getInvalidTokensFromBlackList = async (options) => {
+  const { cacheModule, config, verifyAuthenticationToken } = options;
   try {
-    const allTokensInBlackList = await cacheModule.getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
-    return allTokensInBlackList.filter(tokenInBlackList => verifyAuthenticationToken(tokenInBlackList) === null);
+    const allTokensInBlackList = await cacheModule
+      .getAllMembersOfSet(config.sets.INVALID_USER_TOKEN_SET);
+    return allTokensInBlackList
+      .filter(tokenInBlackList => verifyAuthenticationToken(tokenInBlackList) === null);
   } catch (error) {
     throw error;
   }
 };
 
-const removeInvalidTokensFromBlackList = ({ cacheModule, config, verifyAuthenticationToken }) => async () => {
-  try {
-    const invalidTokensFromBlackList = await getInvalidTokensFromBlackList({
-      cacheModule,
-      config,
-      verifyAuthenticationToken
-    });
+const removeInvalidTokensFromBlackList = ({ cacheModule, config, verifyAuthenticationToken }) => (
+  async () => {
+    try {
+      const invalidTokensFromBlackList = await getInvalidTokensFromBlackList({
+        cacheModule,
+        config,
+        verifyAuthenticationToken
+      });
 
-    await cacheModule.removeMembersFromSet(invalidTokensFromBlackList);
-  } catch (error) {
-    throw error;
+      await cacheModule.removeMembersFromSet(invalidTokensFromBlackList);
+    } catch (error) {
+      throw error;
+    }
   }
-};
+);
 
 const invalidateToken = ({ cacheModule, config }) => async (bearer) => {
   try {

@@ -2,13 +2,13 @@ const express = require('express');
 const wrap = require('express-async-wrapper');
 
 const router = express.Router();
+const cors = require('cors');
 const userRoutes = require('./user/');
 
 const { userModule, authenticationModule, passportHandlerModule } = require('../modules');
 
 const mountUserRoutes = userRoutes({ authenticationModule, userModule, wrap });
 const RoutesHandler = require('./routesHandler');
-const cors = require('cors');
 
 const baseApiUrl = '/api';
 const routesHandler = new RoutesHandler({

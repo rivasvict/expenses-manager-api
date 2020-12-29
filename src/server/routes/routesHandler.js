@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 class RoutesHandler {
   constructor({ router, baseApiUrl = '/api' }) {
     this.baseApiUrl = baseApiUrl;
