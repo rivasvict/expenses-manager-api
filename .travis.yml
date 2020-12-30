@@ -1,4 +1,4 @@
 language: node_js
 env:
   - SECRET=a_test_secret
-script: npm run test-build
+script: npm run lint && npm run test
