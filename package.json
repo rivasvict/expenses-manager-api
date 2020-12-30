@@ -4,7 +4,8 @@
   "description": "An open source API designed to serve all needs for tracking expenses",
   "private": true,
   "scripts": {
-    "test": "npm run lint && DEBUG=true mocha ./src/server/**/*.spec.js ./src/server/**/**/*.spec.js",
+    "test": "DEBUG=true mocha ./src/server/**/*.spec.js ./src/server/**/**/*.spec.js",
+    "test-build": "npm run lint && npm run test",
     "test-debug": "npm run test -- --inspect=0.0.0.0 --watch --watch-ignore data node_modules",
     "start-environment": "docker-compose up -d",
     "stop-environment": "docker-compose down",
