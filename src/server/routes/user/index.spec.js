@@ -28,7 +28,7 @@ describe('User routes handlers', function () {
         this.userToAuthenticate = {
           firstName: 'firstName',
           lastName: 'lastName',
-          email: 'victor@gmail.com',
+          username: 'victor@gmail.com',
           password: 'password'
         };
         this.req = {

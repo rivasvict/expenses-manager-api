@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "An open source API designed to serve all needs for tracking expenses",
   "private": true,
+  "main": "./bin/www",
   "scripts": {
     "test": "DEBUG=true mocha ./src/server/**/*.spec.js ./src/server/**/**/*.spec.js",
     "test-debug": "npm run test -- --inspect=0.0.0.0 --watch --watch-ignore data node_modules",
@@ -12,7 +13,7 @@
     "integration-test-debug": "bash bin/scripts/run-integration-test.sh --inspect=0.0.0.0:9228 --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
-    "start:development": "nodemon ./bin/www --inspect=0.0.0.0 --exec 'npm run lint && node'",
+    "start:development": "nodemon --inspect=0.0.0.0 ./bin/www",
     "lint": "eslint ./ --ext=js"
   },
   "repository": {
