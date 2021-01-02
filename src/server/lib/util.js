@@ -11,15 +11,7 @@ const getSaltHash = async ({ dataToHash, saltWorkFactor = SALT_DEFAULT_WORK_FACT
   }
 };
 
-const compareHashed = ({ plainString, hashedString }) => {
-  try {
-    debugger;
-    return bcrypt
-      .compare(plainString, hashedString);
-  } catch (error) {
-    debugger;
-    throw new Error(error);
-  }
-};
+const compareHashed = ({ plainString, hashedString }) => bcrypt
+  .compare(plainString, hashedString);
 
 module.exports = { getSaltHash, compareHashed };
