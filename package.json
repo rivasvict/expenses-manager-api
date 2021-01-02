@@ -13,7 +13,7 @@
     "integration-test-debug": "bash bin/scripts/run-integration-test.sh --inspect=0.0.0.0:9228 --watch",
     "start": "if-env NODE_ENV=production && start:production || npm run start:development",
     "start:prod": "node ./bin/www",
-    "start:development": "nodemon --inspect=0.0.0.0",
+    "start:development": "nodemon --inspect=0.0.0.0 ./bin/www",
     "lint": "eslint ./ --ext=js"
   },
   "repository": {
