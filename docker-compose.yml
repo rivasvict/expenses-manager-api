@@ -37,6 +37,9 @@ services:
       - mongo
 
   node:
+    # Using slim version over alpine due to an issue
+    # on apline with bcrypt failing silently
+    # https://github.com/kelektiv/node.bcrypt.js/issues/830
     image: node:14.15.0-slim
     user: node
     working_dir: /home/node/app
