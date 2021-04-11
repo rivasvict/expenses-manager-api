@@ -236,8 +236,8 @@ describe('User routes handlers', function () {
         this.jsonFake = sinon.fake(() => { });
         this.statusFake = sinon.fake.returns({ json: this.jsonFake });
         this.req = {
-          headers: {
-            authorization: this.bearer
+          cookies: {
+            token: this.bearer
           }
         };
         this.res = {
@@ -260,8 +260,7 @@ describe('User routes handlers', function () {
         const logOutHandler = LogOutHandler({
           invalidateToken: () => Promise.reject(new Error({ message: 'Bearer is missing' }))
         });
-        delete this.req.headers.authorization;
-        await logOutHandler(this.req, this.res);
+        await logOutHandler({ cookies: {} }, this.res);
         expect(this.statusFake.callCount).to.be.equal(1);
         expect(this.statusFake.calledWith(400)).to.be.equal(true);
         expect(this.jsonFake.callCount).to.be.equal(1);

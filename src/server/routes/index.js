@@ -26,8 +26,7 @@ const whiteListedRoutesGenericHandler = RoutesHandler.mountMiddlewaresUnless(
   ],
   // Except from these routes
   '/api/user/login',
-  '/api/user/sign-up',
-  '/api/user/log-out'
+  '/api/user/sign-up'
 );
 
 router.use(`${baseApiUrl}*`, cors({
