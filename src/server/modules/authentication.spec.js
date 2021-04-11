@@ -180,7 +180,7 @@ describe('Authentication module', function () {
 
   describe('isTokenInvalidated: Token invalidation check through blacklist', function () {
     beforeEach('Preconfigure tests', function () {
-      this.invalidToken = 'Bearer invalidToken';
+      this.invalidToken = 'invalidToken';
       this.rawToken = 'invalidToken';
       this.getAuthenticationModule = ({ cacheModule }) => authenticationModule({
         cacheModule,
@@ -217,7 +217,7 @@ describe('Authentication module', function () {
         }
       });
       const isTokenInvalidated = await authentication
-        .isTokenInvalidated('Bearer invalidToken');
+        .isTokenInvalidated('invalidToken');
       expect(isTokenInvalidated).to.be.equal(false);
       expect(isMemberOfSetFake.calledOnce).to.be.equal(true);
       expect(isMemberOfSetFake.calledWith({
@@ -275,7 +275,7 @@ describe('Authentication module', function () {
         }
       });
       const tokenToInvalidate = 'thisIsAnInvalidToken';
-      const bearer = `Bearer ${tokenToInvalidate}`;
+      const bearer = `${tokenToInvalidate}`;
       await authentication
         .invalidateToken(bearer);
       expect(addToSetFake.calledOnce).to.be.equal(true);

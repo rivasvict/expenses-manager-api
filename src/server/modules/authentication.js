@@ -53,11 +53,8 @@ const passportVerify = () => (jwtPayload, done) => {
   }
 };
 
-const getTokenOutOfBearer = bearer => bearer.split(' ')[1];
-
-const isTokenInvalidated = ({ cacheModule, config }) => async (bearer) => {
+const isTokenInvalidated = ({ cacheModule, config }) => async (token) => {
   try {
-    const token = getTokenOutOfBearer(bearer);
     const isTokenInBlacklist = await cacheModule.isMemberOfSet({
       setName: config.sets.INVALID_USER_TOKEN_SET, member: token
     });
@@ -96,9 +93,8 @@ const removeInvalidTokensFromBlackList = ({ cacheModule, config, verifyAuthentic
   }
 );
 
-const invalidateToken = ({ cacheModule, config }) => async (bearer) => {
+const invalidateToken = ({ cacheModule, config }) => async (userToken) => {
   try {
-    const userToken = getTokenOutOfBearer(bearer);
     await cacheModule.addToSet({
       setName: config.sets.INVALID_USER_TOKEN_SET, members: [userToken]
     });

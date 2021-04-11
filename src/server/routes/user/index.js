@@ -49,7 +49,7 @@ const signUpRouteHandler = userModule => async (req, res) => {
 
 const logOutHandler = authentication => async (req, res) => {
   try {
-    const bearer = req.headers.authorization;
+    const bearer = req.cookies && req.cookies.token;
     if (bearer) {
       await authentication.invalidateToken(bearer);
       res.status(200).json({ messaje: 'Successfully logged out' });
