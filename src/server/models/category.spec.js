@@ -71,7 +71,7 @@ describe('Category module', function () {
             name: 'A name',
             description: 'This is a test description',
             creation: 'Just string',
-            type: 'outcome'
+            type: 'expense'
           };
 
           this.getCategoryInstance(categoryInvalidCreationDataType);
