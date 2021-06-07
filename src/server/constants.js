@@ -11,7 +11,7 @@ module.exports = {
   ],
   CATEGOTY_TYPES: [
     'income',
-    'outcome'
+    'expense'
   ],
   RESPONSE: {
     STATUSES: {
