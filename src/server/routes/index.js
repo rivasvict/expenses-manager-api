@@ -16,17 +16,22 @@ const routesHandler = new RoutesHandler({
   baseApiUrl
 });
 
+// MOCKED ROUTES
+const balanceRoutes = require('./mocked-routes/balance');
+
+const mountBalanceRoutes = balanceRoutes({ wrap });
+
 const jwtStrategy = passportHandlerModule.isAuthorized;
 // TODO: Configure development CORS policies
 
-const whiteListedRoutesGenericHandler = RoutesHandler.mountMiddlewaresUnless(
+const globalMiddlewaresWithWhitelistedRoutes = RoutesHandler.mountMiddlewaresUnless(
   // Mount to whatever it is in this array to all existing routes
   [
     jwtStrategy
   ],
   // Except from these routes
-  '/api/user/login',
-  '/api/user/sign-up'
+  `${baseApiUrl}/user/login`,
+  `${baseApiUrl}/user/sign-up`
 );
 
 router.use(`${baseApiUrl}*`, cors({
@@ -37,7 +42,7 @@ router.use(`${baseApiUrl}*`, cors({
     'http://localhost:3000'
   ],
   credentials: true
-}), wrap(whiteListedRoutesGenericHandler));
+}), wrap(globalMiddlewaresWithWhitelistedRoutes));
 
 /*
  * TODO: Make an additional manual test (besides automated) on authenticated routes
@@ -45,5 +50,6 @@ router.use(`${baseApiUrl}*`, cors({
  */
 
 routesHandler.mountRoute({ mountRouteCallback: mountUserRoutes, mainRouteUrl: '/user' });
+routesHandler.mountRoute({ mountRouteCallback: mountBalanceRoutes, mainRouteUrl: '/balance' });
 
 module.exports = router;

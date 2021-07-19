@@ -1,0 +1,228 @@
+{
+  "entries": {
+    "2020": {
+      "8": {
+        "incomes": [
+          {
+            "amount": 15.5,
+            "description": "September 2020 income 1",
+            "timestamp": 1599720113,
+            "type": "income",
+            "category": {
+              "id": 1,
+              "name": "loan"
+            }
+          },
+          {
+            "amount": 15.5,
+            "description": "September 2020 income 2",
+            "timestamp": 1600497713,
+            "type": "income",
+            "category": {
+              "id": 1,
+              "name": "salary"
+            }
+          }
+        ],
+        "expenses": [
+          {
+            "amount": 15.5,
+            "description": "September 2020 expense 1",
+            "timestamp": 1600497713,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "food"
+            }
+          },
+          {
+            "amount": 15.5,
+            "description": "September 2020 expense 2",
+            "timestamp": 1600508513,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "house"
+            }
+          }
+        ]
+      },
+      "9": {
+        "incomes": [],
+        "expenses": [
+          {
+            "amount": 15.5,
+            "description": "October 2020 expense 1",
+            "timestamp": 1604137313,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "food"
+            }
+          }
+        ]
+      },
+      "10": {
+        "incomes": [],
+        "expenses": []
+      },
+      "11": {
+        "incomes": [
+          {
+            "amount": 15.5,
+            "description": "December 2020 income 1",
+            "timestamp": 1607596913,
+            "type": "income",
+            "category": {
+              "id": 1,
+              "name": "loan"
+            }
+          },
+          {
+            "amount": 15.5,
+            "description": "December 2020 income 2",
+            "timestamp": 1607596913,
+            "type": "income",
+            "category": {
+              "id": 1,
+              "name": "salary"
+            }
+          }
+        ],
+        "expenses": [
+          {
+            "amount": 15.5,
+            "description": "December 2020 expense 1",
+            "timestamp": 1607596912,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "food"
+            }
+          },
+          {
+            "amount": 15.5,
+            "description": "December 2020 expense 2",
+            "timestamp": 1609411313,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "house"
+            }
+          }
+        ]
+      }
+    },
+    "2021": {
+      "0": {
+        "incomes": [],
+        "expenses": []
+      },
+      "1": {
+        "incomes": [
+          {
+            "amount": 15.5,
+            "description": "February 2021 income 1",
+            "timestamp": 1609411313,
+            "type": "income",
+            "category": {
+              "id": 1,
+              "name": "loan"
+            }
+          }
+        ],
+        "expenses": [
+          {
+            "amount": 15.5,
+            "description": "February 2021 expense 1",
+            "timestamp": 1613558513,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "food"
+            }
+          },
+          {
+            "amount": 15.5,
+            "description": "February 2021 expense 2",
+            "timestamp": 1614336113,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "house"
+            }
+          }
+        ]
+      },
+      "2": {
+        "incomes": [
+          {
+            "amount": 15.5,
+            "description": "March 2021 income 1",
+            "timestamp": 1614940913,
+            "type": "income",
+            "category": {
+              "id": 1,
+              "name": "loan"
+            }
+          },
+          {
+            "amount": 15.5,
+            "description": "March 2020 income 2",
+            "timestamp": 1614940913,
+            "type": "income",
+            "category": {
+              "id": 1,
+              "name": "salary"
+            }
+          }
+        ],
+        "expenses": []
+      },
+      "3": {
+        "incomes": [],
+        "expenses": [
+          {
+            "amount": 15.5,
+            "description": "April 2021 expense 1",
+            "timestamp": 1614940913,
+            "type": "expense",
+            "category": {
+              "id": 1,
+              "name": "house"
+            }
+          }
+        ]
+      },
+      "4": {
+        "incomes": [],
+        "expenses": []
+      },
+
+      "5": {
+        "incomes": [],
+        "expenses": []
+      },
+      "6": {
+        "incomes": [],
+        "expenses": []
+      },
+      "7": {
+        "incomes": [],
+        "expenses": []
+      },
+      "8": {
+        "incomes": [],
+        "expenses": []
+      },
+      "9": {
+        "incomes": [],
+        "expenses": []
+      },
+      "10": {
+        "incomes": [],
+        "expenses": []
+      }
+    }
+  }
+}

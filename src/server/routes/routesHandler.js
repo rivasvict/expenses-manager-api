@@ -22,9 +22,8 @@ class RoutesHandler {
     }
   }
 
-  static async runAsMiddlewares(middlewareRunOptions) {
+  static async runAsMiddlewares({ req, res, middlewares, lastMiddleware }) {
     try {
-      const { req, res, middlewares, lastMiddleware } = middlewareRunOptions;
       let nextMiddlewareIndex = -1;
 
       const next = async () => {
@@ -32,6 +31,8 @@ class RoutesHandler {
         if (middlewares[nextMiddlewareIndex]) {
           await middlewares[nextMiddlewareIndex](req, res, next);
         } else {
+          // No middleware parameters since the lastMiddleware
+          // runs natively as the express next function
           await lastMiddleware();
         }
       };
