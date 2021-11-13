@@ -1,16 +1,16 @@
-const { mongoose, expenseSchema } = require('../db/schemas/expense/');
+const { mongoose, entrySchema } = require('../db/schemas/entry');
 const constants = require('../constants');
 const { getDbModel } = require('../lib/db-helper');
 
-const DbExpense = getDbModel({
+const DbEntry = getDbModel({
   db: mongoose,
   modelName: constants.MODEL_NAMES.EXPENSE,
-  schema: expenseSchema
+  schema: entrySchema
 });
 
-class Expense extends DbExpense {
-  constructor(expense) {
-    super(expense);
+class Entry extends DbEntry {
+  constructor(entry) {
+    super(entry);
     const validationError = this.validateSync();
     if (validationError) {
       throw validationError;
@@ -19,12 +19,12 @@ class Expense extends DbExpense {
 
   async create() {
     try {
-      const newExpense = await this.save();
-      return newExpense;
+      const newEntry = await this.save();
+      return newEntry;
     } catch (error) {
       throw error;
     }
   }
 }
 
-module.exports = Expense;
+module.exports = Entry;
