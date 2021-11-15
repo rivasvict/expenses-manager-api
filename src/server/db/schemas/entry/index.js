@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const expense = {
+const entry = {
   ammount: { type: Number, required: true },
   description: { type: String, required: false },
   date: { type: String, required: true }
 };
 
 const { Schema } = mongoose;
-const expenseSchema = new Schema(expense);
-module.exports = { mongoose, expenseSchema };
+const entrySchema = new Schema(entry);
+module.exports = { mongoose, entrySchema };

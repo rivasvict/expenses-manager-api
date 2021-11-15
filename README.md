@@ -2,7 +2,7 @@
 ==============
 
 This is just a simple API to support different operations for expenses
-tracker operations. The idea is that developers can create instances
+tracking. The idea is that developers can create instances
 of this API and use it for calculus, registration, stats and
 projections.
 
