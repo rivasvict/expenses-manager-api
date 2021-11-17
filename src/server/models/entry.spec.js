@@ -3,14 +3,16 @@ const sinon = require('sinon');
 
 const Entry = require('./entry');
 
-describe('Entry module', function () {
+describe('Entry model', function () {
   describe('entry.create', function () {
     beforeEach('Define entry to be created', function () {
       const getEntryInstance = entryToInstance => new Entry(entryToInstance);
       this.entry = {
         ammount: 12.3,
         description: 'A simple test description',
-        date: new Date().toUTCString()
+        date: new Date(),
+        categories_path: ',House,',
+        type: 'expense'
       };
       this.entryInstance = getEntryInstance(this.entry);
       this.entryToResolve = Object
@@ -31,6 +33,8 @@ describe('Entry module', function () {
         expect(savedEntry.description).to.be.equal(this.entryInstance.description);
         expect(savedEntry.date).to.be.equal(this.entryInstance.date);
         expect(savedEntry.id).to.be.equal(this.entryInstance.id);
+        expect(savedEntry.categories_path).to.be.equal(this.entryInstance.categories_path);
+        expect(savedEntry.type).to.be.equal(this.entryInstance.type);
       } catch (error) {
         throw error;
       }

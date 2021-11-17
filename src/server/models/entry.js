@@ -4,7 +4,7 @@ const { getDbModel } = require('../lib/db-helper');
 
 const DbEntry = getDbModel({
   db: mongoose,
-  modelName: constants.MODEL_NAMES.EXPENSE,
+  modelName: constants.MODEL_NAMES.ENTRY,
   schema: entrySchema
 });
 

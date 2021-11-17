@@ -2,10 +2,12 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 
 const Account = require('./account');
+const Entry = require('./entry');
 
-describe('Account module', function () {
+describe('Account model', function () {
   beforeEach('Prepare getAccountInstance', function () {
     this.getAccountInstance = accountToInstance => new Account(accountToInstance);
+    this.getEntryInstance = entryToInstance => new Entry(entryToInstance);
   });
 
   describe('Instance account with validation', function () {
@@ -90,7 +92,7 @@ describe('Account module', function () {
         this.getAccountInstance(this.accountWithMissingAtributes);
       } catch (error) {
         expect(error.message)
-          .to.be.equal('Validation failed: currency: Path `currency` is required., name: Path `name` is required.');
+          .to.be.equal('Validation failed: currency: Path `currency` is required.');
       }
     });
 
@@ -136,6 +138,45 @@ describe('Account module', function () {
       } catch (error) {
         throw error;
       }
+    });
+  });
+
+  describe('account.addEntry', function () {
+    describe.only('Save entries to the account', function () {
+      beforeEach('Prepare to add an entry to an account', async function () {
+        const mockedAccount = {
+          ammount: 12.3,
+          description: 'A simple test description',
+          date: new Date(),
+          categories_path: ',House,',
+          type: 'expense',
+          currency: 'CAD'
+        };
+
+        const account = this.getAccountInstance(mockedAccount);
+        const spiedAccount = sinon.spy(account.expenses);
+        this.saveAccountStub = sinon.stub(account, 'save').returns(Promise.resolve());
+
+        const mockedEntry = {
+          ammount: 12.3,
+          description: 'A simple test description',
+          date: new Date(),
+          categories_path: ',House,',
+          type: 'expense'
+        };
+
+        const entry = this.getEntryInstance(mockedEntry);
+        await account.addEntry({ entry });
+        this.spiedAccountPush = spiedAccount.push;
+      });
+
+      it('Should call the push function of the subdocument entry as an expense', function () {
+        expect(this.spiedAccountPush.calledOnce).to.be.equals(true);
+      });
+
+      it('Should add an entry to an account', function () {
+        expect(this.saveAccountStub.calledOnce).to.be.equals(true);
+      });
     });
   });
 });

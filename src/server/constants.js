@@ -3,13 +3,13 @@ module.exports = {
     USER: 'User',
     ACCOUNT: 'Account',
     CATEGORY: 'Category',
-    EXPENSE: 'Expense'
+    ENTRY: 'ENTRY'
   },
   CURRENCIES: [
     'USD',
     'CAD'
   ],
-  CATEGOTY_TYPES: [
+  ENTRY_TYPES: [
     'income',
     'expense'
   ],

@@ -25,6 +25,15 @@ class Account extends DbAccount {
       throw error;
     }
   }
+
+  async addEntry({ entry }) {
+    try {
+      this[`${entry.type}s`].push(entry);
+      return this.save();
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Account;
