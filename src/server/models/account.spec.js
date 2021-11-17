@@ -165,8 +165,8 @@ describe('Account model', function () {
           type: 'expense'
         };
 
-        const entry = this.getEntryInstance(mockedEntry);
-        await account.addEntry({ entry });
+        this.entry = this.getEntryInstance(mockedEntry);
+        await account.addEntry({ entry: this.entry });
         this.spiedAccountPush = spiedAccount.push;
       });
 
@@ -174,9 +174,14 @@ describe('Account model', function () {
         expect(this.spiedAccountPush.calledOnce).to.be.equals(true);
       });
 
+      it('Should call the push function of the expenses with the right entry data', function () {
+        expect(this.spiedAccountPush.calledWith(this.entry)).to.be.equals(true);
+      });
+
       it('Should add an entry to an account', function () {
         expect(this.saveAccountStub.calledOnce).to.be.equals(true);
       });
+      // TODO: Add the alternate path and non happy paths
     });
   });
 });
