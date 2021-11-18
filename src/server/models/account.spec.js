@@ -141,21 +141,25 @@ describe('Account model', function () {
     });
   });
 
-  describe('account.addEntry', function () {
-    describe.only('Save entries to the account', function () {
-      beforeEach('Prepare to add an entry to an account', async function () {
-        const mockedAccount = {
-          ammount: 12.3,
-          description: 'A simple test description',
-          date: new Date(),
-          categories_path: ',House,',
-          type: 'expense',
-          currency: 'CAD'
-        };
+  describe.only('account.addEntry', function () {
+    beforeEach('Prepare the account to use', function () {
+      const mockedAccount = {
+        name: 'Test account',
+        description: 'A simple description',
+        currency: 'CAD'
+      };
 
-        const account = this.getAccountInstance(mockedAccount);
-        const spiedAccount = sinon.spy(account.expenses);
-        this.saveAccountStub = sinon.stub(account, 'save').returns(Promise.resolve());
+      this.account = this.getAccountInstance(mockedAccount);
+      this.saveAccountStub = sinon.stub(this.account, 'save').returns(Promise.resolve());
+    });
+
+    afterEach('afterEach: Save entries to the account', function () {
+      this.saveAccountStub.restore();
+    });
+
+    describe('Save entries to the account', function () {
+      beforeEach('Prepare to add an entry to an account', async function () {
+        const spiedAccountExpenses = sinon.spy(this.account.expenses);
 
         const mockedEntry = {
           ammount: 12.3,
@@ -166,20 +170,24 @@ describe('Account model', function () {
         };
 
         this.entry = this.getEntryInstance(mockedEntry);
-        await account.addEntry({ entry: this.entry });
-        this.spiedAccountPush = spiedAccount.push;
+        await this.account.addEntry({ entry: this.entry });
+        this.spiedAccountExpensesPush = spiedAccountExpenses.push;
+      });
+
+      afterEach('afterEach: Prepare to add an entry to an account', function () {
+        this.spiedAccountExpensesPush.restore();
       });
 
       it('Should call the push function of the subdocument entry as an expense', function () {
-        expect(this.spiedAccountPush.calledOnce).to.be.equals(true);
-      });
-
-      it('Should call the push function of the expenses with the right entry data', function () {
-        expect(this.spiedAccountPush.calledWith(this.entry)).to.be.equals(true);
+        expect(this.spiedAccountExpensesPush.calledOnce).to.be.equals(true);
       });
 
       it('Should add an entry to an account', function () {
         expect(this.saveAccountStub.calledOnce).to.be.equals(true);
+      });
+
+      it('Should call the push function of the expenses with the right entry data', function () {
+        expect(this.spiedAccountExpensesPush.calledWith(this.entry)).to.be.equals(true);
       });
       // TODO: Add the alternate path and non happy paths
     });
