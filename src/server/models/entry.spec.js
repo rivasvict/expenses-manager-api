@@ -1,12 +1,16 @@
 const { expect } = require('chai');
+const { entries } = require('lodash');
 const sinon = require('sinon');
 
 const Entry = require('./entry');
 
 describe('Entry model', function () {
+  before('Make the factory of an entry instance available to the whole test suite for entries', function () {
+    this.getEntryInstance = entry => new Entry(entry);
+  });
+
   describe('entry.create', function () {
     beforeEach('Define entry to be created', function () {
-      const getEntryInstance = entryToInstance => new Entry(entryToInstance);
       this.entry = {
         ammount: 12.3,
         description: 'A simple test description',
@@ -14,7 +18,7 @@ describe('Entry model', function () {
         categories_path: ',House,',
         type: 'expense'
       };
-      this.entryInstance = getEntryInstance(this.entry);
+      this.entryInstance = this.getEntryInstance(this.entry);
       this.entryToResolve = Object
         .assign(Object.create(this.entry), { id: this.entryInstance.id });
 
@@ -38,6 +42,34 @@ describe('Entry model', function () {
       } catch (error) {
         throw error;
       }
+    });
+  });
+
+  describe.only('Get entries', function () {
+    describe('Get entries by account id', function () {
+      beforeEach('Stub the find method of the entries model', function () {
+        this.findEntriesStub = sinon.stub(Entry, 'find').returns(Promise.resolve());
+        this.accountId = '322345';
+      });
+
+      afterEach('Clean the find method', function () {
+        this.findEntriesStub.restore();
+      });
+
+      it('Should call the find method with the right arguments', async function () {
+        await Entry.getEntriesByAccountId(this.accountId);
+        // TODO: Review the Sinon documentation to improve the way
+        // we get the account_id parameter from the funciton call
+        const calledAccountId = this.findEntriesStub.args[0][0].account_id;
+        expect(calledAccountId === this.accountId).to.be.equals(true);
+      });
+
+      it('Should call the find method only once', async function () {
+        await Entry.getEntriesByAccountId(this.accountId);
+        expect(this.findEntriesStub.calledOnce).to.be.equals(true);
+      });
+
+      it('Should throw an error when no account id is present in the call');
     });
   });
 });

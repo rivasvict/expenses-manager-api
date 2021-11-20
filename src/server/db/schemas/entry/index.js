@@ -6,7 +6,8 @@ const entry = {
   description: { type: String, required: false },
   date: { type: Date, required: false },
   categories_path: { type: String, required: true },
-  type: { type: String, required: true, enum: constants.ENTRY_TYPES }
+  type: { type: String, required: true, enum: constants.ENTRY_TYPES },
+  account_id: { type: String, required: true }
 };
 
 const { Schema } = mongoose;

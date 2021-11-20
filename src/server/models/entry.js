@@ -25,6 +25,14 @@ class Entry extends DbEntry {
       throw error;
     }
   }
+
+  static async getEntriesByAccountId(accountId) {
+    try {
+      return this.find({ account_id: accountId });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Entry;
