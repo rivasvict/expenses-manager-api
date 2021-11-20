@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 
 const constants = require('../../../constants');
 
-const [INCOME, EXPENSE] = constants.ENTRY_TYPES;
-
 const account = {
   name: { type: String, required: false },
   currency: {
@@ -12,17 +10,7 @@ const account = {
     enum: constants.CURRENCIES
   },
   description: { type: String, required: false },
-  default: { type: Boolean, required: false },
-  expenses: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: constants.MODEL_NAMES.ENTRY,
-    default: INCOME
-  }],
-  incomes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: constants.MODEL_NAMES.ENTRY,
-    default: EXPENSE
-  }]
+  default: { type: Boolean, required: false }
 };
 
 const { Schema } = mongoose;
