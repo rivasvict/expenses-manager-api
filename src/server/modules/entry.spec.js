@@ -17,7 +17,7 @@ describe('Entry Module', function () {
     this.entryModule = EntryModule({ Entry: entryTestContainer.Entry });
   });
 
-  describe('Add an income', function () {
+  describe('Add an entry', function () {
     beforeEach('Prepare an entry to be added', function () {
       this.entry = {
         ammount: 15,
@@ -25,6 +25,7 @@ describe('Entry Module', function () {
         type: INCOME_NAME,
         description: 'Great income',
         categories_path: ',Work,',
+        // TODO: Check better ESLINT rules for this non-constructor usage error
         date: new Date
       };
       this.createEntryStub = sinon.stub(Entry.prototype, 'create').returns(Promise.resolve());
@@ -43,5 +44,18 @@ describe('Entry Module', function () {
       await this.entryModule.addEntry(this.entry);
       expect(this.createEntryStub.calledOnce).to.be.equals(true);
     });
+  });
+
+  describe.skip('Get expenses based on an account', function () {
+    beforeEach('Stub getEntriesByAccountId method FROM THE ENTRIES MODEL', function () {
+      this.getEntriesByAccountStub = sinon.stub(Entry.prototype, 'getEntriesByAccountId').returns(Promise.resolve());
+    });
+
+    it('Should call the getEntriesByAccountId of the MODEL at least once', async function () {
+      await this.entryModule.getEntriesByAccountId('452522');
+      expect(this.getEntriesByAccountStub.calledOnce).to.be.equals(true);
+    });
+
+    it('Should call the getEntriesByAccountId with the right arguments');
   });
 });
