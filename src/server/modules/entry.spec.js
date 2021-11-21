@@ -4,28 +4,30 @@ const { expect } = require('chai');
 const EntryModule = require('./entry');
 const Entry = require('../models/entry');
 const constants = require('../constants');
+const dayjs = require('dayjs');
 
 const [INCOME_NAME] = constants.ENTRY_TYPES;
 
 describe('Entry Module', function () {
   describe('Add an entry', function () {
     beforeEach('Prepare an entry to be added', function () {
-      const entryTestContainer = {
-        Entry
-      };
-
-      this.spiedEntryConstructor = sinon.spy(entryTestContainer, 'Entry');
-      this.entryModule = EntryModule({ Entry: entryTestContainer.Entry });
       this.entry = {
         ammount: 15,
         account_id: '214131',
         type: INCOME_NAME,
         description: 'Great income',
         categories_path: ',Work,',
-        // TODO: Check better ESLINT rules for this non-constructor usage error
-        date: new Date
+        date: 1596502849
       };
-      this.createEntryStub = sinon.stub(Entry.prototype, 'create').returns(Promise.resolve());
+
+      this.entryForResponse = new Entry({ ...this.entry, date: dayjs.unix(1596502849) });
+      const entryTestContainer = {
+        Entry
+      };
+
+      this.spiedEntryConstructor = sinon.spy(entryTestContainer, 'Entry');
+      this.entryModule = EntryModule({ Entry: entryTestContainer.Entry });
+      this.createEntryStub = sinon.stub(Entry.prototype, 'create').returns(Promise.resolve(this.entryForResponse));
     });
 
     afterEach('Reset the mocks and stubs', function () {
@@ -41,6 +43,12 @@ describe('Entry Module', function () {
     it('Should call the add method only once', async function () {
       await this.entryModule.addEntry(this.entry);
       expect(this.createEntryStub.calledOnce).to.be.equals(true);
+    });
+
+    it('Should call the setISODateFromUnixTimestamp at least once', async function () {
+      const setISODateFromUnixTimestampSpy = sinon.spy(Entry.prototype, 'setISODateFromUnixTimestamp');
+      await this.entryModule.addEntry(this.entry);
+      expect(setISODateFromUnixTimestampSpy.calledOnce).to.be.equals(true);
     });
   });
 

@@ -4,7 +4,7 @@ const constants = require('../../../constants');
 const entry = {
   ammount: { type: Number, required: true },
   description: { type: String, required: false },
-  date: { type: Date, required: false },
+  date: { type: Date, required: true },
   categories_path: { type: String, required: true },
   type: { type: String, required: true, enum: constants.ENTRY_TYPES },
   account_id: { type: String, required: true }
