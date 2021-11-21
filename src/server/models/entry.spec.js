@@ -69,7 +69,13 @@ describe('Entry model', function () {
         expect(this.findEntriesStub.calledOnce).to.be.equals(true);
       });
 
-      it('Should throw an error when no account id is present in the call');
+      it('Should throw an error when no account id is present in the call', async function () {
+        try {
+          await Entry.getEntriesByAccountId();
+        } catch (error) {
+          expect(error.message).to.be.equals('Missing accountId argument');
+        }
+      });
     });
   });
 });

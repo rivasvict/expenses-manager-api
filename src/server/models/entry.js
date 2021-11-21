@@ -28,6 +28,9 @@ class Entry extends DbEntry {
 
   static async getEntriesByAccountId(accountId) {
     try {
+      if (!accountId) {
+        throw new Error('Missing accountId argument');
+      }
       return this.find({ account_id: accountId });
     } catch (error) {
       throw error;
