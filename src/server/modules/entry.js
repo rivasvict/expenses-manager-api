@@ -7,6 +7,15 @@ const addEntry = ({ Entry }) => (entry) => {
   }
 };
 
+const getEntriesByAccountId = ({ Entry }) => (accountId) => {
+  try {
+    return Entry.getEntriesByAccountId(accountId);
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = ({ Entry }) => ({
-  addEntry: addEntry({ Entry })
+  addEntry: addEntry({ Entry }),
+  getEntriesByAccountId: getEntriesByAccountId({ Entry })
 });

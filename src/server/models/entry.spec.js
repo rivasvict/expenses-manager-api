@@ -13,6 +13,7 @@ describe('Entry model', function () {
     beforeEach('Define entry to be created', function () {
       this.entry = {
         ammount: 12.3,
+        account_id: 'rwtretgwe2',
         description: 'A simple test description',
         date: new Date(),
         categories_path: ',House,',
@@ -45,7 +46,7 @@ describe('Entry model', function () {
     });
   });
 
-  describe.only('Get entries', function () {
+  describe('Get entries', function () {
     describe('Get entries by account id', function () {
       beforeEach('Stub the find method of the entries model', function () {
         this.findEntriesStub = sinon.stub(Entry, 'find').returns(Promise.resolve());
@@ -56,10 +57,8 @@ describe('Entry model', function () {
         this.findEntriesStub.restore();
       });
 
-      it('Should call the find method with the right arguments', async function () {
+      it('Should call the find method with the right account id', async function () {
         await Entry.getEntriesByAccountId(this.accountId);
-        // TODO: Review the Sinon documentation to improve the way
-        // we get the account_id parameter from the funciton call
         const calledAccountId = this.findEntriesStub.args[0][0].account_id;
         expect(calledAccountId === this.accountId).to.be.equals(true);
       });
