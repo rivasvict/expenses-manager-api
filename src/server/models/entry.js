@@ -1,7 +1,7 @@
+const dayjs = require('dayjs');
 const { mongoose, entrySchema } = require('../db/schemas/entry');
 const constants = require('../constants');
 const { getDbModel } = require('../lib/db-helper');
-const dayjs = require('dayjs');
 
 const DbEntry = getDbModel({
   db: mongoose,
@@ -33,7 +33,10 @@ class Entry extends DbEntry {
         throw new Error('Missing accountId argument');
       }
 
-      return this.find({ account_id: accountId });
+      return this.find({ account_id: accountId })
+      // TODO: Think of a better way to separate concerns
+      // of finding and sorting
+        .sort({ date: 'descending' });
     } catch (error) {
       throw error;
     }

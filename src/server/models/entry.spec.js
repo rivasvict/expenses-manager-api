@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { entries } = require('lodash');
+const { initial } = require('lodash');
 const sinon = require('sinon');
 
 const Entry = require('./entry');
@@ -49,7 +49,10 @@ describe('Entry model', function () {
   describe('Get entries', function () {
     describe('Get entries by account id', function () {
       beforeEach('Stub the find method of the entries model', function () {
-        this.findEntriesStub = sinon.stub(Entry, 'find').returns(Promise.resolve());
+        this.sortFake = sinon.fake();
+        this.findEntriesStub = sinon.stub(Entry, 'find').returns({
+          sort: this.sortFake
+        });
         this.accountId = '322345';
       });
 
@@ -57,10 +60,16 @@ describe('Entry model', function () {
         this.findEntriesStub.restore();
       });
 
-      it('Should call the find method with the right account id', async function () {
+      it('Should call the find method with the right account account id', async function () {
         await Entry.getEntriesByAccountId(this.accountId);
-        const calledAccountId = this.findEntriesStub.args[0][0].account_id;
-        expect(calledAccountId === this.accountId).to.be.equals(true);
+        const calledWith = this.findEntriesStub.args[0][0];
+        expect(calledWith.account_id === this.accountId).to.be.equals(true);
+      });
+
+      it('Shold call the sort method after the find method to get the result sorted by date', async function () {
+        await Entry.getEntriesByAccountId(this.accountId);
+        const calledWith = this.sortFake.args[0][0];
+        expect(calledWith.date === 'descending').to.be.equals(true);
       });
 
       it('Should call the find method only once', async function () {
