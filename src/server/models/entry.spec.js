@@ -1,5 +1,4 @@
 const { expect } = require('chai');
-const { initial } = require('lodash');
 const sinon = require('sinon');
 
 const Entry = require('./entry');

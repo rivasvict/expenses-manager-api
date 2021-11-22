@@ -1,10 +1,10 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
 
+const dayjs = require('dayjs');
 const EntryModule = require('./entry');
 const Entry = require('../models/entry');
 const constants = require('../constants');
-const dayjs = require('dayjs');
 
 const [INCOME_NAME] = constants.ENTRY_TYPES;
 
