@@ -8,7 +8,7 @@ const balanceRouter = rewire('./');
 
 const [INCOME_NAME] = constants.ENTRY_TYPES;
 
-describe.only('Balance route', function () {
+describe('Balance route', function () {
   describe('Create a new entry', function () {
     beforeEach('Set the Entry module up for creating a new entry', function () {
       this.Entry = Entry;
@@ -29,7 +29,6 @@ describe.only('Balance route', function () {
       this.stubbedAddEntry.restore();
     });
 
-    // TODO: Remove this test case and only check on the addEntry function
     it('Should call the addEntry method of the Entry module at least once', async function () {
       this.addEntry({ body: this.entry }, { status: () => ({ json: () => {} }) });
       expect(this.stubbedAddEntry.calledOnce).to.be.equals(true);
