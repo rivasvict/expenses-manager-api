@@ -17,7 +17,7 @@ const routesHandler = new RoutesHandler({
 });
 
 // MOCKED ROUTES
-const balanceRoutes = require('./mocked-routes/balance');
+const balanceRoutes = require('./balance/index');
 
 const mountBalanceRoutes = balanceRoutes({ wrap });
 
