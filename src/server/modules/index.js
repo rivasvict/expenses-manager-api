@@ -16,6 +16,7 @@ const EntryModule = require('./entry');
 
 const User = require('../models/user');
 const Entry = require('../models/entry');
+const Account = require('../models/account');
 
 const cacheClient = new Redis({
   port: parseInt(config.REDIS_PORT, 10),
@@ -24,7 +25,7 @@ const cacheClient = new Redis({
 
 const accountModule = AccountModule();
 const cacheModule = CacheModule({ cacheClient });
-const userModule = UserModule({ User, _ });
+const userModule = UserModule({ User, _, Account });
 const authenticationModule = AuthenticationModule({ config, cacheModule, userModule, _, jwt });
 const passportHandlerModule = PassportHandlerModule({
   passport,
