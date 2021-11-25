@@ -1,54 +1,62 @@
 const _ = require('lodash');
 const sinon = require('sinon');
 const { expect } = require('chai');
+const rewire = require('rewire');
 
 const { getSaltHash } = require('../lib/util.js');
 
 const UserModule = require('./user.js');
+const Account = require('../models/account');
+const User = require('../models/user');
+const userModuleIndex = rewire('./user.js');
 
 describe('User module', function () {
   describe('Implementation: Sign regular user up', function () {
-    beforeEach('Prepare mocked user model', function () {
-      this.getMockedUserModel = userToTest => function () {
-        return {
-          create: sinon.fake.returns(Promise.resolve({ ...userToTest, toJSON: () => userToTest }))
-        };
-      };
-
-      this.getMockedUserModelWithError = errorToThrow => function () {
-        return {
-          create: sinon.fake.throws(errorToThrow)
-        };
-      };
-    });
-
     describe('signUp: Test for user creation', function () {
       it('Should create new user when it is formed with correct data', async function () {
         const userToTest = {
           firstName: 'ahisuhd',
           email: 'ahfushaa@gmail.com',
           lastName: 'Rivas',
-          password: 'hola'
+          password: 'hola',
+          accounts: []
         };
-        const userModule = UserModule({ _, User: this.getMockedUserModel(userToTest) });
-        const user = await userModule.signUp(userToTest);
+        this.createUserStub = sinon.stub(User.prototype, 'create').returns(Promise.resolve(new User(userToTest)));
+        const spiedSetDefaultAccountForUser = sinon.fake();
+        const removePassword = userModuleIndex.__get__('RemovePassword')(_);
+        const signUp = userModuleIndex.__get__('signUp')({
+          User,
+          getError: sinon.fake(),
+          Account,
+          setDefaultAccountForUser: spiedSetDefaultAccountForUser,
+          removePassword
+        });
+        const user = await signUp(userToTest);
 
-        expect(user).to.deep.equal(_.omit(userToTest, 'password'));
+        expect(_.omit(user, '_id')).to.deep.equal(_.omit(userToTest, 'password'));
+        expect(spiedSetDefaultAccountForUser.calledOnce).to.be.equal(true);
+        expect(userToTest).to.deep.equal(_.omit(spiedSetDefaultAccountForUser.firstCall.args[0].toJSON(), '_id'));
+      });
+
+      // TODO: Refactor the way this stub is handled
+      afterEach('Restore stubs for the User module functions', function () {
+        this.createUserStub.restore();
       });
 
       it('Should throw error when missing data', async function () {
         const userToTest = {
           email: 'ahfushaa@gmail.com',
           lastName: 'Rivas',
-          password: 'hola'
+          password: 'hola',
+          accounts: []
         };
         const validationPathName = 'firstName';
-        const validationMessage = 'Validation failed: firstName: Path `firstName` is required.';
+        const validationMessage = 'Path `firstName` is required.';
         const validationTypeName = 'ValidationError';
         const validationContent = [{ message: validationMessage, path: validationPathName }];
         const validationError = {
           validation: validationContent,
-          name: validationTypeName,
+          _message: 'Validation failed',
           message: 'Invalid data'
         };
 
@@ -60,12 +68,9 @@ describe('User module', function () {
           }
         };
 
+        this.createUserStub = sinon.stub(User.prototype, 'create').returns(Promise.reject(dbValidationError));
         const userModule = UserModule({
-          User: function User() {
-            return {
-              create: sinon.fake.returns(Promise.reject(dbValidationError))
-            };
-          },
+          User,
           _
         });
 
@@ -82,31 +87,35 @@ describe('User module', function () {
           firstName: 'Victor',
           email: 'ahfushaa@gmailcom',
           lastName: 'Rivas',
-          password: 'hola'
+          password: 'hola',
+          accounts: []
         };
-        const userModule = UserModule({ User: this.getMockedUserModel(user), _ });
+        this.createUserStub = sinon.stub(User.prototype, 'create').returns(Promise.resolve());
+        const userModule = UserModule({ User, _ });
         try {
           await userModule.signUp(user);
         } catch (error) {
-          expect(error.message).to.be.equal(`Validation failed: email: Provided email: ${user.email} has no valid format`);
-          expect(error.name).to.be.equal('ValidationError');
+          expect(error.message).to.be.equal('Invalid data');
         }
       });
 
       it('Should throw error when alrady used email', async function () {
         const duplicationUserError = new Error('Duplicated user');
 
+        this.createUserStub = sinon.stub(User.prototype, 'create').returns(Promise.reject(duplicationUserError));
         try {
           const userModule = UserModule({
-            User: this.getMockedUserModelWithError(duplicationUserError),
-            _
+            User,
+            _,
+            Account
           });
 
           await userModule.signUp({
             firstName: 'Victor',
             email: 'ahfushaa@gmail.com',
             lastName: 'Rivas',
-            password: 'hola'
+            password: 'hola',
+            accounts: []
           });
         } catch (error) {
           expect(error).to.be.deep.equal(duplicationUserError);
