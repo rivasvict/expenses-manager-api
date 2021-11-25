@@ -8,20 +8,14 @@
             "description": "September 2020 income 1",
             "timestamp": 1599720113,
             "type": "income",
-            "category": {
-              "id": 1,
-              "name": "loan"
-            }
+            "categories_path": ",loan,"
           },
           {
             "amount": 15.5,
             "description": "September 2020 income 2",
             "timestamp": 1600497713,
             "type": "income",
-            "category": {
-              "id": 1,
-              "name": "salary"
-            }
+            "categories_path": ",salary,"
           }
         ],
         "expenses": [
@@ -30,20 +24,14 @@
             "description": "September 2020 expense 1",
             "timestamp": 1600497713,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "food"
-            }
+            "categories_path": ",loan,"
           },
           {
             "amount": 15.5,
             "description": "September 2020 expense 2",
             "timestamp": 1600508513,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "house"
-            }
+            "categories_path": ",house,"
           }
         ]
       },
@@ -55,10 +43,7 @@
             "description": "October 2020 expense 1",
             "timestamp": 1604137313,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "food"
-            }
+            "categories_path": ",food,"
           }
         ]
       },
@@ -73,20 +58,14 @@
             "description": "December 2020 income 1",
             "timestamp": 1607596913,
             "type": "income",
-            "category": {
-              "id": 1,
-              "name": "loan"
-            }
+            "categories_path": ",loan,"
           },
           {
             "amount": 15.5,
             "description": "December 2020 income 2",
             "timestamp": 1607596913,
             "type": "income",
-            "category": {
-              "id": 1,
-              "name": "salary"
-            }
+            "categories_path": ",salary,"
           }
         ],
         "expenses": [
@@ -95,20 +74,14 @@
             "description": "December 2020 expense 1",
             "timestamp": 1607596912,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "food"
-            }
+            "categories_path": ",food,"
           },
           {
             "amount": 15.5,
             "description": "December 2020 expense 2",
             "timestamp": 1609411313,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "house"
-            }
+            "categories_path": ",house,"
           }
         ]
       }
@@ -125,10 +98,7 @@
             "description": "February 2021 income 1",
             "timestamp": 1609411313,
             "type": "income",
-            "category": {
-              "id": 1,
-              "name": "loan"
-            }
+            "categories_path": ",loan,"
           }
         ],
         "expenses": [
@@ -137,20 +107,14 @@
             "description": "February 2021 expense 1",
             "timestamp": 1613558513,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "food"
-            }
+            "categories_path": ",food,"
           },
           {
             "amount": 15.5,
             "description": "February 2021 expense 2",
             "timestamp": 1614336113,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "house"
-            }
+            "categories_path": ",house,"
           }
         ]
       },
@@ -161,20 +125,14 @@
             "description": "March 2021 income 1",
             "timestamp": 1614940913,
             "type": "income",
-            "category": {
-              "id": 1,
-              "name": "loan"
-            }
+            "categories_path": ",loan,"
           },
           {
             "amount": 15.5,
             "description": "March 2020 income 2",
             "timestamp": 1614940913,
             "type": "income",
-            "category": {
-              "id": 1,
-              "name": "salary"
-            }
+            "categories_path": ",salary,"
           }
         ],
         "expenses": []
@@ -187,10 +145,7 @@
             "description": "April 2021 expense 1",
             "timestamp": 1614940913,
             "type": "expense",
-            "category": {
-              "id": 1,
-              "name": "house"
-            }
+            "categories_path": ",house,"
           }
         ]
       },
