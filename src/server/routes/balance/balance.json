@@ -4,32 +4,32 @@
       "8": {
         "incomes": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "September 2020 income 1",
-            "timestamp": 1599720113,
+            "date": 1599720113,
             "type": "income",
             "categories_path": ",loan,"
           },
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "September 2020 income 2",
-            "timestamp": 1600497713,
+            "date": 1600497713,
             "type": "income",
             "categories_path": ",salary,"
           }
         ],
         "expenses": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "September 2020 expense 1",
-            "timestamp": 1600497713,
+            "date": 1600497713,
             "type": "expense",
             "categories_path": ",loan,"
           },
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "September 2020 expense 2",
-            "timestamp": 1600508513,
+            "date": 1600508513,
             "type": "expense",
             "categories_path": ",house,"
           }
@@ -39,9 +39,9 @@
         "incomes": [],
         "expenses": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "October 2020 expense 1",
-            "timestamp": 1604137313,
+            "date": 1604137313,
             "type": "expense",
             "categories_path": ",food,"
           }
@@ -54,32 +54,32 @@
       "11": {
         "incomes": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "December 2020 income 1",
-            "timestamp": 1607596913,
+            "date": 1607596913,
             "type": "income",
             "categories_path": ",loan,"
           },
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "December 2020 income 2",
-            "timestamp": 1607596913,
+            "date": 1607596913,
             "type": "income",
             "categories_path": ",salary,"
           }
         ],
         "expenses": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "December 2020 expense 1",
-            "timestamp": 1607596912,
+            "date": 1607596912,
             "type": "expense",
             "categories_path": ",food,"
           },
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "December 2020 expense 2",
-            "timestamp": 1609411313,
+            "date": 1609411313,
             "type": "expense",
             "categories_path": ",house,"
           }
@@ -94,25 +94,25 @@
       "1": {
         "incomes": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "February 2021 income 1",
-            "timestamp": 1609411313,
+            "date": 1609411313,
             "type": "income",
             "categories_path": ",loan,"
           }
         ],
         "expenses": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "February 2021 expense 1",
-            "timestamp": 1613558513,
+            "date": 1613558513,
             "type": "expense",
             "categories_path": ",food,"
           },
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "February 2021 expense 2",
-            "timestamp": 1614336113,
+            "date": 1614336113,
             "type": "expense",
             "categories_path": ",house,"
           }
@@ -121,16 +121,16 @@
       "2": {
         "incomes": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "March 2021 income 1",
-            "timestamp": 1614940913,
+            "date": 1614940913,
             "type": "income",
             "categories_path": ",loan,"
           },
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "March 2020 income 2",
-            "timestamp": 1614940913,
+            "date": 1614940913,
             "type": "income",
             "categories_path": ",salary,"
           }
@@ -141,9 +141,9 @@
         "incomes": [],
         "expenses": [
           {
-            "amount": 15.5,
+            "ammount": 15.5,
             "description": "April 2021 expense 1",
-            "timestamp": 1614940913,
+            "date": 1614940913,
             "type": "expense",
             "categories_path": ",house,"
           }
