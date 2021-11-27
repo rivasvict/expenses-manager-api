@@ -39,6 +39,11 @@ describe('Balance route', function () {
       expect(this.stubbedAddEntry.calledWith(this.entry)).to.be.equals(true);
     });
 
+    // TODO: WONT FIX IN HERE, The failing test is due to
+    // The backend having a responsibility it should not
+    // (extracting the account number in the route. This
+    // Should be already processed and sent to the request
+    // Of this endpoint
     it('Should call the status with 200 code', async function () {
       const statusFake = sinon.fake.returns({ json: () => {} });
       await this.addEntry({ body: this.entry }, { status: statusFake });
@@ -46,6 +51,11 @@ describe('Balance route', function () {
       expect(statusFake.calledWith(200)).to.be.equals(true);
     });
 
+    // TODO: WONT FIX IN HERE, The failing test is due to
+    // The backend having a responsibility it should not
+    // (extracting the account number in the route. This
+    // Should be already processed and sent to the request
+    // Of this endpoint
     it('Should call the json method at least once', async function () {
       const jsonFake = sinon.fake();
       await this.addEntry({ body: this.entry }, { status: () => ({ json: jsonFake }) });

@@ -11,9 +11,12 @@ const getMocked = () => async (req, res) => {
 // TODO: COMPLETE THE LOGIC OF SETTING A RECORD
 const addEntry = ({ entryModule }) => async (req, res) => {
   try {
-    // TODO: Move the logic of modifyting the entry object
-    // to a helper or the FRONTEND
     const entry = req.body;
+    // TODO: The failing test is due to
+    // The backend having a responsibility it should not
+    // (extracting the account number in the route. This
+    // Should be already processed and sent to the request
+    // Of this endpoint
     const accountId = req.user.accounts[0];
     const addedEntry = await entryModule.addEntry({ account_id: accountId, ...entry });
     await res.status(200).json(addedEntry);

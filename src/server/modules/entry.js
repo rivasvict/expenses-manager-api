@@ -1,5 +1,4 @@
 const getEntryInstanceWithISODate = ({ Entry, entry }) => {
-  debugger;
   const entryInstance = new Entry(entry);
   entryInstance.setISODateFromUnixTimestamp();
   return entryInstance;
