@@ -14,7 +14,7 @@ describe('Balance route', function () {
       this.Entry = Entry;
       this.entryModule = EntryModule({ Entry: this.Entry });
       this.entry = {
-        ammount: 15,
+        amount: 15,
         account_id: '214131',
         type: INCOME_NAME,
         description: 'Great income',

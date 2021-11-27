@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const constants = require('../../../constants');
 
 const entry = {
-  ammount: { type: Number, required: true },
+  amount: { type: Number, required: true },
   description: { type: String, required: false },
   date: { type: Date, required: true },
   categories_path: { type: String, required: true },

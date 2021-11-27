@@ -11,7 +11,7 @@ describe('Entry model', function () {
   describe('entry.create', function () {
     beforeEach('Define entry to be created', function () {
       this.entry = {
-        ammount: 12.3,
+        amount: 12.3,
         account_id: 'rwtretgwe2',
         description: 'A simple test description',
         date: new Date(),
@@ -33,7 +33,7 @@ describe('Entry model', function () {
       try {
         const savedEntry = await this.entryInstance.create();
         expect(savedEntry.errors).to.be.equal(undefined);
-        expect(savedEntry.ammount).to.be.equal(this.entryInstance.ammount);
+        expect(savedEntry.amount).to.be.equal(this.entryInstance.amount);
         expect(savedEntry.description).to.be.equal(this.entryInstance.description);
         expect(savedEntry.date).to.be.equal(this.entryInstance.date);
         expect(savedEntry.id).to.be.equal(this.entryInstance.id);
@@ -89,7 +89,7 @@ describe('Entry model', function () {
   describe('Set ISODate from unix timestamp', function () {
     beforeEach('Get the entry object', function () {
       this.entry = {
-        ammount: 12.3,
+        amount: 12.3,
         account_id: 'rwtretgwe2',
         description: 'A simple test description',
         date: 1596502849,

@@ -12,7 +12,7 @@ describe('Entry Module', function () {
   describe('Add an entry', function () {
     beforeEach('Prepare an entry to be added', function () {
       this.entry = {
-        ammount: 15,
+        amount: 15,
         account_id: '214131',
         type: INCOME_NAME,
         description: 'Great income',
