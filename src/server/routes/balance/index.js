@@ -1,4 +1,4 @@
-const mockedData = require('./balance.json');
+const mockedData = require('./mocks/balance.json');
 
 const getMocked = () => async (req, res) => {
   try {

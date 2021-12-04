@@ -30,35 +30,35 @@ describe('Balance route', function () {
     });
 
     it('Should call the addEntry method of the Entry module at least once', async function () {
-      this.addEntry({ body: this.entry }, { status: () => ({ json: () => {} }) });
+      this.addEntry({ body: this.entry, user: { accounts: ['52442'] } }, { status: () => ({ json: () => {} }) });
       expect(this.stubbedAddEntry.calledOnce).to.be.equals(true);
     });
 
     it('Should call the addEntry method of the Entry module with the right entry', function () {
-      this.addEntry({ body: this.entry }, { status: () => ({ json: () => {} }) });
+      this.addEntry({ body: this.entry, user: { accounts: ['52442'] } }, { status: () => ({ json: () => {} }) });
       expect(this.stubbedAddEntry.calledWith(this.entry)).to.be.equals(true);
     });
 
-    // TODO: WONT FIX IN HERE, The failing test is due to
-    // The backend having a responsibility it should not
+    // TODO: Improve responsibility handling for the route.
+    // The backend has a responsibility it should not
     // (extracting the account number in the route. This
     // Should be already processed and sent to the request
     // Of this endpoint
     it('Should call the status with 200 code', async function () {
       const statusFake = sinon.fake.returns({ json: () => {} });
-      await this.addEntry({ body: this.entry }, { status: statusFake });
+      await this.addEntry({ body: this.entry, user: { accounts: ['52442'] } }, { status: statusFake });
       expect(statusFake.calledOnce).to.be.equals(true);
       expect(statusFake.calledWith(200)).to.be.equals(true);
     });
 
-    // TODO: WONT FIX IN HERE, The failing test is due to
-    // The backend having a responsibility it should not
+    // TODO: Improve responsibility handling for the route.
+    // The backend has a responsibility it should not
     // (extracting the account number in the route. This
     // Should be already processed and sent to the request
     // Of this endpoint
     it('Should call the json method at least once', async function () {
       const jsonFake = sinon.fake();
-      await this.addEntry({ body: this.entry }, { status: () => ({ json: jsonFake }) });
+      await this.addEntry({ body: this.entry, user: { accounts: ['52442'] } }, { status: () => ({ json: jsonFake }) });
       expect(jsonFake.calledOnce).to.be.equals(true);
     });
   });
