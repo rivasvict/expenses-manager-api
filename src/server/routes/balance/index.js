@@ -1,7 +1,9 @@
 const mockedData = require('./mocks/balance-response.json');
 
-const getMocked = () => async (req, res) => {
+const getMocked = ({ entryModule }) => async (req, res) => {
   try {
+    const accountId = req.user.accounts[0];
+    const result = await entryModule.getEntriesByAccountId(accountId);
     await res.status(200).json(mockedData);
   } catch (error) {
     throw error;
@@ -30,7 +32,7 @@ const mountMockedRoutes = ({ wrap, entryModule }) => ({ router, baseUrl }) => {
   // TODO: For the handler of this function, add a way for
   // us to be able to send query params to define the
   // number of months we will get from this query
-  router.get(`${baseUrl}/`, wrap(getMocked()));
+  router.get(`${baseUrl}/`, wrap(getMocked({ entryModule })));
   router.post(`${baseUrl}/`, wrap(addEntry({ entryModule })));
 };
 

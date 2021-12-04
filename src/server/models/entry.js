@@ -33,10 +33,12 @@ class Entry extends DbEntry {
         throw new Error('Missing accountId argument');
       }
 
-      return this.find({ account_id: accountId })
-      // TODO: Think of a better way to separate concerns
-      // of finding and sorting
-        .sort({ date: 'descending' });
+      return this.model(constants.MODEL_NAMES.ENTRY)
+        .find({ account_id: accountId })
+        // TODO: Think of a better way to separate concerns
+        // of finding and sorting
+        .sort({ date: 'descending' })
+        .exec();
     } catch (error) {
       throw error;
     }

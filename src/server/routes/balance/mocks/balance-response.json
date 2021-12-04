@@ -1,198 +1,122 @@
-{
-  "entries": {
-    "2020": {
-      "8": {
-        "incomes": [
-          {
-            "amount": 15.5,
-            "description": "September 2020 income 1",
-            "date": 1599720113,
-            "type": "income",
-            "categories_path": ",loan,",
-            "account_id": "13241udf123"
-          },
-          {
-            "amount": 15.5,
-            "description": "September 2020 income 2",
-            "date": 1600497713,
-            "type": "income",
-            "categories_path": ",salary,",
-            "account_id": "13241udf123"
-          }
-        ],
-        "expenses": [
-          {
-            "amount": 15.5,
-            "description": "September 2020 expense 1",
-            "date": 1600497713,
-            "type": "expense",
-            "categories_path": ",loan,",
-            "account_id": "13241udf123"
-          },
-          {
-            "amount": 15.5,
-            "description": "September 2020 expense 2",
-            "date": 1600508513,
-            "type": "expense",
-            "categories_path": ",house,",
-            "account_id": "13241udf123"
-          }
-        ]
-      },
-      "9": {
-        "incomes": [],
-        "expenses": [
-          {
-            "amount": 15.5,
-            "description": "October 2020 expense 1",
-            "date": 1604137313,
-            "type": "expense",
-            "categories_path": ",food,",
-            "account_id": "13241udf123"
-          }
-        ]
-      },
-      "10": {
-        "incomes": [],
-        "expenses": []
-      },
-      "11": {
-        "incomes": [
-          {
-            "amount": 15.5,
-            "description": "December 2020 income 1",
-            "date": 1607596913,
-            "type": "income",
-            "categories_path": ",loan,",
-            "account_id": "13241udf123"
-          },
-          {
-            "amount": 15.5,
-            "description": "December 2020 income 2",
-            "date": 1607596913,
-            "type": "income",
-            "categories_path": ",salary,",
-            "account_id": "13241udf123"
-          }
-        ],
-        "expenses": [
-          {
-            "amount": 15.5,
-            "description": "December 2020 expense 1",
-            "date": 1607596912,
-            "type": "expense",
-            "categories_path": ",food,",
-            "account_id": "13241udf123"
-          },
-          {
-            "amount": 15.5,
-            "description": "December 2020 expense 2",
-            "date": 1609411313,
-            "type": "expense",
-            "categories_path": ",house,",
-            "account_id": "13241udf123"
-          }
-        ]
-      }
-    },
-    "2021": {
-      "0": {
-        "incomes": [],
-        "expenses": []
-      },
-      "1": {
-        "incomes": [
-          {
-            "amount": 15.5,
-            "description": "February 2021 income 1",
-            "date": 1609411313,
-            "type": "income",
-            "categories_path": ",loan,",
-            "account_id": "13241udf123"
-          }
-        ],
-        "expenses": [
-          {
-            "amount": 15.5,
-            "description": "February 2021 expense 1",
-            "date": 1613558513,
-            "type": "expense",
-            "categories_path": ",food,",
-            "account_id": "13241udf123"
-          },
-          {
-            "amount": 15.5,
-            "description": "February 2021 expense 2",
-            "date": 1614336113,
-            "type": "expense",
-            "categories_path": ",house,",
-            "account_id": "13241udf123"
-          }
-        ]
-      },
-      "2": {
-        "incomes": [
-          {
-            "amount": 15.5,
-            "description": "March 2021 income 1",
-            "date": 1614940913,
-            "type": "income",
-            "categories_path": ",loan,",
-            "account_id": "13241udf123"
-          },
-          {
-            "amount": 15.5,
-            "description": "March 2020 income 2",
-            "date": 1614940913,
-            "type": "income",
-            "categories_path": ",salary,",
-            "account_id": "13241udf123"
-          }
-        ],
-        "expenses": []
-      },
-      "3": {
-        "incomes": [],
-        "expenses": [
-          {
-            "amount": 15.5,
-            "description": "April 2021 expense 1",
-            "date": 1614940913,
-            "type": "expense",
-            "categories_path": ",house,",
-            "account_id": "13241udf123"
-          }
-        ]
-      },
-      "4": {
-        "incomes": [],
-        "expenses": []
-      },
-
-      "5": {
-        "incomes": [],
-        "expenses": []
-      },
-      "6": {
-        "incomes": [],
-        "expenses": []
-      },
-      "7": {
-        "incomes": [],
-        "expenses": []
-      },
-      "8": {
-        "incomes": [],
-        "expenses": []
-      },
-      "9": {
-        "incomes": [],
-        "expenses": []
-      },
-      "10": {
-        "incomes": [],
-        "expenses": []
-      }
-    }
+[
+  {
+    "amount": 15.5,
+    "description": "September 2020 income 1",
+    "date": "Thu Sep 10 2020 06:41:53 GMT+0000 (UTC)",
+    "type": "income",
+    "categories_path": ",loan,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "September 2020 income 2",
+    "date": "Sat Sep 19 2020 06:41:53 GMT+0000 (UTC)",
+    "type": "income",
+    "categories_path": ",salary,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "September 2020 expense 1",
+    "date": "Sat Sep 19 2020 06:41:53 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",loan,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "September 2020 expense 2",
+    "date": "Sat Sep 19 2020 09:41:53 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",house,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "October 2020 expense 1",
+    "date": "Sat Oct 31 2020 09:41:53 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",food,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "December 2020 income 1",
+    "date": "Thu Dec 10 2020 10:41:53 GMT+0000 (UTC)",
+    "type": "income",
+    "categories_path": ",loan,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "December 2020 income 2",
+    "date": "Thu Dec 10 2020 10:41:53 GMT+0000 (UTC)",
+    "type": "income",
+    "categories_path": ",salary,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "December 2020 expense 1",
+    "date": "Thu Dec 10 2020 10:41:52 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",food,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "December 2020 expense 2",
+    "date": "Thu Dec 31 2020 10:41:53 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",house,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "February 2021 income 1",
+    "date": "Thu Dec 31 2020 10:41:53 GMT+0000 (UTC)",
+    "type": "income",
+    "categories_path": ",loan,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "February 2021 expense 1",
+    "date": "Wed Feb 17 2021 10:41:53 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",food,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "February 2021 expense 2",
+    "date": "Fri Feb 26 2021 10:41:53 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",house,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "March 2021 income 1",
+    "date": "Fri Mar 05 2021 10:41:53 GMT+0000 (UTC)",
+    "type": "income",
+    "categories_path": ",loan,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "March 2020 income 2",
+    "date": "Fri Mar 05 2021 10:41:53 GMT+0000 (UTC)",
+    "type": "income",
+    "categories_path": ",salary,",
+    "account_id": "13241udf123"
+  },
+  {
+    "amount": 15.5,
+    "description": "April 2021 expense 1",
+    "date": "Fri Mar 05 2021 10:41:53 GMT+0000 (UTC)",
+    "type": "expense",
+    "categories_path": ",house,",
+    "account_id": "13241udf123"
   }
-}
+]
