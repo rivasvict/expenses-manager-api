@@ -37,7 +37,7 @@ class Entry extends DbEntry {
         .find({ account_id: accountId })
         // TODO: Think of a better way to separate concerns
         // of finding and sorting
-        .sort({ date: 'descending' })
+        .sort({ date: 'ascending' })
         .exec();
     } catch (error) {
       throw error;
