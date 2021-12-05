@@ -4,7 +4,7 @@ const getMocked = ({ entryModule }) => async (req, res) => {
   try {
     const accountId = req.user.accounts[0];
     const result = await entryModule.getEntriesByAccountId(accountId);
-    await res.status(200).json(mockedData);
+    await res.status(200).json(result);
   } catch (error) {
     throw error;
   }
