@@ -18,6 +18,9 @@ const user = {
   },
   lastName: { type: String, required: true },
   password: { type: String, required: true },
+  // TODO: Make sure the accounts work as an embeded
+  // document
+  // Ref: https://mongoosejs.com/docs/2.7.x/docs/embedded-documents.html
   accounts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: constants.MODEL_NAMES.ACCOUNT
