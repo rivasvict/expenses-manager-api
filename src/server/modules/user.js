@@ -14,12 +14,15 @@ const GetError = _ => (error) => {
   return error;
 };
 
+const defaultAccount = {
+  name: 'Default',
+  currency: 'CAD',
+  description: 'Default account',
+  default: true
+};
+
 const SetDefaultAccountForUser = Account => user => (
-  user.accounts.push(new Account({
-    name: 'Default',
-    currency: 'CAD',
-    description: 'Default account'
-  }))
+  user.accounts.push(new Account(defaultAccount))
 );
 
 const signUp = ({ User, getError, removePassword, setDefaultAccountForUser }) => async (userToCreate) => {
