@@ -14,9 +14,21 @@ const GetError = _ => (error) => {
   return error;
 };
 
-const signUp = ({ User, getError, removePassword }) => async (userToCreate) => {
+const defaultAccount = {
+  name: 'Default',
+  currency: 'CAD',
+  description: 'Default account',
+  default: true
+};
+
+const SetDefaultAccountForUser = Account => user => (
+  user.accounts.push(new Account(defaultAccount))
+);
+
+const signUp = ({ User, getError, removePassword, setDefaultAccountForUser }) => async (userToCreate) => {
   try {
     const user = new User(userToCreate);
+    setDefaultAccountForUser(user);
     const userOnDb = await user.create();
     return removePassword(userOnDb.toJSON());
   } catch (error) {
@@ -52,13 +64,14 @@ const getUser = ({ User, removePassword }) => async (email) => {
   }
 };
 
-module.exports = ({ User, _ }) => {
+module.exports = ({ User, _, Account }) => {
   // TODO: This should be loaded form a helper
   const getError = GetError(_);
   const removePassword = RemovePassword(_);
+  const setDefaultAccountForUser = SetDefaultAccountForUser(Account);
 
   return {
-    signUp: signUp({ User, getError, removePassword }),
+    signUp: signUp({ User, getError, removePassword, Account, setDefaultAccountForUser }),
     authenticateUser: authenticateUser({ User, removePassword }),
     getUser: getUser({ User, removePassword })
   };

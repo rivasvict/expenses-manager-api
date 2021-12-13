@@ -2,10 +2,12 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 
 const Account = require('./account');
+const Entry = require('./entry');
 
-describe('Account module', function () {
+describe('Account model', function () {
   beforeEach('Prepare getAccountInstance', function () {
     this.getAccountInstance = accountToInstance => new Account(accountToInstance);
+    this.getEntryInstance = entryToInstance => new Entry(entryToInstance);
   });
 
   describe('Instance account with validation', function () {
@@ -90,7 +92,7 @@ describe('Account module', function () {
         this.getAccountInstance(this.accountWithMissingAtributes);
       } catch (error) {
         expect(error.message)
-          .to.be.equal('Validation failed: currency: Path `currency` is required., name: Path `name` is required.');
+          .to.be.equal('Validation failed: currency: Path `currency` is required.');
       }
     });
 

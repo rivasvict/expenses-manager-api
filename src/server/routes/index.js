@@ -5,7 +5,7 @@ const router = express.Router();
 const cors = require('cors');
 const userRoutes = require('./user/');
 
-const { userModule, authenticationModule, passportHandlerModule } = require('../modules');
+const { userModule, authenticationModule, passportHandlerModule, entryModule } = require('../modules');
 
 const mountUserRoutes = userRoutes({ authenticationModule, userModule, wrap });
 const RoutesHandler = require('./routesHandler');
@@ -17,9 +17,9 @@ const routesHandler = new RoutesHandler({
 });
 
 // MOCKED ROUTES
-const balanceRoutes = require('./mocked-routes/balance');
+const balanceRoutes = require('./balance/index');
 
-const mountBalanceRoutes = balanceRoutes({ wrap });
+const mountBalanceRoutes = balanceRoutes({ wrap, entryModule });
 
 const jwtStrategy = passportHandlerModule.isAuthorized;
 // TODO: Configure development CORS policies
