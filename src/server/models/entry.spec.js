@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const constants = require('../constants');
 
 const Entry = require('./entry');
 
@@ -48,8 +49,11 @@ describe('Entry model', function () {
   describe('Get entries', function () {
     describe('Get entries by account id', function () {
       beforeEach('Stub the find method of the entries model', function () {
-        this.sortFake = sinon.fake();
-        this.findEntriesStub = sinon.stub(Entry, 'find').returns({
+        this.execFake = sinon.fake();
+        this.sortFake = sinon.fake.returns({
+          exec: this.execFake
+        });
+        this.findEntriesStub = sinon.stub(Entry.model(constants.MODEL_NAMES.ENTRY), 'find').returns({
           sort: this.sortFake
         });
         this.accountId = '322345';
@@ -68,7 +72,7 @@ describe('Entry model', function () {
       it('Shold call the sort method after the find method to get the result sorted by date', async function () {
         await Entry.getEntriesByAccountId(this.accountId);
         const calledWith = this.sortFake.args[0][0];
-        expect(calledWith.date === 'descending').to.be.equals(true);
+        expect(calledWith.date === 'ascending').to.be.equals(true);
       });
 
       it('Should call the find method only once', async function () {
