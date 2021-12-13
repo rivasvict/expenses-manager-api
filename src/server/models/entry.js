@@ -1,4 +1,3 @@
-const dayjs = require('dayjs');
 const { mongoose, entrySchema } = require('../db/schemas/entry');
 const constants = require('../constants');
 const { getDbModel } = require('../lib/db-helper');
@@ -42,12 +41,6 @@ class Entry extends DbEntry {
     } catch (error) {
       throw error;
     }
-  }
-
-  setISODateFromUnixTimestamp() {
-    // TODO: Look for a simple way to make dependency injection
-    // for dayjs
-    this.date = dayjs.unix(this.date);
   }
 }
 

@@ -44,12 +44,6 @@ describe('Entry Module', function () {
       await this.entryModule.addEntry(this.entry);
       expect(this.createEntryStub.calledOnce).to.be.equals(true);
     });
-
-    it('Should call the setISODateFromUnixTimestamp at least once', async function () {
-      const setISODateFromUnixTimestampSpy = sinon.spy(Entry.prototype, 'setISODateFromUnixTimestamp');
-      await this.entryModule.addEntry(this.entry);
-      expect(setISODateFromUnixTimestampSpy.calledOnce).to.be.equals(true);
-    });
   });
 
   describe('Get expenses based on an account', function () {

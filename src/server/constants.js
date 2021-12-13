@@ -3,7 +3,7 @@ module.exports = {
     USER: 'User',
     ACCOUNT: 'Account',
     CATEGORY: 'Category',
-    ENTRY: 'ENTRY'
+    ENTRY: 'Entry'
   },
   CURRENCIES: [
     'USD',

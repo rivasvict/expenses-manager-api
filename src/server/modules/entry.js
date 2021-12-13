@@ -1,12 +1,6 @@
-const getEntryInstanceWithISODate = ({ Entry, entry }) => {
-  const entryInstance = new Entry(entry);
-  entryInstance.setISODateFromUnixTimestamp();
-  return entryInstance;
-};
-
 const addEntry = ({ Entry }) => (entry) => {
   try {
-    const entryInstance = getEntryInstanceWithISODate({ Entry, entry });
+    const entryInstance = new Entry(entry);
     return entryInstance.create();
   } catch (error) {
     throw error;
