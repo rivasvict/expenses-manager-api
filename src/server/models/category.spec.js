@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const Category = require('./category');
 
-describe('Category module', function () {
+describe('Category model', function () {
   beforeEach('Create category objects', function () {
     this.getCategoryInstance = categoryToInstance => new Category(categoryToInstance);
     this.creationDate = new Date();
@@ -28,7 +28,7 @@ describe('Category module', function () {
 
           this.getCategoryInstance(categoryInvalidNameType);
         } catch (error) {
-          expect(error.message).to.be.equal('Validation failed: name: Cast to string failed for value "[]" at path "name"');
+          expect(error.message).to.be.equal('Validation failed: name: Cast to string failed for value "[]" (type Array) at path "name"');
         }
       });
 
@@ -44,7 +44,7 @@ describe('Category module', function () {
 
             this.getCategoryInstance(cathegoryInvalidTypeDataType);
           } catch (error) {
-            expect(error.message).to.be.equal('Validation failed: type: Cast to string failed for value "[]" at path "type"');
+            expect(error.message).to.be.equal('Validation failed: type: Cast to string failed for value "[]" (type Array) at path "type"');
           }
         });
 
@@ -77,7 +77,7 @@ describe('Category module', function () {
           this.getCategoryInstance(categoryInvalidCreationDataType);
         } catch (error) {
           expect(error.message).to.be
-            .equal('Validation failed: creation: Cast to date failed for value "Just string" at path "creation"');
+            .equal('Validation failed: creation: Cast to date failed for value "Just string" (type string) at path "creation"');
         }
       });
     });
