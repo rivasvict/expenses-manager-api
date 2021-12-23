@@ -3,7 +3,8 @@ const sendLoginSuccessResponseToClient = () => (req, res) => {
   if (token) {
     res.cookie('token', token, {
       httpOnly: true,
-      sameSite: true
+      sameSite: 'none',
+      secure: true
     });
     res.status(200).json(user);
   }

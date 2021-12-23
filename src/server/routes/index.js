@@ -18,6 +18,7 @@ const routesHandler = new RoutesHandler({
 
 // MOCKED ROUTES
 const balanceRoutes = require('./balance/index');
+const { FRONTEND_SERVER_ADDRESS } = require('../../../config');
 
 const mountBalanceRoutes = balanceRoutes({ wrap, entryModule });
 
@@ -36,10 +37,7 @@ const globalMiddlewaresWithWhitelistedRoutes = RoutesHandler.mountMiddlewaresUnl
 
 router.use(`${baseApiUrl}*`, cors({
   origin: [
-    // TODO: Make sure you make these values dependent on the environment variables
-    'http://192.168.0.218:3000',
-    'http://localdev:3000',
-    'http://localhost:3000'
+    FRONTEND_SERVER_ADDRESS
   ],
   credentials: true
 }), wrap(globalMiddlewaresWithWhitelistedRoutes));

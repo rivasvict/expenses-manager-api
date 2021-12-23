@@ -31,7 +31,13 @@ or domain
 
 3. Build the docker containers
 
+For **development** environments
+
 `docker-compose up --build`
+
+or for **production** environments
+
+`docker-compose --file docker-compose.yml --file docker-compose.prod.yml up --build`
 
 4. While the previous command is running, in another terminal,
 please run the db configuration script (Only run this once, no
@@ -45,9 +51,13 @@ with docker-compose up
 Run the project (docker)
 -------
 
-Simply run
+Simply in **development** environemnt, run
 
 `docker-compose up`
+
+or for **production** environments
+
+`docker-compose --file docker-compose.yml --file docker-compose.prod.yml up --build`
 
 # TODO
 

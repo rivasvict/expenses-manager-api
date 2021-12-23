@@ -1,0 +1,37 @@
+version: '3'
+services:
+
+# The development configuration lives here
+  mongo:
+    ports:
+      - ${DB_EXTERNAL_PORT}:${DB_PORT}
+    environment:
+      DB_TEST_NAME: ${DB_TEST_NAME}
+      DB_TEST_PASSWORD: ${DB_TEST_PASSWORD}
+      DB_TEST_USER: ${DB_TEST_USER}
+
+  mongo-express:
+    image: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_ADMIN_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_ADMIN_PASSWORD}
+    depends_on:
+      - mongo
+    ports:
+      - ${MONGO_EXPRESS_EXTERNAL_PORT}:8081
+    env_file:
+      - ./.env
+
+  node:
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - ${PORT}:${PORT}
+      - ${DEBUG_NODE_PORT}:${DEBUG_NODE_PORT}
+    environment:
+      DEBUG_NODE_SERVER: ${DEBUG_NODE_SERVER}
+      DEBUG_NODE_PORT: ${DEBUG_NODE_PORT}
+
+  redis:
+    ports:
+      - ${REDIS_EXTERNAL_PORT}:${REDIS_PORT}
