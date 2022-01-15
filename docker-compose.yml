@@ -3,62 +3,37 @@ services:
 
   mongo:
     image: mongo:4.0.5-xenial
-    restart: always
     volumes:
       - ${MONGO_DATA_DIR}:/data/db
       - ./docker-config/mongo/:/config/dbs/
     env_file:
       - ./.env
-    ports:
-      - 27018:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_ADMIN_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD}
       MONGO_INITDB_DATABASE: ${DB_NAME}
       NODE_ENV: ${NODE_ENV}
       DB_NAME: ${DB_NAME}
-      DB_TEST_NAME: ${DB_TEST_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_TEST_PASSWORD: ${DB_TEST_PASSWORD}
       DB_USER: ${DB_USER}
-      DB_TEST_USER: ${DB_TEST_USER}
-
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - 8082:8081
-    env_file:
-      - ./.env
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_ADMIN_USER}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_ADMIN_PASSWORD}
-    depends_on:
-      - mongo
 
   node:
-    # Using slim version over alpine due to an issue
-    # on apline with bcrypt failing silently
-    # https://github.com/kelektiv/node.bcrypt.js/issues/830
-    image: node:14.15.0-slim
+    build:
+      context: .
+      dockerfile: ./Dockerfiles/node/Dockerfile
     user: node
-    working_dir: /home/node/app
-    ports:
-      - ${PORT}:${PORT}
-      - ${DEBUG_NODE_PORT}:${DEBUG_NODE_PORT}
-    volumes:
-      - ./:/home/node/app
-    environment:
-      NODE_ENV: ${NODE_ENV}
-      DEBUG_NODE_SERVER: ${DEBUG_NODE_SERVER}
-      DEBUG_NODE_PORT: ${DEBUG_NODE_PORT}
+    env_file:
+      - ./.env
     expose:
       - "${PORT}"
+    depends_on:
+      - mongo
+      - redis
     command: "npm start"
 
   redis:
     image: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - 6378:6379
+    depends_on:
+      - mongo

@@ -1,0 +1,57 @@
+version: '3'
+services:
+
+  mongo:
+    restart: always
+
+  node:
+    restart: always
+
+  redis:
+    restart: always
+    
+  nginx:
+    image: nginx:1.21.4-alpine
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+
+      # Step 1: To be added first in the SSL configuration
+      # process, please remember to uncomment the following
+      # two lines when the documentation of the production
+      # setup says it so
+
+      #- ./data/certbot/conf:/etc/letsencrypt
+      #- ./data/certbot/www:/var/www/certbot
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - node
+
+    # Step 4: To be added second in the SSL configuration
+    # process, please remember to uncomment the following
+    # line when the documentation of the production
+    # setup says it so
+
+    #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+
+    # Step 2: To be added second in the SSL configuration
+    # process, please remember to uncomment the following
+    # three lines when the documentation of the production
+    # setup says it so
+
+    #restart: unless-stopped
+    #volumes:
+      #- ./data/certbot/conf:/etc/letsencrypt
+      #- ./data/certbot/www:/var/www/certbot
+
+    # Step 3: To be added second in the SSL configuration
+    # process, please remember to uncomment the following
+    # line when the documentation of the production
+    # setup says it so
+
+    #entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

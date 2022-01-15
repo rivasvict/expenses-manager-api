@@ -4,5 +4,9 @@
 node_modules
 
 .env
+.env.prod
 # The container directory for the Mongo and Redis data
 data
+nginx
+docker-compose.prod.yml
+init-letsencrypt.sh

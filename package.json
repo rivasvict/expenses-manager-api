@@ -11,7 +11,7 @@
     "stop-environment": "docker-compose down",
     "integration-test": "bash bin/scripts/run-integration-test.sh exit-test.js",
     "integration-test-debug": "bash bin/scripts/run-integration-test.sh --inspect=0.0.0.0:9228 --watch",
-    "start": "if-env NODE_ENV=production && start:production || npm run start:development",
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:development",
     "start:prod": "node ./bin/www",
     "start:development": "nodemon --inspect=0.0.0.0 ./bin/www",
     "lint": "eslint ./ --ext=js"
@@ -30,7 +30,7 @@
     "dayjs": "^1.10.7",
     "debug": "~2.6.9",
     "dotenv": "^6.2.0",
-    "express": "~4.16.0",
+    "express": "~4.17.2",
     "express-async-wrapper": "^0.1.0",
     "http-errors": "~1.6.2",
     "if-env": "^1.0.4",
