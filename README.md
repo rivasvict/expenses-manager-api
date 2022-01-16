@@ -55,16 +55,17 @@ Simply in **development** environemnt, run
 
 `docker-compose up`
 
-## Production setup
+## Production setup with domain and SSL with certbot and letsencrypt
 -------
 
 All of the previous setup steps are required for the setup of the production environment.
 
+**Note:** The reference for the nginx-certbot docker production configuration file comes from this [guide](https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71) and also from this [repo](https://github.com/wmnnd/nginx-certbot) (Which is made from the previously mentioned guide)
+
 Copy the necessary template
 -------
 
-**Note:** The reference for the nginx-certbot docker production configuration file comes from this [guide](https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71) and also from this [repo](https://github.com/wmnnd/nginx-certbot) (Which is made from the previously mentioned guide)
-files for the Docker production configuration and the LetsEncrypt initialization script
+Copy the files for the Docker production configuration and the LetsEncrypt initialization script
 
 `cp docker-compose.prod.yml.template ./docker-compose.prod.yml; cp init-letsencrypt.sh.template ./init-letsencrypt.sh;`
 
