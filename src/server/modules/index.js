@@ -20,7 +20,9 @@ const Account = require('../models/account');
 
 const cacheClient = new Redis({
   port: parseInt(config.REDIS_PORT, 10),
-  host: config.REDIS_SERVER
+  host: config.REDIS_SERVER,
+  password: config.REDIS_PASSWORD,
+  user: config.REDIS_USER
 });
 
 const accountModule = AccountModule();
