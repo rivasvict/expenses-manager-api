@@ -25,6 +25,7 @@ services:
   node:
     volumes:
       - ./:/home/node/app
+      - /home/node/app/node_modules
     ports:
       - ${PORT}:${PORT}
       - ${DEBUG_NODE_PORT}:${DEBUG_NODE_PORT}
