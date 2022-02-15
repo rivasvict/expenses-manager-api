@@ -11,6 +11,12 @@ services:
       DB_TEST_USER: ${DB_TEST_USER}
 
   mongo-express:
+  # TODO: Check if a contribution is needed here
+  # https://github.com/mongo-express/mongo-express-docker/pull/65/files
+  # In order to see if we can use the latest container image
+  # of mongo-express without the need of the mongo string url necessarily
+  # and also have the alternative to be able to use the port as a separate
+  # variable
     image: mongo-express:0.54
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_ADMIN_USER}
