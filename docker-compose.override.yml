@@ -4,23 +4,24 @@ services:
 # The development configuration lives here
   mongo:
     ports:
-      - ${DB_EXTERNAL_PORT}:${DB_PORT}
+      - ${ME_CONFIG_MONGODB_PORT}:${DB_PORT}
     environment:
       DB_TEST_NAME: ${DB_TEST_NAME}
       DB_TEST_PASSWORD: ${DB_TEST_PASSWORD}
       DB_TEST_USER: ${DB_TEST_USER}
 
   mongo-express:
-    image: mongo-express
+    image: mongo-express:0.54
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_ADMIN_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_ADMIN_PASSWORD}
+      ME_CONFIG_MONGODB_PORT: ${ME_CONFIG_MONGODB_PORT}
     depends_on:
       - mongo
     ports:
       - ${MONGO_EXPRESS_EXTERNAL_PORT}:8081
-    env_file:
-      - ./.env
+    expose:
+      - "${MONGO_EXPRESS_EXTERNAL_PORT}"
 
   node:
     volumes:
