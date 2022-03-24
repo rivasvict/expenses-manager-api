@@ -18,7 +18,7 @@ module.exports = {
   REDIS_SERVER: isIntegration ? environment.HOST : environment.REDIS_SERVER || '0.0.0.0',
   REDIS_PORT: isIntegration ? environment.REDIS_TEST_PORT : environment.REDIS_PORT || '6379',
   REDIS_PASSWORD: environment.REDIS_PASSWORD || '',
-  REDIS_PASSWORD: environment.REDIS_USER || '',
+  REDIS_USER: environment.REDIS_USER || '',
   FRONTEND_SERVER_ADDRESS: environment.FRONTEND_SERVER_ADDRESS || 'http://localhost:3000',
   sets: {
     INVALID_USER_TOKEN_SET: 'invalidUserTokenSet'
