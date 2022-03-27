@@ -3,8 +3,14 @@ const getDbModel = ({ db, modelName, schema }) => {
   return existingUserModel || db.model(modelName, schema);
 };
 
+const getConnectionScring = ({ dbPrefix = '', dbUserName = '', dbPassword = '', dbServer = '', dbPort = '', dbName = '', connectionOptions = '' }) => {
+  const port = dbPort.length ? `:${dbPort}` : '';
+  return `${dbPrefix}://${dbUserName}:${dbPassword}@${dbServer}${port}/${dbName}${connectionOptions}`;
+};
+
 const dbHelper = {
-  getDbModel
+  getDbModel,
+  getConnectionScring
 };
 
 module.exports = dbHelper;

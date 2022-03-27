@@ -34,3 +34,61 @@ describe('getDbModel', function () {
     expect(this.db.model.calledWith(options.modelName, options.schema)).to.be.equal(true);
   });
 });
+
+describe.only('getConnectionScring', function () {
+  describe('Form the expected uri when:', function () {
+    beforeEach('Set the constants that will not change for the string creation', function () {
+      this.fixedConnectionParameters = {
+        dbPrefix: 'mongodb',
+        dbUserName: 'userTest',
+        dbPassword: 'userPassword',
+        dbServer: 'good.db.server',
+        dbName: 'good-db-name'
+      };
+    });
+
+    it('No port nor connection options provided', function () {
+      const connectionParameters = {
+        ...this.fixedConnectionParameters
+      };
+      const connectionString = dbHelper.getConnectionScring(connectionParameters);
+      const { dbPrefix, dbUserName, dbPassword, dbServer, dbName } = connectionParameters;
+      const expectedUri = `${dbPrefix}://${dbUserName}:${dbPassword}@${dbServer}/${dbName}`;
+      expect(connectionString).to.be.equal(expectedUri);
+    });
+    
+    it('No port but connection options provided', function () {
+      const connectionParameters = {
+        ...this.fixedConnectionParameters,
+        connectionOptions: '?opt1=value1&opt2=value2'
+      };
+      const connectionString = dbHelper.getConnectionScring(connectionParameters);
+      const { dbPrefix, dbUserName, dbPassword, dbServer, dbName, connectionOptions } = connectionParameters;
+      const expectedUri = `${dbPrefix}://${dbUserName}:${dbPassword}@${dbServer}/${dbName}${connectionOptions}`;
+      expect(connectionString).to.be.equal(expectedUri);
+    });
+
+    it('Port provided but no connection options provided', function () {
+      const connectionParameters = {
+        ...this.fixedConnectionParameters,
+        dbPort: '27017'
+      };
+      const connectionString = dbHelper.getConnectionScring(connectionParameters);
+      const { dbPrefix, dbUserName, dbPassword, dbServer, dbPort, dbName } = connectionParameters;
+      const expectedUri = `${dbPrefix}://${dbUserName}:${dbPassword}@${dbServer}:${dbPort}/${dbName}`;
+      expect(connectionString).to.be.equal(expectedUri);
+    });
+
+    it('Port and connection options provided', function () {
+      const connectionParameters = {
+        ...this.fixedConnectionParameters,
+        dbPort: '27017',
+        connectionOptions: '?opt1=value1&opt2=value2'
+      };
+      const connectionString = dbHelper.getConnectionScring(connectionParameters);
+      const { dbPrefix, dbUserName, dbPassword, dbServer, dbPort, dbName, connectionOptions } = connectionParameters;
+      const expectedUri = `${dbPrefix}://${dbUserName}:${dbPassword}@${dbServer}:${dbPort}/${dbName}${connectionOptions}`;
+      expect(connectionString).to.be.equal(expectedUri);
+    });
+  })
+});
