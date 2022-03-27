@@ -3,9 +3,9 @@ const getDbModel = ({ db, modelName, schema }) => {
   return existingUserModel || db.model(modelName, schema);
 };
 
-const getConnectionScring = ({ dbPrefix = '', dbUserName = '', dbPassword = '', dbServer = '', dbPort = '', dbName = '', connectionOptions = '' }) => {
+const getConnectionScring = ({ dbPrefix = '', dbUser = '', dbPassword = '', dbServer = '', dbPort = '', dbName = '', dbConnectionOptions = '' }) => {
   const port = dbPort.length ? `:${dbPort}` : '';
-  return `${dbPrefix}://${dbUserName}:${dbPassword}@${dbServer}${port}/${dbName}${connectionOptions}`;
+  return `${dbPrefix}://${dbUser}:${dbPassword}@${dbServer}${port}/${dbName}${dbConnectionOptions}`;
 };
 
 const dbHelper = {

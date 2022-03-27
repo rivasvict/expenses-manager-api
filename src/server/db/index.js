@@ -1,22 +1,29 @@
 const mongoose = require('mongoose');
 const config = require('../../../config.js');
+const dbHelper = require('../lib/db-helper.js');
 
-const dbCredentials = `${config.DB_USER}:${config.DB_PASSWORD}`;
-const authenticatedMongoUrl = dbCredentials;
+const dbPrefix = config.DB_PREFIX;
+const dbUser = config.DB_USER;
+const dbPassword = config.DB_PASSWORD;
 const dbServer = config.DB_SERVER;
 const dbPort = config.DB_PORT;
 const dbName = config.DB_NAME;
-// TODO: Send this to the config file
-const isRemoteDb = true;
-const dbConnectionQueryStringParameters = `?retryWrites=true&w=majority`;
-const connectionPrefix = isRemoteDb ? `mongodb+srv` : `mongodb`;
-const dbPortForLocalDb = isRemoteDb ? ``: `:${dbPort}`;
+const dbConnectionOptions = config.DB_CONNECTION_OPTIONS;
 
 const initialize = async () => {
   try {
-    const dbUrl = `${connectionPrefix}://${authenticatedMongoUrl}@${dbServer}${dbPortForLocalDb}/${dbName}${dbConnectionQueryStringParameters}`;
+    const dbUri = dbHelper.getConnectionScring({
+      dbPrefix,
+      dbUser,
+      dbPassword,
+      dbServer,
+      dbPort,
+      dbName,
+      dbConnectionOptions
+    });
 
-    await mongoose.connect(dbUrl, {
+    console.log(dbUri);
+    await mongoose.connect(dbUri, {
       useNewUrlParser: true
     });
 
