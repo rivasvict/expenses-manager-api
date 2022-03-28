@@ -36,7 +36,7 @@ describe('getDbModel', function () {
 });
 
 describe('getConnectionScring', function () {
-  describe('Form the expected uri when:', function () {
+  describe('Form the expected connection uri when:', function () {
     beforeEach('Set the constants that will not change for the string creation', function () {
       this.fixedConnectionParameters = {
         dbPrefix: 'mongodb',
@@ -88,6 +88,18 @@ describe('getConnectionScring', function () {
       const connectionString = dbHelper.getConnectionScring(connectionParameters);
       const { dbPrefix, dbUser, dbPassword, dbServer, dbPort, dbName, dbConnectionOptions } = connectionParameters;
       const expectedUri = `${dbPrefix}://${dbUser}:${dbPassword}@${dbServer}:${dbPort}/${dbName}${dbConnectionOptions}`;
+      expect(connectionString).to.be.equal(expectedUri);
+    });
+
+    it('Port should NOT be set when setting a replica set by using +srv as part of the db prefix', function () {
+      const connectionParameters = {
+        ...this.fixedConnectionParameters,
+        dbPrefix: 'mongodb+srv',
+        dbPort: '27017'
+      };
+      const connectionString = dbHelper.getConnectionScring(connectionParameters);
+      const { dbPrefix, dbUser, dbPassword, dbServer, dbName } = connectionParameters;
+      const expectedUri = `${dbPrefix}://${dbUser}:${dbPassword}@${dbServer}/${dbName}`;
       expect(connectionString).to.be.equal(expectedUri);
     });
   })

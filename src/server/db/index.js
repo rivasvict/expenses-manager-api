@@ -12,6 +12,7 @@ const dbConnectionOptions = config.DB_CONNECTION_OPTIONS;
 
 const initialize = async () => {
   try {
+    mongoose.set('useCreateIndex', true);
     const dbUri = dbHelper.getConnectionScring({
       dbPrefix,
       dbUser,
@@ -22,9 +23,9 @@ const initialize = async () => {
       dbConnectionOptions
     });
 
-    console.log(dbUri);
     await mongoose.connect(dbUri, {
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     });
 
     console.log('Mongo Connected!');
