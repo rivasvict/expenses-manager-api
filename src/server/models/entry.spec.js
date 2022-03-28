@@ -89,24 +89,4 @@ describe('Entry model', function () {
       });
     });
   });
-
-  describe('Set ISODate from unix timestamp', function () {
-    beforeEach('Get the entry object', function () {
-      this.entry = {
-        amount: 12.3,
-        account_id: 'rwtretgwe2',
-        description: 'A simple test description',
-        date: 1596502849000,
-        categories_path: ',House,',
-        type: 'expense'
-      };
-      this.entryInstance = this.getEntryInstance(this.entry);
-    });
-
-    it('Should set an ISODate to the date attribute of the entry from an unix timestamp', function () {
-      expect(this.entryInstance.date.getDate()).to.be.equals(3);
-      expect(this.entryInstance.date.getMonth()).to.be.equals(7);
-      expect(this.entryInstance.date.getUTCFullYear()).to.be.equals(2020);
-    });
-  });
 });
