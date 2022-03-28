@@ -55,6 +55,20 @@ Simply in **development** environemnt, run
 
 `docker-compose up`
 
+### Run untit tests on docker
+
+Provide permissions to the script
+
+```
+chmod +x bin/scripts/run-unit-tests.sh
+```
+
+Enjoy
+
+```
+bin/scripts/run-unit-tests.sh
+```
+
 ## Production setup with domain and SSL with certbot and letsencrypt
 -------
 
