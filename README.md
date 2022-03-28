@@ -60,13 +60,13 @@ Simply in **development** environemnt, run
 Provide permissions to the script
 
 ```
-chmod +x bin/scripts/run-unit-tests.sh
+chmod +x bin/scripts/run-unit-tests-with-docker.sh
 ```
 
 Enjoy
 
 ```
-bin/scripts/run-unit-tests.sh
+bin/scripts/run-unit-tests-with-docker.sh
 ```
 
 ## Production setup with domain and SSL with certbot and letsencrypt
