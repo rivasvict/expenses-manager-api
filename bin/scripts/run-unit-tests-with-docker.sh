@@ -1,2 +1,2 @@
 docker build -t expenses-manager-api-unit-test-image -f Dockerfiles/node/Dockerfile .; \
-docker run --rm --name expenses-manager-api-test -v /home/vor/code/victor/expenses-manager-api/:/home/node/app -v /home/node/app/node_modules expenses-manager-api-unit-test-image npm run test-debug;
+docker run --rm --name expenses-manager-api-test -v $(pwd):/home/node/app -v /home/node/app/node_modules expenses-manager-api-unit-test-image npm run test-debug;
