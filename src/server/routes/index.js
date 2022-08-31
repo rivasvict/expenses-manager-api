@@ -1,5 +1,6 @@
 const express = require('express');
 const wrap = require('express-async-wrapper');
+const path = require('path');
 
 const router = express.Router();
 const cors = require('cors');
@@ -16,9 +17,16 @@ const routesHandler = new RoutesHandler({
   baseApiUrl
 });
 
+const clientRoutesHandler = new RoutesHandler({
+  router,
+  baseApiUrl: ''
+});
+
 // MOCKED ROUTES
 const balanceRoutes = require('./balance/index');
 const { FRONTEND_SERVER_ADDRESS } = require('../../../config');
+const clientRoutes = require('./client');
+const mountClientRoutes = clientRoutes({ static: express.static, path });
 
 const mountBalanceRoutes = balanceRoutes({ wrap, entryModule });
 
@@ -49,5 +57,7 @@ router.use(`${baseApiUrl}*`, cors({
 
 routesHandler.mountRoute({ mountRouteCallback: mountUserRoutes, mainRouteUrl: '/user' });
 routesHandler.mountRoute({ mountRouteCallback: mountBalanceRoutes, mainRouteUrl: '/balance' });
+
+clientRoutesHandler.mountRoute({ mountRouteCallback: mountClientRoutes });
 
 module.exports = router;
